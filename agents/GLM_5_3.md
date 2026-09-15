@@ -8,11 +8,11 @@ Lead Developer / Software Architect
 
 ## CURRENT PHASE
 
-MANGABD-002 — Phase A (Investigation) COMPLETE, proposal ready for GLM-5.3-Flash review
+MANGABD-002 — Phase B (Second-pass review + final proposal) COMPLETE — **WAITING_FOR_USER**
 
-Task: fresh-Colab execution reliability (see agents/TASK_002.md).
+Task: fresh-Colab execution reliability (see agents/TASK_002.md). Phase B record: agents/DECISION.md §“MANGABD-002 — PHASE B” (§B.1–B.12). Second-pass addendum below (T2.12).
 
-NO SOURCE CODE MODIFIED in this phase (investigation + proposal only, per TASK_002 Phase A rules).
+NO SOURCE CODE MODIFIED in any phase (investigation + review + proposal only, per TASK_002 rules). Implementation gated on explicit Project Owner approval.
 
 ---
 
@@ -596,6 +596,48 @@ INVESTIGATION COMPLETE. Proposal (T2.7) ready for GLM-5.3-Flash's independent re
 
 ## STATUS
 
-MANGABD-002 PHASE A COMPLETE — investigation + proposal documented in this file (sections T2.0–T2.11); awaiting GLM-5.3-Flash independent review and Project Owner approval before any implementation (TASK_002 Phase B/C gate).
+MANGABD-002 PHASE A COMPLETE — investigation + proposal documented in this file (sections T2.0–T2.11).
 
-**No source code modified during MANGABD-001 or MANGABD-002 Phase A. Only agent documentation files were updated, as permitted.**
+MANGABD-002 PHASE B COMPLETE — second-pass review of GLM-5.3-Flash's investigation + review (agents/GLM_5_3_FLASH.md §F2.0–F2.7) performed; all four challenges C-1..C-4 independently verified against the repository and UPHELD (T2.12 below); final engineering proposal written to agents/DECISION.md (§B.6). **DECISION STATUS: WAITING_FOR_USER.** No implementation until the Project Owner explicitly approves.
+
+**No source code modified during MANGABD-001, MANGABD-002 Phase A, or MANGABD-002 Phase B. Only agent documentation files were updated, as permitted.**
+
+---
+
+# MANGABD-002 — PHASE B SECOND-PASS ADDENDUM (GLM-5.3)
+
+Date: 2026-09-16. Inputs: my Phase A report (T2.0–T2.11), Flash's independent investigation + review of my proposal (F2.0–F2.7, verdict APPROVE_WITH_CORRECTED_JUSTIFICATION, challenges C-1..C-4), and the actual repository. Per protocol, no challenge was accepted on authority — each was re-verified against the code in a fresh session, and the decisive one was re-reproduced at runtime. Full merged record: agents/DECISION.md §B.1–B.12.
+
+## T2.12 Second-Pass Findings
+
+### T2.12.1 Adjudication of Flash's four challenges
+
+| ID | Verification performed this session | Verdict |
+|---|---|---|
+| **C-1** ("pre-crash work provably empty" is false on Drive-persisted state) | Five-component code chain line-pinned: cell 1:80–94 (active Drive-mount request + Drive preference over local fallback) → cell 3:992–993 (module-level `load_manifest()`/`load_translation_df()`) → cell 13:36 (`apply_container_types()`) → cell 13:37–38 (per-page `mask_only_translated()`) → cell 13:39 (crash line). Mutation carriers: cell 12:57–66 (coordinate snap + `region_type="narrator"` + unconditional `save_translation_df()` at 12:66), cell 11:91–96 (mask `cv2.bitwise_and` + `save_image_artifact` at 11:96). Then **my own runtime reproduction** (`scripts/fresh_repro_drive.py`, workspace): verbatim cells 13+14 + verbatim AST-extracted cell-11/12 helper defs, real cv2/numpy/pandas, in-memory Drive-state artifact store (1 page, 2 rows, real images/masks). DR-A (fresh+Drive+current): row coords snapped (55,65,110,70)→(52,62,116,76), region_type bubble→narrator, CSV rewritten, mask AND-shrunk 13,800→9,600 px, THEN NameError at cell_14.py:40→cell_13.py:39. DR-C (fresh+Drive+guarded): ZERO mutations, clean skip. DR-B==DR-D (warm preserved). ED-A/ED-C reproduce Phase A's empty-disk matrix. | **UPHELD.** My T2.2.2 observation 2 / T2.7 point 3 were over-generalized — proven only for empty disk, and my E2 could not have seen the Drive case because it stubbed the quality helpers. Correction accepted on my own evidence, not Flash's authority. The correction STRENGTHENS the guard (DR-C prevents corruption rather than skipping no-ops). |
+| **C-2** (R1 omitted the "post-fix fresh Run All does real work" dimension) | Verified: cell 20:1 `apply_translations_from_ai_file()`, cell 23:89 `sync_translate_stage()`, cell 26:1 `render_all_pages(force=True)` (forced full re-render). | **UPHELD.** Folded into amended R1 and the owner-facing disclosure (DECISION §B.6). |
+| **C-3** ("cell order is intended" rests on 11/12 banners only) | Verified: `Place:` banners at 11:3 and 12:3 only; cells 13:1/14:1 carry title-only banners. | **UPHELD.** T2.1.1's scope narrowed to the patch layer; cells 13/14 read as patch-session scratch cells. Root cause/fix unaffected. |
+| **C-4** (guard comment used old "Cell 11" numbering) | Verified in my own T2.7 text. | **UPHELD.** Comment corrected (physical cell 15 + banner numbering noted); corrected wording already executed in DR-C/DR-D. |
+
+Also found in Flash's review, one wording nit that changes no conclusion: F2.5.3 lists `sync_translate_stage` as "defined by cells ≤13" (it is cell 23:28). Guard sufficiency still holds because the only variant needing it (23:71) can only bind after 23:28 executes in the same cell, and no `del` exists anywhere.
+
+### T2.12.2 Corrections to my Phase A report
+
+1. **T2.2.2 observation 2 and T2.7 point 3 — RETRACTED as universal claims.** "Pre-crash work is provably empty / outcome-neutral by construction" holds ONLY for the empty-disk state. On Drive-persisted state the pre-crash work is destructive and persisted (T2.12.1 DR-A). The guard's justification is upgraded, not weakened: it prevents artifact corruption in the realistic Drive scenario.
+2. **T2.4 factor 2 — wording corrected.** Cell 13's wrap calls `run_inpaint_all` (13:39) unguarded and before the kill/restore loop, but NOT "before any page iteration": the `mask_only_translated` loop (13:37–38) precedes it. (My own T2.2.2 obs. 2 already acknowledged "the page loops" — the Phase A text was internally inconsistent; the Drive dimension makes the inconsistency material.)
+3. **T2.1.1 — scope narrowed** per C-3.
+4. **T2.7's warm-preservation claim — sub-case precision added.** Warm re-apply has two sub-cases (re-run 13→14 fires the quality wrap; re-run 14 alone in a fully-warm kernel fires the last-bound variant, normally cell 23's plain). The guard is variant-agnostic (all five variants need exactly the two checked names — T2.1.5), so it is correct under both.
+
+### T2.12.3 New observations (in neither agent's prior report)
+
+1. **The guard idiom is native to the codebase:** cell 25's UI handler (25:363–366) already gates the same names with `if "run_inpaint_all" in globals() and "run_render_all" in globals(): … elif "run_inpaint_render_all" in globals(): …`. The fix adopts the notebook's own established pattern.
+2. **Even empty-disk fresh writes once:** the unconditional `save_translation_df()` at 12:66 — idempotent empty-CSV rewrite on empty disk (Phase A noted this), mutation-carrier on Drive.
+3. **`require_translation` divergence verified at the signature level:** 15:678 defaults `True`; 11:190/12:155/13:35/23:71 default `False` — "name exists" ≠ "behavior preserved" (supports Layer-2 root cause and the option-3 rejection).
+
+### T2.12.4 Final proposal (unchanged executable code; C-4-corrected comment)
+
+See DECISION.md §B.6 for the final patch text and the corrected five-point justification. The guard condition, call, and else-branch are byte-identical to my Phase A T2.7 proposal; only the comment changed (physical numbering). Regression register R1 amended (C-2), R2–R6 unchanged; residual-risk note added (warm-path N-1(c) and Drive-fresh mutation class remain, by scope decision). Verification strategy (DECISION §B.10) now includes the six-scenario Drive-state matrix as the Phase D baseline.
+
+### T2.12.5 Phase B status
+
+COMPLETE. DECISION.md carries the full merged record (§B.1–B.12), decision status **WAITING_FOR_USER**. Awaiting Project Owner approval of the §B.6 patch (and optional inputs §B.11.2–B.11.4: cell-26 force question, Drive usage, workflow questions) before any Phase C implementation.

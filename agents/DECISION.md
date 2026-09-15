@@ -2,8 +2,12 @@
 
 ## STATUS
 
-MANGABD-001 COMPLETE (dual-agent audit + comparison, this file).
-MANGABD-002 ACTIVE — Phase A: GLM-5.3 investigation + proposal COMPLETE (see agents/GLM_5_3.md sections T2.0–T2.11); awaiting GLM-5.3-Flash independent investigation and review. Phase B decision record will be appended here after both investigations. No source code modified.
+**WAITING_FOR_USER**
+
+MANGABD-001 COMPLETE (dual-agent audit + comparison; historical record below).
+MANGABD-002 PHASE B COMPLETE — second-pass technical review finished; final engineering proposal written (see "MANGABD-002 — PHASE B" section at the end of this file). Root cause dual-confirmed; one GLM-5.3 Phase A claim corrected (Drive-scenario, §B.5); proposal verdicts: GLM-5.3-Flash APPROVE_WITH_CORRECTED_JUSTIFICATION, GLM-5.3 accepts all four corrections after independent code verification + runtime reproduction.
+
+**No source code modified at any point. Implementation (Phase C) is gated on explicit Project Owner approval of the §B.6 patch.**
 
 ---
 
@@ -22,7 +26,9 @@ The Project Owner has final authority over major changes.
 
 ## CURRENT TASK
 
-MANGABD-001 — Initial Codebase Audit (Phase 1, no source changes)
+MANGABD-002 — Fresh-Colab Execution Reliability (investigation complete; proposal awaiting Owner approval)
+
+(Historical: MANGABD-001 — Initial Codebase Audit, Phase 1, complete; record below)
 
 ---
 
@@ -296,3 +302,186 @@ NOT STARTED
 # FINAL OUTCOME
 
 NOT DECIDED
+
+---
+---
+
+# ═══ MANGABD-002 — PHASE B: SECOND-PASS REVIEW, FINAL ENGINEERING PROPOSAL ═══
+
+**Date: 2026-09-16. Participants: GLM-5.3 (second-pass review + proposal), GLM-5.3-Flash (independent investigation + review, commit 4e3d239), Project Owner (decision pending).**
+
+**DECISION STATUS: WAITING_FOR_USER.** Nothing in this section has been implemented. Phase C (implementation) starts only after the Project Owner explicitly approves the §B.6 patch.
+
+Inputs compared: (1) GLM-5.3's original Phase A analysis (agents/GLM_5_3.md §T2.0–T2.11, commit d7622d7), (2) GLM-5.3-Flash's independent investigation + review (agents/GLM_5_3_FLASH.md §F2.0–F2.7, verdict APPROVE_WITH_CORRECTED_JUSTIFICATION, four challenges C-1..C-4), (3) the actual current repository. Per protocol, every disagreement was re-verified against the underlying code in a fresh session — not argued from memory.
+
+---
+
+## B.1 Second-Pass Verification Method (GLM-5.3, this session)
+
+**Code re-verification [FACT, line-pinned this session]:** cell 13 in full (wrap structure lines 35–45); cell 12 `_snap_white_box` (30–42), `apply_container_types` (44–68, unconditional `save_translation_df()` at 66), `restore_boxes` (71+); cell 11 `_has_valid_trans` (84–86), `mask_only_translated` (88–97, `cv2.bitwise_and` + `save_image_artifact` at 96); cell 14 in full (title-only banner at 1, `globals()` rebind at 37, the fix site at 40); cell 1 `choose_base_directory` (67–103: active Drive mount request 80–88, Drive preference 91–94, local fallback 96–100); cell 3 module-level loads (992–993); cells 20:1 / 23:89 / 26:1 module-level calls; cell 25 UI handler (363–366); all five `run_inpaint_render_all` signatures + `inpaint_all_pages` (9:598) + `render_all_pages` (10:982).
+
+**Independent runtime reproduction [TEST RESULT]** (`scripts/fresh_repro_drive.py`, analysis workspace, outside the repo): unlike the Phase A reproduction (which stubbed the quality helpers and therefore could only model the empty-disk state), this execution uses **verbatim AST-extracted helper sources from cells 11/12 + the whole verbatim sources of cells 13 and 14**, real cv2 4.13.0 / numpy 2.1.3 / pandas 2.2.3, and an in-memory artifact store modeling a Drive-persisted session (1 page, 2 translation rows — one valid, one not — real original/mask images). Six scenarios:
+
+| Scenario | Kernel / Disk / Cell-14 code | Result | Persisted mutations |
+|---|---|---|---|
+| DR-A | fresh / Drive / current | **NameError `run_inpaint_all`**, frames `cell_14.py:40 → cell_13.py:39` | **YES** — see below |
+| DR-B | warm / Drive / current | OK, full pipeline fires | YES (same as DR-A) + pipeline calls |
+| DR-C | fresh / Drive / guarded | OK, clean printed skip | **ZERO** |
+| DR-D | warm / Drive / guarded | OK, call sequence **identical to DR-B** | YES (same as DR-B) |
+| ED-A | fresh / empty / current | NameError (matches Phase A scenario A) | one idempotent empty-CSV rewrite |
+| ED-C | fresh / empty / guarded | OK, clean skip (matches Phase A scenario C) | ZERO |
+
+DR-A mutation record (the decisive evidence for C-1): row `r1` coordinates snapped `(55,65,110,70) → (52,62,116,76)`, `region_type` `bubble → narrator`, `save_translation_df()` called (CSV rewritten); stored mask AND-shrunk **13,800 → 9,600 px** (the untranslated row's region zeroed — irreversible), `save_image_artifact(p1,"mask")` called; **then** the NameError. Full printout preserved in the workspace script output.
+
+---
+
+## B.2 Disagreement / Challenge Adjudication (all verified against code this session)
+
+| ID | Flash's challenge (F2.4) | Verification performed | Verdict |
+|---|---|---|---|
+| **C-1 (significant)** | GLM-5.3's "pre-crash work on fresh is provably empty / outcome-neutral by construction" (T2.2.2 obs. 2, T2.7 point 3) is refuted in the Drive-persisted state: real mutations occur before the abort | Five-component code chain verified: cell 1:80–94 (Drive mount request + preference) → cell 3:992–993 (module-level disk loads) → cell 13:36 (`apply_container_types`) → cell 13:37–38 (per-page `mask_only_translated`) → cell 13:39 (crash line). Mutation carriers verified: cell 12:57–66 (snap + region_type + unconditional CSV save), cell 11:91–96 (mask AND + artifact save). **Independently reproduced (DR-A vs DR-C).** | **UPHELD — Flash is right.** GLM-5.3's Phase A claim holds only for the empty-disk state its E2 modeled. Correction accepted; §B.5/B.6 restate the justification accordingly. |
+| **C-2 (moderate)** | R1 omits that post-fix fresh Run All + Drive data performs real work at cells 20/23/26 (incl. forced re-render), not just "newly-reachable environmental risk" | Verified: cell 20:1 `apply_translations_from_ai_file()` (applies any `ai_text_export*.txt`), cell 23:89 `sync_translate_stage()` (marks stages), cell 26:1 `render_all_pages(force=True)` (forced full re-render). | **UPHELD.** Folded into R1 (§B.8) and the owner-facing disclosure (§B.6). |
+| **C-3 (minor)** | "Cell ORDER is intended" rests on placement banners in cells 11/12 only; cells 13/14 — the cells that actually break fresh runs — carry no placement banner | Verified: `Place:` banners exist at 11:3 and 12:3 only; cell 13:1 and 14:1 carry title-only banners ("RESIDUAL KILLER", "kill_residual v3"). | **UPHELD.** T2.1.1's inference is acceptable for the patch layer as a whole; evidence for cells 13/14 specifically is thinner — they read as patch-session scratch cells. Root cause and fix unaffected. |
+| **C-4 (cosmetic)** | Proposed guard comment says "the orchestrator (Cell 11)" — old banner numbering vs physical numbering used everywhere else | Verified in GLM-5.3's own T2.7 text. | **UPHELD.** Comment corrected in the final patch (§B.6); corrected wording already executed in DR-C/DR-D. |
+
+**One wording nit found in Flash's review (does not affect any conclusion):** F2.5.3 lists `sync_translate_stage` among free names "defined by cells ≤13" — it is defined at cell 23:28. The guard-sufficiency CONCLUSION is still sound because the only variant needing that name (cell 23:71) can only be bound after cell 23 has executed, and cell 23:28 precedes 23:28→71 binding in the same cell; no `del` statements exist anywhere (Phase A E1), so the name cannot disappear afterwards.
+
+**Convergence check:** every other claim in F2.1–F2.6 matches GLM-5.3's Phase A and the code: single abort site; five-variant hunger table; deferred-NameError mechanism; guard-flag stickiness; four-path execution matrix; `require_translation` divergence (15:678 defaults `True`; 11/12/13/23 default `False` — verified this session); UI-button bypass at 25:363–366.
+
+**New second-pass observations (in neither agent's prior report):**
+
+1. **The guard idiom is native to this codebase.** Cell 25's UI handler already gates the same dependency with `if "run_inpaint_all" in globals() and "run_render_all" in globals(): … elif "run_inpaint_render_all" in globals(): …` (25:363–366). The proposed fix adopts the notebook's own established dependency-declaration pattern — it is not a foreign idiom introduced by reviewers.
+2. **Warm "re-apply" has two sub-cases** that the Phase A text conflated: (a) re-running cells 13→14 re-binds and fires the quality wrap; (b) re-running cell 14 alone in a fully-warm kernel fires whichever variant was bound last (normally cell 23's plain variant). The guard is variant-agnostic (all five variants need exactly the two checked names), so it is correct under both sub-cases. Flash's F2.1.5 table captured this correctly ("whichever variant was last bound").
+3. **Even empty-disk fresh performs one disk write** — the unconditional `save_translation_df()` at cell 12:66 (idempotent empty-CSV rewrite; Phase A noted this, but the Drive dimension upgrades the same line from "harmless" to "mutation carrier").
+
+---
+
+## B.3 Final Root Cause (dual-agent confirmed; three layers)
+
+**Layer 1 — Immediate mechanism [FACT + TEST RESULT, dual-confirmed]:** physical cell 14, line 40, executes `run_inpaint_render_all(force=True)` at module level. On a fresh sequential run the name is bound to cell 13's quality-core wrap (defined 13:35, rebound 13:45), whose body resolves `run_inpaint_all` (13:39) and `run_render_all` (13:44) — defined only in cell 15 (15:634, 15:656). Python resolves function-body globals at call time → **deferred NameError** (the callee exists; its body's dependency does not) → Run All aborts; cells 15–26 never execute in that pass. **Positional invariant (both agents, independently derived):** all five `run_inpaint_render_all` variants require the two cell-15 names, so ANY module-level call to this name placed before cell 15 fails on a fresh kernel regardless of which variant is bound. On Drive-persisted state the abort is **preceded by destructive persisted mutations** (B.2/C-1: coordinate snap + region_type rewrite + CSV save + irreversible mask AND-shrink).
+
+**Layer 2 — Structural cause [FACT, dual-confirmed]:** the patch layer (cells 11–14, 19–26) follows a "define-and-immediately-apply" authoring pattern — each hotfix cell both (re)defines functions AND executes pipeline work at module level (14:40, 20:1, 23:89, 26:1, plus the print-side-effect at 11:203). The pattern is only sound in a warm kernel where later cells have already run; cell 14 is the only site whose dependency graph points forward (before its own definition). The five variants also have **divergent semantics** (`require_translation` default `True` at 15:678 vs `False` elsewhere), so "making the name exist" is not equivalent to "preserving behavior" — which variant is live changes what the same call does.
+
+**Layer 3 — Process cause [FACT, dual-confirmed]:** no fresh-run test has ever existed. Stored outputs show the last saved session executed only cells 0,1,2,3,5,6; execution counts were cleared; the artifact is a manual `.txt` snapshot of an `.ipynb`. The notebook's known-good state lives in warm Colab kernels, not in the repository, so the fresh-run regression persisted unnoticed across the patch-layer era.
+
+---
+
+## B.4 Contributing Causes (final merged register, evidence-tagged)
+
+1. Five redefinitions of `run_inpaint_render_all` (11:190, 12:155, 13:35, 15:678, 23:71); the pre-cell-15 bindings are the most name-hungry variants. [FACT]
+2. Cell-13 wrap execution order: `apply_container_types()` (13:36) and the per-page `mask_only_translated()` loop (13:37–38) run BEFORE the failing `run_inpaint_all` (13:39) — with Drive data these are destructive *(corrected wording vs Phase A T2.4 factor 2, which said "before any page iteration")*. The 13:39 call itself is unguarded by any page-count check, so the NameError fires even on a zero-page session. [FACT + TEST RESULT]
+3. The define-and-immediately-apply pattern across patch cells; cell 14 is the only forward-pointing instance — the others (20, 23, 26) are fresh-safe by luck of placement, not design. [FACT]
+4. **Fresh KERNEL ≠ fresh DISK** [Flash F2.1.4, now dual-confirmed]: cell 1 actively requests Drive mount and prefers `/content/drive/MyDrive/MangaBD_V12`; cell 3 loads `MANGABD_MANIFEST`/`translation_df` from disk at module level. A fresh runtime therefore inherits the previous session's real pages/rows/artifacts whenever Drive is mounted. Whether the owner actually uses Drive persistence is UNKNOWN (the one stored session used local `/content/mangabd`).
+5. `apply_container_types`' unconditional `save_translation_df()` (12:66) — idempotent on empty disk, mutation-carrier on Drive. [FACT]
+6. Sticky patch guards (`_QC_FINAL_RENDER_PATCHED` 11:187, `_QC_RENDER_PATCHED` 12:152, `_MBD_SLICED` 24:122, `colab_files.__mbd_patched` 24:46) make re-application semantics session-history-dependent. [FACT]
+7. `globals()`-rebinding idiom (11:200, 12:162, 13:45, 14:37) makes the binding timeline order-sensitive and defeats naive def-before-use reasoning. [FACT]
+8. No execution-order documentation, no CI, no fresh-run smoke test — the failure mode was structurally invisible to the owner's workflow. [FACT]
+9. Post-abort surface (cells 15–26) has never executed in a fresh sequence; statically name-safe (dual-independent simulators) but runtime-unproven on fresh. [FACT + UNKNOWN]
+
+---
+
+## B.5 Corrected Understanding (what changed since Phase A, and why)
+
+1. **"Pre-crash work on fresh is provably empty" — RETRACTED as a universal claim; holds only for empty disk.** In the Drive-persisted state, cell 14's call snaps coordinates, rewrites region_type, persists the CSV, and irreversibly AND-shrinks stored masks BEFORE the NameError (GLM-5.3's own DR-A reproduction, §B.1 — not accepted on Flash's authority). **Direction of the correction strengthens the fix:** the guard is not merely "skips no-op work"; in the realistic Drive scenario it PREVENTS artifact corruption (DR-C: zero mutations). The empty-disk neutrality proof alone was insufficient justification; the DECISION-grade justification is now "declare the dependency; fire only in the warm path that already works today; prevent the Drive-fresh mutate-then-crash".
+2. **Phase A T2.4 factor 2 wording corrected** (see B.4.2): the mask loop precedes the failing line; what is true is that the failing call is unguarded and precedes the kill/restore loop.
+3. **"Cell order is intended" — scope narrowed** (C-3): proven for the patch layer via the 11:3/12:3 banners; cells 13/14 carry no placement banners and read as patch-session scratch cells whose placement nobody reconsidered.
+4. **Warm re-apply has two sub-cases** (re-run 13→14 vs re-run 14 alone); the guard is correct under both because it is variant-agnostic.
+5. **The guard idiom is the codebase's own** (cell 25:363–366 uses the same `in globals()` check for the same names) — the fix is stylistically native, not reviewer-foreign.
+
+---
+
+## B.6 RECOMMENDED FIX (final; executable code byte-identical to Phase A proposal — only the comment changed per C-4)
+
+**File:** `MangaBD_V12_ipynb_txt.ipynb (3).txt` — physical cell 14, replacing the single line 40 `run_inpaint_render_all(force=True)` with:
+
+```python
+# MANGABD-002: run_inpaint_render_all calls run_inpaint_all/run_render_all, which
+# the orchestrator cell (physical cell 15; banner numbering "Cell 11") defines
+# LATER in a fresh Run All. Skip the pipeline run until they exist.
+if ("run_inpaint_all" in globals()) and ("run_render_all" in globals()):
+    run_inpaint_render_all(force=True)
+else:
+    print("  ⏭️ kill_residual v3 loaded; pipeline run skipped (orchestrator not loaded yet)")
+```
+
+**Justification (corrected per C-1/C-2):**
+
+1. **One cell, one statement, 7 lines replace 1 (+6 net), single hunk.** No definition moves; no binding-timeline change; the `def`s and `globals()` rebinds in cells 13/14 untouched.
+2. **Warm-kernel behavior preserved exactly** — dual-confirmed by runtime reproduction on both disk states (Phase A E2: `calls_B == calls_D`; this session DR-B == DR-D, Drive state). The owner's interactive re-apply workflow is unaffected, under both warm sub-cases (B.5.4).
+3. **Fresh-run skip is strictly safer than today's code in every modeled state** — empty disk: skips one idempotent empty-CSV rewrite (ED-A → ED-C); Drive: **prevents destructive pre-crash mutations** (DR-A → DR-C). Nothing of value is skipped; corruption is.
+4. **It declares the dependency, it does not hide the error.** Not a try/except, not a silent fallback, not a dummy variable, not a global hack — the four forbidden patterns in TASK_002 are all avoided. The else-branch prints a visible, greppable reason. The idiom is the notebook's own (cell 25:363–366).
+5. **No other module-level call needs the same treatment** — cells 20/23/26 are fresh-safe by construction (dual-independent transitive-closure analysis + manual reads). Guarding them would be unnecessary change, which TASK_002 forbids.
+
+**Owner-facing disclosure (required by C-2 — this is what fresh Run All will do after the fix):** on a Drive-persisted runtime, a fresh Run All proceeds past cell 14 for the first time and executes real work at module level: cell 20 applies any `ai_text_export*.txt` found in storage; cell 23 syncs translate-stage flags; cell 26 runs `render_all_pages(force=True)` — a forced full re-render of every eligible page. This is the codebase's current intent once unblocked (and TASK_002's preservation mandate), not a side effect of the guard, but it may trigger hours of GPU work and artifact overwrites at Run-All time. If the owner does NOT want Run-All-time rendering, say so when approving — a `force=False` question for cell 26 is a separate one-line follow-up the Owner can bundle into this approval (out of MANGABD-002's minimal scope otherwise).
+
+**What this fix deliberately does NOT change:** the fresh-vs-warm pipeline fork (fresh-final binding = cell 23's plain variant; Owner Question 2 in the MANGABD-001 record gates the canonical-variant decision); the warm-kernel destructive scenario N-1(c); sticky guards; stacked render patches (N-2); the redefinition jungle. All deferred to the structural phase (MANGABD-001 proposals 2–7).
+
+---
+
+## B.7 Alternative Solutions Considered (final; smallest-safe-first)
+
+| # | Option | Verdict | Rationale (cumulative, both agents) |
+|---|---|---|---|
+| 0 | Do nothing / document only | REJECT | fails the task objective (fresh Run All must work). |
+| 1 | **Dependency guard at the 14:40 call** | **RECOMMENDED** | §B.6. Only option that is fresh-safe in BOTH disk states while preserving warm semantics byte-identically. |
+| 2 | Delete the 14:40 call outright | REJECT (as primary) | smaller diff but CHANGES warm behavior (re-running cell 14 would no longer re-apply the pipeline) — violates preservation without evidence the owner doesn't use that flow. |
+| 3 | Move the call to a new end-of-notebook cell | REJECT (for 002) | bigger diff; duplicates cell 26's intent; **and (Flash F2.5.6, verified) it changes WHICH variant executes** — after cell 15 the binding is 15's `require_translation=True` variant, after cell 23 the plain variant — neither matches the owner's current warm re-apply semantics on the paths where the quality wrap applies. Revisit as structural follow-up. |
+| 4 | Reorder cells (move 11–14 after 15) | REJECT | reshuffles every redefinition winner, invalidates both agents' maps, contradicts the 11/12 banner placement, highest regression risk. |
+| 5 | Early stub definitions of `run_inpaint_all`/`run_render_all` | REJECT | explicitly forbidden by TASK_002 (dummy variables); silently changes fresh semantics. |
+| 6 | Structural fix: single composition root / extracted `mangabd/` package | DEFER | correct end-state (MANGABD-001 Alternative B) but far beyond 002's minimal scope; blocked on Owner Questions 1/2 (canonical order; canonical variant). |
+
+---
+
+## B.8 Regression Risk Register (final; R1 amended per C-2, R3 verified this session)
+
+| # | Risk | Likelihood | Impact | Mitigation / note |
+|---|---|---|---|---|
+| R1 | **(amended)** Post-fix fresh Run All newly reaches cells 15–26. Two dimensions: (a) environmental failures of newly-reachable code (cell 0/4 installs, GPU) — self-tests fail LOUDLY by design, correct behavior; (b) **real pipeline work over Drive-persisted data at cells 20/23/26, including a forced full re-render at 26:1** — possibly hours of GPU work and artifact overwrites at Run-All time. | Medium | Medium | (a) expectation-setting only; (b) disclosed to the Owner in §B.6 — if unwanted, the Owner can bundle a cell-26 `force=False` follow-up into the approval. Not a defect of the guard; it is the codebase's current intent once unblocked. |
+| R2 | Fresh Run All leaves the plain (cell 23) pipeline bound; owner expects quality-core. | Low | Medium | Pre-existing fork (not introduced by the fix); Owner Question 2. The guard's printed skip line makes the fresh path visible in logs. |
+| R3 | Guard-condition staleness: a future edit that changes which variant is bound at cell 14, or its free-name set, could desynchronize the guard. | Low | Low | All five current variants need exactly these two names (dual-verified hunger tables); the code comment states the dependency; both agents' reports document the check procedure. |
+| R4 | A future rename of `run_inpaint_all`/`run_render_all` would turn a hard crash into a printed skip (error softening). | Low | Low | The else-branch prints loudly; a rename is a reviewed code-change event anyway. |
+| R5 | Notebook JSON edit corrupts the artifact. | Low | High | Phase C protocol (§B.9): programmatic edit + JSON re-parse + AST re-validation + single-hunk diff + mode check (100644 — see the file-mode incident, worklog Task 3 addendum) + Flash review. |
+| R6 | Owner's warm workflow silently diverges from fresh (fix works warm; owner never notices fresh is now different). | Medium | Low | Intended outcome of the task (deterministic fresh behavior); documented here and in §B.6. |
+
+**Residual risk NOT introduced but NOT fixed by this change (explicitly out of scope, tracked in the MANGABD-001 register):** the warm-kernel destructive scenario N-1(c) (re-running cell 14 with pages loaded fires force-inpaint + irreversible mask shrink) and the Drive-fresh mutation class now proven by DR-A remain reachable through the WARM path and through any manual fresh continuation that re-runs cell 14 after cell 15. The guard removes the FRESH Run-All instances only. Full remediation is MANGABD-001 proposals 2–3 (opt-in `restore_boxes`, reversible artifact mutation), Owner-gated.
+
+---
+
+## B.9 Exact Files / Cells Requiring Modification (Phase C scope)
+
+| Item | Value |
+|---|---|
+| File | `MangaBD_V12_ipynb_txt.ipynb (3).txt` (the repository's only source artifact) |
+| Location | `cells[14]` in the notebook JSON (physical cell 14; banner title "kill_residual v3"), final source line (line 40) |
+| Change | Replace 1 line with the 7-line guarded block (§B.6). Single hunk. |
+| Everything else | **Untouched.** All 26 other cells byte-identical; no agent-doc changes count as source (TASK_002 permitted files during investigation). |
+| Phase C protocol | Programmatic JSON edit of `cells[14].source`; then verify: JSON re-parses; cell count still 27; cell 14 AST-parses; the `def`/`globals()` statements in cells 13/14 byte-identical; `git diff` = exactly one hunk in one file; file mode preserved 100644; commit only after Flash's Phase D sign-off per TASK_002. |
+
+---
+
+## B.10 Verification Strategy (Phase D — for GLM-5.3-Flash, after Phase C)
+
+1. **Static re-check:** re-run the fresh-kernel simulator against the edited notebook → abort-class site count must be 0; definition timeline unchanged except cell 14's tail.
+2. **Diff audit:** exactly one hunk in `MangaBD_V12_ipynb_txt.ipynb (3).txt`; JSON parses; 27 cells; cell 14 AST-parses; guard text matches §B.6 verbatim; file mode 100644.
+3. **Guard-logic equivalence:** re-run the six-scenario Drive-state reproduction (§B.1 matrix as the expected baseline: edited-notebook DR-A becomes OK-with-skip and zero mutations; DR-B == DR-D still; ED-C unchanged) against the EDITED notebook file — not a hand-edited copy.
+4. **Colab fresh Run All (strongest practical test; requires the Owner or a Colab-capable environment — closes T-8):** fresh runtime → Run All → expect: no NameError; the skip line printed after "kill_residual v3 active"; self-test banners print; notebook reaches cell 26. With Drive mounted, additionally expect (disclosed behavior, §B.6): cells 20/23/26 perform real work including the forced re-render.
+5. **Warm-path functional check:** in the same session, upload one page via the Control Studio UI → Detect + OCR + translate → run the "final" button → confirm outputs are produced normally (the guard must not have disabled anything in the warm path).
+6. **Limitation:** if Colab is unavailable to both agents, static + local-runtime evidence stands (as in Phases A/B) and full fresh-runtime confirmation is explicitly deferred to the Owner's first Run All.
+
+---
+
+## B.11 Owner Inputs Requested (WAITING_FOR_USER)
+
+1. **Approve or reject the §B.6 patch** (single-cell dependency guard). This is the only approval blocking Phase C.
+2. **Optional bundle:** should cell 26's Run-All-time `render_all_pages(force=True)` become `force=False` (or otherwise not fire on Run All)? Only relevant if you do not want a forced full re-render whenever you Run All with data present (§B.6 disclosure).
+3. **Drive usage (new, per C-1):** do you run with Google Drive persistence (the notebook's designed primary) or local `/content/mangabd` (used in the one stored session)? This calibrates the weight of R1(b) and the residual Drive-fresh mutation class (§B.8 residual note).
+4. **Workflow question (carried from Phase A T2.10):** is fresh Run All ever your canonical workflow, and was cell 14's immediate-execution intentionally used as "re-apply quality core"? The fix preserves the warm path either way; the answer only weights R2/R6.
+5. **Still open from MANGABD-001 (gate the STRUCTURAL follow-up, not this fix):** canonical execution order (Q1) and canonical pipeline variant (Q2).
+
+---
+
+## B.12 Phase B Outcome
+
+Both agents independently investigated (statement-level fresh-kernel simulators + verbatim-code runtime reproductions), exchanged reviews, and converged on: root cause = three-layer (positional deferred-NameError / define-and-immediately-apply pattern / no fresh-run test); recommended fix = single-cell dependency guard; all four Phase A→B corrections resolved by repository evidence, with GLM-5.3's own Drive-state reproduction independently confirming Flash's decisive C-1 challenge. Zero source code modified during Phases A and B.
+
+**NEXT STEP: Project Owner decision on §B.11.1 (and optionally B.11.2–B.11.4). Status remains WAITING_FOR_USER until then.**
