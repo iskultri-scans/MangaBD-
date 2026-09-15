@@ -8,9 +8,11 @@ Lead Developer / Software Architect
 
 ## CURRENT PHASE
 
-Initial Codebase Audit — PHASE 1 COMPLETE
+MANGABD-002 — Phase A (Investigation) COMPLETE, proposal ready for GLM-5.3-Flash review
 
-NO IMPLEMENTATION YET.
+Task: fresh-Colab execution reliability (see agents/TASK_002.md).
+
+NO SOURCE CODE MODIFIED in this phase (investigation + proposal only, per TASK_002 Phase A rules).
 
 ---
 
@@ -316,7 +318,7 @@ Priority order for Phase 2 (after GLM-5.3-Flash's independent review and owner d
 
 ---
 
-## STATUS
+## STATUS (MANGABD-001 — historical)
 
 REVIEW_COMPLETE (Phase 1 audit finished; no source code modified)
 
@@ -337,3 +339,263 @@ Flash's review (APPROVE_WITH_CHANGES) challenged 5 claims. Every challenge was r
 Flash's new findings F-1..F-6 and test results T-1..T-8 were independently re-verified in this session; all confirmed (T-6 reproduced exactly on pandas 2.2.3). The comparison itself produced five new findings (N-1..N-5, recorded in DECISION.md), notably the three-scenario entrypoint model that resolves the latent P-1×P-2 tension present in BOTH reports.
 
 No source code modified in this session. Comparison complete — see `agents/DECISION.md` (STATUS: REVIEW_COMPARISON_COMPLETE, awaiting owner decisions).
+
+---
+---
+
+# MANGABD-002 — PHASE A INVESTIGATION REPORT (GLM-5.3)
+
+## Fresh-Colab Execution Reliability
+
+Date: 2026-09-15. Rules observed: TASK_002 Phase A — investigation and proposal only; no source code modified; evidence labels used throughout; no assumption that the MANGABD-001 findings are complete or single-caused.
+
+---
+
+## T2.0 Method and Evidence Base
+
+This investigation did NOT rely on the MANGABD-001 audit text. It re-derived the execution behavior from the current repository using two purpose-built, read-only analyses plus targeted manual reads:
+
+- **E1 [TEST RESULT] — Fresh-kernel static simulator** (`fresh_run_sim.py`, `fresh_run_sim2.py`, kept out of the repo in the analysis workspace): AST-level replay of cells 0→26 in sequential order, tracking the module-level namespace exactly as a fresh kernel builds it. For every module-level statement it records definitions (assign/def/class/import/for/with/`globals()[k]=v`/delete), evaluates simple guards (`not globals().get("X")`, `"X" in globals()`, `getattr(obj,"X",False)`, tracked constants), and checks every `Name` load in executed expressions. For every module-level call to a user-defined function it resolves the callee to the binding that exists at that moment and performs a **transitive interprocedural free-name check** (callee → called user functions → …, latest-binding rule, depth 12). Known analyzer limitation: it models name resolution, not value-dependent behavior; guarded (`try/except`) sites are classified non-aborting.
+- **E2 [TEST RESULT] — Runtime reproduction** (`fresh_repro.py`): executes the REAL verbatim source of physical cells 13 and 14 (extracted from the notebook, unmodified) inside a controlled namespace that reproduces the fresh-kernel state at that point: empty `MANGABD_MANIFEST` with `"pages": {}` (structure verified from `create_empty_manifest`, cell 3:251–261), empty `translation_df` WITH all columns (verified from `empty_translation_df`, cell 3:833–834, and `TRANSLATION_DF_COLUMNS`, cell 3:123), artifact IO stubs returning None (fresh disk), and record-keeping stubs for the cell-11/12 quality helpers. Cell 15 names (`run_inpaint_all`, `run_render_all`) are ABSENT — exactly the fresh state. Four scenarios: fresh+warm × current+guarded.
+- **E3 [FACT] — Manual reads**: cells 3 (state init), 11–15, 19–26 read line-by-line this session; banner placement comments verified; `save_translation_artifact`/`apply_manual_translation` located (both cell 8); cell 24 imports and proof-block `try/except Exception` verified; cell 25 imports verified.
+
+Analyzer false-positives found and eliminated during development (documented for reproducibility): (a) `_D` flagged as missing in cell 26's transitive closure — actually a function-local `from PIL import ImageDraw as _D` inside `_qc_render_vertical` (cell 12:118); fixed by counting in-function imports as bound; (b) cell 20's `applied = apply_translations_from_ai_file()` is an Assign-RHS call, initially outside the interprocedural check; fixed. One remaining cosmetic limitation: `__mbd_patched` is set as an ATTRIBUTE on the `colab_files` module object (cell 24:46), not a namespace name, so the simulator reports "never set" — the patch itself IS applied on fresh (guard `not getattr(colab_files,'__mbd_patched',False)` evaluates True).
+
+---
+
+## T2.1 The Execution Graph (as it exists in the current notebook)
+
+### T2.1.1 Cell placement vs. intended order [FACT]
+
+The banner comments inside the patch cells state their intended position: cell 11 line 3 — "Place: after Cell 10, before Cell 11. Delete all old FIX/QC cells."; cell 12 line 3 — "Place: after Cell 10, before Cell 11". The physical arrangement (patch cells 11–14 between renderer cell 10 and orchestrator cell 15) MATCHES this stated intent. Therefore the cell ORDER is intended; the anomaly is not placement but the **module-level pipeline call at the end of cell 14**, which cannot succeed in a fresh sequential run at this position and can only have been authored and tested inside a warm kernel.
+
+### T2.1.2 Definition timeline and sequential winners [TEST RESULT, E1]
+
+| Name | Definition sites (cell:line) | Sequential-final binding |
+|---|---|---|
+| `run_inpaint_render_all` | 11:190 (+globals 11:200), 12:155 (+162), 13:35 (+45), 15:678, 23:71 | **cell 23** (plain + `sync_translate_stage`) |
+| `run_inpaint_all` | 15:634 only | cell 15 |
+| `run_render_all` | 15:656 only | cell 15 |
+| `kill_residual` | 11:99, 13:4, 14:4 (+globals 14:37) | **cell 14** (v3, pixel-level) |
+| `apply_container_types` | 11:63, 12:44 | **cell 12** (unguarded snap) |
+| `restore_boxes` | 11:121, 12:71 | **cell 12** |
+| `mask_only_translated` | 11:88 only | cell 11 |
+| `recover_coordinates` | 11:30 only | cell 11 |
+| `render_bengali_text` | 10:552; wrappers 11:178 (+186), 12:143 (+151) | **cell 12 wrapper → cell 11 wrapper → cell 10 original** (stacked, see T2.1.4) |
+| `translate_with_nllb` | 8, 19:93 | cell 19 |
+| `sync_translate_stage` | 23:28 | cell 23 |
+| `render_all_pages` | 10:982 | cell 10 |
+
+Namespace growth (module-level names visible after each cell): 00:34 01:80 02:86 03:135 04:176 05:212 06:252 07:275 08:307 09:324 10:359 11:376 12:378 13:378 14:378 15:407 16:438 17:459 18:477 19:478 20:478 21:478 22:485 23:489 24:514 25:571 26:571. No `del` statements exist anywhere; names are never removed once defined.
+
+### T2.1.3 Module-level execution map [TEST RESULT, E1]
+
+Unguarded module-level calls to user functions, with callee resolution at call time:
+
+| Site | Callee | Callee def | Direct missing names | Transitive missing | Fresh verdict |
+|---|---|---|---|---|---|
+| 0:283, 0:314, 0:354, 1:103, 1:424, 1:596/597, 3:992/993, 4:410/416, 25:261–273, 25:415 | env/config/storage/UI helpers | same/earlier cells | — | — | SAFE |
+| **14:40** | `run_inpaint_render_all` | **cell 13** | **`run_inpaint_all`, `run_render_all`** | same | **ABORT — the only one** |
+| 20:1 (Assign-RHS) | `apply_translations_from_ai_file` | cell 19 | — | — | SAFE (no export file → prints, returns 0) |
+| 23:89 | `sync_translate_stage` | cell 23 | — | — | SAFE (empty df → warning, returns 0) |
+| 26:1 | `render_all_pages` | cell 10 | — | — | SAFE (no eligible pages → returns []) |
+
+Additional module-level side effects (non-call): font downloads in 11/12 (network, `try/except`-guarded), `colab_files.download` patch + slicer wrap in 24 (guards evaluated True on fresh → applied), UI construction in 25 (ipywidgets `display`), `recover_coordinates()` invoked as a `print()` f-string argument at 11:203 (fresh: empty df → returns 0, benign; warm re-run: reverts coordinates/region_type — MANGABD-001 P-3/F-6). The designed per-cell self-tests (cells 0, 1, 3–10, 15–18) run inside `try/except` pairs (full test / degraded fallback) and are non-aborting by construction; their failures are loud-by-design environment diagnostics, not order bugs.
+
+### T2.1.4 Guard-flag state machine and stickiness [FACT]
+
+On a fresh sequential run the four patch guards all evaluate "not yet applied" and their bodies execute: `_QC_FINAL_RENDER_PATCHED` set at 11:187, `_QC_RENDER_PATCHED` at 12:152, `_MBD_SLICED` at 24:122, `__mbd_patched` (module attribute) at 24:46. Because the two render patches use DIFFERENT flag names, they stack rather than replace (N-2 from MANGABD-001, now statically confirmed): after cell 12, `render_bengali_text` = cell-12 wrapper, whose `_qc_orig_render` = cell-11 wrapper, whose `_base_render` = cell-10 original.
+
+**Stickiness (hidden state dependency):** in a warm kernel, re-running cell 11 or 12 AFTER their flags are set skips the wrapper re-application entirely — the guard bodies are dead on re-run. The wrapper functions themselves call `_qc_render_vertical` / helper names via global lookup at call time, so re-running a cell still rebinds the INNER helpers, but an EDITED WRAPPER CONDITION WOULD NEVER TAKE EFFECT in that session. Same pattern for `_MBD_SLICED` (slicer never re-wraps; only the `SLICE_MODE` global it reads can be flipped). This is a concrete "execution history changes behavior" mechanism (TASK_002 question 7).
+
+### T2.1.5 Callee "hunger" of every `run_inpaint_render_all` variant [TEST RESULT, E1]
+
+| Def site | Free names (globals needed at call time) |
+|---|---|
+| 11:190 | MANGABD_MANIFEST, apply_container_types, kill_residual, mask_only_translated, restore_boxes, **run_inpaint_all**, **run_render_all** |
+| 12:155 | MANGABD_MANIFEST, apply_container_types, restore_boxes, **run_inpaint_all**, **run_render_all** |
+| 13:35 | MANGABD_MANIFEST, apply_container_types, kill_residual, mask_only_translated, restore_boxes, **run_inpaint_all**, **run_render_all** |
+| 15:678 | **run_inpaint_all**, **run_render_all** |
+| 23:71 | **run_inpaint_all**, **run_render_all**, sync_translate_stage |
+
+**Every variant requires `run_inpaint_all`/`run_render_all`, which are defined only in cell 15.** Therefore ANY module-level call to this name placed anywhere before cell 15 fails on a fresh kernel, regardless of which variant is bound. Cell 14 is such a call. This generalizes the root cause beyond "cell 13's wrap is hungry" — the position of the call relative to cell 15 is the invariant that matters.
+
+---
+
+## T2.2 The Fresh-Run Failure Path [TEST RESULT — statically AND runtime proven]
+
+### T2.2.1 Static proof (E1)
+
+Replaying cells 0→26 with the fresh-kernel simulator yields EXACTLY ONE abort-class finding in the entire notebook:
+
+```
+cell 14 line 40: call run_inpaint_render_all:
+    callee-def-cell 13, callee-missing ['run_inpaint_all', 'run_render_all']
+```
+
+Every other unguarded module-level call (including transitive closure over the callee graph) resolves cleanly. Therefore: on a fresh Colab "Run All", cells 0–13 execute (with their designed self-tests and patch side effects), the run **aborts at physical cell 14, line 40**, and cells 15–26 never execute in that pass. This also means everything after cell 14 has NEVER been exercised in a fresh sequential run — the stored outputs (physical 0,1,2,3,5,6 only) are consistent with this: even the owner's own saved session never went past the early cells.
+
+### T2.2.2 Runtime reproduction (E2) — verdict matrix
+
+Executing the verbatim cell 13 + cell 14 sources in the simulated kernel states:
+
+| Scenario | Kernel | Cell-14 code | Result | Recorded calls |
+|---|---|---|---|---|
+| A | fresh (cell-15 names absent) | current | **`NameError: name 'run_inpaint_all' is not defined`, raised at cell_14.py line 40** | `apply_container_types` (returned 0, no-op) then crash |
+| B | warm (cell-15 names present) | current | OK — **entire pipeline fires as a definition-cell side effect** | `apply_container_types`, `run_inpaint_all(force=True, require_translation=False)`, `run_render_all(force=True, require_translation=False)` |
+| C | fresh | proposed guard | OK — clean skip with printed reason | none |
+| D | warm | proposed guard | OK — **call sequence identical to B** (`calls_B == calls_D: True`) | same as B |
+
+Two load-bearing observations from scenario A:
+
+1. **The failure is a deferred NameError, not a missing callee.** The name `run_inpaint_render_all` EXISTS at cell 14:40 (bound by cell 13:45's `globals()` reassignment). The crash happens when the bound function's BODY resolves `run_inpaint_all` (cell 13, line 39) — a name that will only exist after cell 15. This is why the bug is invisible to naive "is the function defined?" reasoning and why it survives in the owner's workflow: in a warm kernel the body resolves fine.
+2. **The pre-crash work on fresh is provably empty.** Before reaching the failing line, the wrap calls `apply_container_types()` — which iterates the empty `translation_df`, changes nothing, and re-saves the empty CSV (idempotent). The page loops see `MANGABD_MANIFEST["pages"] == {}`. Therefore skipping the call on fresh discards NO work — the guard in scenario C is outcome-neutral by construction, not by hope.
+
+### T2.2.3 What happens after the abort (and after a fix)
+
+In Colab, "Run All" stops at the first uncaught exception. With the current code the notebook's fresh-run state at termination is: cells 0–13 executed, `run_inpaint_render_all` bound to cell 13's wrap, `kill_residual` bound to v3, render patches stacked, orchestrator/UI/hotfix cells (15–26) never run. If the owner then runs the remaining cells manually, the binding of `run_inpaint_render_all` ends at cell 23's plain variant — the quality-core wrap is orphaned (MANGABD-001 P-2, scenario (b) of N-1). Any fix that unblocks fresh Run-All must therefore be evaluated against this semantic fork: fresh-run final binding = cell 23 plain; owner's warm re-apply workflow = whichever quality cell was re-run last. This fork is a pre-existing property of the codebase, NOT something the minimal fix introduces — but the proposal below documents it explicitly (see T2.6/T2.7).
+
+---
+
+## T2.3 Root Cause (three layers)
+
+**Layer 1 — Immediate mechanism [FACT]:** physical cell 14, line 40, executes `run_inpaint_render_all(force=True)` at module level. At that point in a fresh sequential run the name is bound to cell 13's quality-core wrap, whose body references `run_inpaint_all` and `run_render_all` — defined only in physical cell 15 (lines 634, 656). Python resolves function-body globals at call time → `NameError` → Run All aborts. All five variants of the callee share this dependency (T2.1.5), so the failure is positional: any pre-cell-15 module-level call to this name fails on a fresh kernel.
+
+**Layer 2 — Structural cause [FACT]:** the patch layer (cells 11–14, 19–26) follows a "define-and-immediately-apply" authoring pattern: each hotfix cell both (re)defines its functions AND executes pipeline work at module level to apply the fix right away (cell 14:40 pipeline run; cell 23:89 stage sync; cell 20:1 file import; cell 26:1 re-render; cell 11:203 coordinate recovery inside a print). This pattern is only sound in a WARM kernel where later cells have already run — i.e., the patch layer was authored against the owner's interactive workflow, never against a fresh sequential execution. The cell placement itself is intended (banner comments, T2.1.1); the immediate-execution statements are the anomaly.
+
+**Layer 3 — Process cause [FACT]:** no fresh-run test has ever existed. The stored outputs prove the last saved session ran only early cells; execution counts were cleared; the artifact is a manual `.txt` snapshot of a `.ipynb`. The notebook's "known-good" state lives in warm Colab kernels, not in the repository, so a fresh-run regression could persist unnoticed across the entire patch-layer era.
+
+---
+
+## T2.4 Contributing Factors (complete, evidence-tagged)
+
+1. **Five redefinitions of `run_inpaint_render_all`** (T2.1.2) — the pre-cell-15 bindings are the most name-hungry variants (7 free names), maximizing the chance that an early call fails. [FACT]
+2. **Cell 13's wrap calls `run_inpaint_all` unconditionally** (line 39), before any page iteration or emptiness check — the NameError fires even on a zero-page session. A guard like `if MANGABD_MANIFEST["pages"]:` before the call would have made fresh runs accidentally survive. [FACT]
+3. **The immediate-execution pattern** across patch cells (Layer 2) — cell 14 is the only instance whose dependencies are not yet defined on fresh; the others (20, 23, 26) happen to be fresh-safe by luck of placement, not by design. [FACT]
+4. **Sticky patch guards** (`_QC_*`, `_MBD_SLICED`, `__mbd_patched`) make re-application semantics depend on session history (T2.1.4). [FACT]
+5. **`globals()`-rebinding idiom** (`globals()["run_inpaint_render_all"] = ...`) at 11:200, 12:162, 13:45, 14:37 makes the binding timeline order-dependent and defeats static "def-before-use" intuition. [FACT]
+6. **No execution-order documentation, no CI, no fresh-run smoke test** — the failure mode was structurally invisible to the owner's workflow. [FACT]
+7. **Post-abort surface never exercised**: cells 15–26 have never run in a fresh sequence; their module-level code is statically safe (E1) but runtime-unproven on fresh (designed self-tests may legitimately fail on environment problems — network installs in cell 0/4, GPU availability). [FACT + UNKNOWN]
+
+---
+
+## T2.5 Answers to TASK_002's ten investigation questions
+
+1. **Intended execution order** — physical order matches the banners' stated placement (patches between renderer and orchestrator); the intended RUN model is interactive/warm (evidenced by the define-and-apply pattern and by cell 14's call that can only work warm). [FACT + inference]
+2. **Actual execution order (fresh Run All)** — cells 0–13, abort at 14:40. [TEST RESULT]
+3. **All relevant definitions** — T2.1.2 timeline. [TEST RESULT]
+4. **Redefinitions/overrides** — T2.1.2 winners column; render patches stack (T2.1.4). [TEST RESULT]
+5. **Variables depending on earlier state** — `MANGABD_CONFIG` (progressive `setdefault` + patch overrides), `MANGABD_MANIFEST` / `translation_df` (loaded-from-disk vs fresh — including the MANGABD-001 P-7 dtype drift), `_qc_orig_render` / `_base_render` captured references, all guard flags. [FACT]
+6. **Undefined in fresh runtime** — exactly `run_inpaint_all`, `run_render_all`, at exactly one site (14:40), via exactly one bound variant (cell 13). Complete by transitive closure over all module-level calls. [TEST RESULT]
+7. **Execution history changes behavior** — yes: last-run binding wins; sticky guards; stacked patches; disk-loaded vs fresh state. [FACT]
+8. **Run All vs manual reruns trigger different implementations** — yes: fresh Run-All (fixed) ends with cell-23 plain binding; warm re-run of 11–14 re-binds the quality wrap AND executes it; the UI button bypasses all variants (25:363–365). Same code, three pipelines. [FACT]
+9. **Hidden state dependencies** — guard flags (incl. module-attribute flag `__mbd_patched`), `globals()` preference blocks (cell 10:150/156), kernel-global name leaks (e.g., `Path` used in cell 10 via cell 1's import). [FACT]
+10. **Fixing one issue could create a regression elsewhere** — analyzed in T2.7 (main risks: newly-reachable cells 15–26 on fresh; preserved fresh-vs-warm semantic fork; guard-coupling staleness). [FACT + HYPOTHESIS where runtime-unproven]
+
+---
+
+## T2.6 Solution Design Space
+
+Evaluated options (smallest-safe-first; TASK_002 constraints: no error-hiding, no unnecessary try/except, no dummy variables, preserve working functionality):
+
+| # | Option | Verdict | Rationale |
+|---|---|---|---|
+| 0 | Do nothing / document only | REJECT | fails the task objective (fresh Run-All must work). |
+| 1 | **Dependency guard around the 14:40 call** | **RECOMMENDED** | see T2.7. Fresh: skips provably-empty work, prints reason, Run-All proceeds. Warm: behavior byte-identical (E2 scenario D == B). 4-line diff, one cell. |
+| 2 | Delete the 14:40 call outright | REJECT (as primary) | smaller diff than 1 but CHANGES warm-kernel behavior (re-running cell 14 would no longer re-apply the pipeline) — violates preservation without evidence the owner doesn't use that flow. |
+| 3 | Move the call to a new end-of-notebook cell | REJECT (for 002) | behavior-equivalent to 2 in warm kernels unless the owner changes habits; moves code across cells (bigger diff); duplicates cell 26's intent. Revisit as structural follow-up. |
+| 4 | Reorder cells (move 11–14 after 15) | REJECT | reshuffles every redefinition winner, invalidates the MANGABD-001 maps, contradicts the banners' stated intended placement, highest regression risk. |
+| 5 | Early stub definitions of `run_inpaint_all`/`run_render_all` | REJECT | explicitly forbidden by TASK_002 (dummy variables); also silently changes fresh semantics. |
+| 6 | Structural fix: single composition root / extracted package | DEFER | the correct end-state (already logged as DECISION.md Alternative B) but far beyond 002's minimal scope; blocked on owner decisions (canonical pipeline variant, DECISION.md Q1/Q2). |
+
+---
+
+## T2.7 RECOMMENDED PROPOSAL (for GLM-5.3-Flash to independently review)
+
+### Proposed change — physical cell 14, line 40 only
+
+Current (cell 14, lines 36–40):
+
+```python
+globals()["kill_residual"] = kill_residual
+print("✅ kill_residual v3 active: pixel-level, box-only, face/border-safe")
+
+run_inpaint_render_all(force=True)
+```
+
+Proposed:
+
+```python
+globals()["kill_residual"] = kill_residual
+print("✅ kill_residual v3 active: pixel-level, box-only, face/border-safe")
+
+# MANGABD-002: run_inpaint_render_all needs run_inpaint_all/run_render_all,
+# which the orchestrator (Cell 11) defines LATER in a fresh Run All.
+if ("run_inpaint_all" in globals()) and ("run_render_all" in globals()):
+    run_inpaint_render_all(force=True)
+else:
+    print("  ⏭️ kill_residual v3 loaded; pipeline run skipped (orchestrator not loaded yet)")
+```
+
+### Why this is the smallest safe change
+
+1. **One cell, one statement, +5/-1 lines.** No other cell's source changes; no definition moves; no binding timeline changes (the `def`s and `globals()` rebinds are untouched).
+2. **Warm-kernel behavior is preserved exactly** — E2 scenario D reproduces scenario B's call sequence identically (`calls_B == calls_D: True`). The owner's interactive re-apply workflow is unaffected.
+3. **Fresh-run skip is outcome-neutral by proof, not by hope** — E2 scenario A shows the pre-crash work on fresh is one no-op `apply_container_types()` call (empty DataFrame, zero pages, idempotent CSV re-save). Nothing of value is skipped.
+4. **It does not hide the error — it declares the dependency.** This is not a `try/except` and not a silent fallback: the guard makes the cell's dependency on the orchestrator explicit in code, and the else-branch prints a visible, greppable reason. The forbidden patterns in TASK_002 (unnecessary try/except, silent fallback, dummy variables, global hacks) are all avoided.
+5. **No other module-level call needs the same treatment** — cells 20/23/26 are fresh-safe by construction (E1 transitive closure + E3 manual reads: no-file → return 0; empty df → return 0; no eligible pages → return []). Adding guards there would be unnecessary change, which TASK_002 forbids.
+
+### What this fix deliberately does NOT change (and why)
+
+- **The fresh-vs-warm pipeline fork remains.** After a fresh Run-All, `run_inpaint_render_all` ends bound to cell 23's plain variant; the owner's warm re-apply still re-binds the quality wrap. WHICH variant should be canonical is DECISION.md Owner Question 2 — explicitly out of scope for MANGABD-002. The fix makes the notebook's fresh behavior deterministic and documented; it does not silently pick a winner.
+- **The warm-kernel destructive scenario N-1(c) remains.** Re-running cell 14 in a warm kernel with pages loaded still fires force-inpaint + irreversible mask shrink. That is a separate defect class (artifact mutation safety, DECISION.md proposals 2–3) and must not be smuggled into a reliability fix.
+- **The sticky guards, stacked render patches, and redefinition jungle remain.** All documented (T2.1.4, T2.4); all deferred to the structural phase pending owner decisions.
+
+### Implementation notes (Phase C, only after approval)
+
+- The notebook is stored as `MangaBD_V12_ipynb_txt.ipynb (3).txt` (JSON with a `.txt` extension). The edit must be applied to `cells[14].source` in the JSON programmatically, then verified: JSON re-parse OK, 27 cells unchanged in count, AST re-parse of cell 14 OK, `git diff` shows exactly one hunk in one file.
+
+---
+
+## T2.8 Regression Risk Analysis (for the proposed guard)
+
+| # | Risk | Likelihood | Impact | Mitigation / note |
+|---|---|---|---|---|
+| R1 | Cells 15–26 module-level code runs fresh for the first time; a latent runtime failure there becomes the new first-stop | Medium | Medium | E1 proves name-resolution safety for ALL of them; remaining risks are environmental (cell 0/4 network installs, GPU presence) and the designed self-tests, which fail LOUDLY by design — that is correct behavior, not a regression of this fix. Documented expectation-setting for the owner. |
+| R2 | Fresh Run-All leaves the plain (cell 23) pipeline bound; owner expects quality-core | Low | Medium | Pre-existing fork (T2.2.3), not introduced by the fix; flagged as DECISION.md Q2. The fix's printed skip message makes the fresh path visible in logs. |
+| R3 | Guard-coupling staleness: if a future edit changes which `run_inpaint_render_all` variant is bound at cell 14, the guard's name set may no longer match its true dependencies | Low | Low | All five current variants need exactly these two names (T2.1.5), so the guard is complete today; the code comment states the dependency; hunger table in this report gives reviewers the check procedure. |
+| R4 | A future rename of `run_inpaint_all` would turn a hard crash into a printed skip (error softening) | Low | Low | The else-branch prints loudly; a rename is a code-change event that goes through review anyway. |
+| R5 | Notebook JSON edit corrupts the artifact | Low | High | Phase C protocol: programmatic edit + JSON re-parse + AST re-validation + single-hunk diff + Flash review (T2.9). |
+| R6 | Owner's warm workflow silently diverges from fresh (fix works warm, but owner never notices fresh is now different) | Medium | Low | Intended outcome of the task (deterministic fresh behavior); documented here and in DECISION.md. |
+
+---
+
+## T2.9 Verification Plan (Phase D — for GLM-5.3-Flash)
+
+1. **Static re-check**: re-run the fresh-kernel simulator against the edited notebook → abort-count must be 0; definition timeline unchanged except cell 14's source.
+2. **Diff audit**: `git diff` shows exactly one hunk in `MangaBD_V12_ipynb_txt.ipynb (3).txt`; no other file changed; JSON parses; 27 cells; cell 14 AST-parses; the two `def`s and `globals()` rebinds in cells 13/14 byte-identical.
+3. **Guard-logic equivalence**: re-run the four-scenario runtime reproduction (E2) with the edited cell 14 → A-variant becomes OK-with-skip, B/D sequences still identical.
+4. **Colab run (strongest practical test, requires owner or a Colab-capable environment)**: fresh runtime → Run All → expect: no NameError; visible skip line after "kill_residual v3 active"; all self-test banners print; notebook runs to the end (environment permitting). Then upload one page via the UI and run Detect+OCR to confirm the pipeline still executes normally (the guard must NOT have disabled anything in the warm path).
+5. **Limitation to document if Colab is unavailable**: static + local-runtime evidence only (as in this Phase A); full fresh-runtime confirmation deferred.
+
+---
+
+## T2.10 Open Questions / Owner Inputs Needed
+
+1. Does the owner ever rely on "fresh Run All" as their canonical workflow (vs. interactive warm-kernel use)? Affects how much weight R2 carries. [UNKNOWN]
+2. DECISION.md Q1/Q2 (canonical execution order; which pipeline variant is canonical) — still unanswered; they gate the structural follow-up but NOT this minimal fix. [UNKNOWN]
+3. Was the cell-14 immediate-execution call ever intentionally used as "re-apply quality core" in the owner's workflow? (Its existence implies yes; the fix preserves it either way.) [UNKNOWN]
+
+---
+
+## T2.11 Phase A Status
+
+INVESTIGATION COMPLETE. Proposal (T2.7) ready for GLM-5.3-Flash's independent review. No source code modified. Analysis artifacts (simulator + reproduction scripts) kept in the analysis workspace, outside the repository, and described in T2.0 for reproducibility.
+
+---
+
+## STATUS
+
+MANGABD-002 PHASE A COMPLETE — investigation + proposal documented in this file (sections T2.0–T2.11); awaiting GLM-5.3-Flash independent review and Project Owner approval before any implementation (TASK_002 Phase B/C gate).
+
+**No source code modified during MANGABD-001 or MANGABD-002 Phase A. Only agent documentation files were updated, as permitted.**

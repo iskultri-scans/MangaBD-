@@ -2,7 +2,8 @@
 
 ## STATUS
 
-REVIEW_COMPARISON_COMPLETE — Phase 1 dual-agent audit finished. Findings compared, disputed claims re-verified against the repository, and reconciled in this file. Awaiting owner decisions before any Phase 2 work.
+MANGABD-001 COMPLETE (dual-agent audit + comparison, this file).
+MANGABD-002 ACTIVE — Phase A: GLM-5.3 investigation + proposal COMPLETE (see agents/GLM_5_3.md sections T2.0–T2.11); awaiting GLM-5.3-Flash independent investigation and review. Phase B decision record will be appended here after both investigations. No source code modified.
 
 ---
 
