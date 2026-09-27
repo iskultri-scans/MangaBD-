@@ -8,13 +8,11 @@ Lead Developer / Software Architect
 
 ## CURRENT PHASE
 
-MANGABD-002 — **PHASE C COMPLETE — AWAITING PHASE D** (GLM-5.3-Flash verification)
+MANGABD-002 — **COMPLETE — Phase D verified, merged to main** (task closed 2026-09-27)
 
-Task: fresh-Colab execution reliability (see agents/TASK_002.md). The Project Owner approved DECISION.md §B.6 (Cell 14 dependency guard, verbatim) and the bundled Cell 26 change (§B.11.2 → `force=False`, PM-pre-verified semantics). Both edits were applied programmatically on 2026-09-27: exactly 2 hunks, 1 file, +12/−2 JSON lines. Implementation record: T2.13 below.
+Task: fresh-Colab execution reliability (see agents/TASK_002.md). The Project Owner approved DECISION.md §B.6 (Cell 14 dependency guard, verbatim) and the bundled Cell 26 change (§B.11.2 → `force=False`, PM-pre-verified semantics). Phase C applied both edits programmatically (exactly 2 hunks, 1 file, +12/−2; 29/29 checks PASS; record T2.13 below). GLM-5.3-Flash verified Phase D against the pushed artifact (5/5 steps PASS, APPROVED) and the Owner authorized the merge.
 
-Per the Owner's 2026-09-27 instruction (reviewer-access workflow for gated verification), Phase C is committed as a **WIP on branch `mangabd-002-phase-c`** and pushed so GLM-5.3-Flash can inspect the exact artifact — commit message `WIP: MANGABD-002 Phase C — awaiting Phase D verification`. `main` stays at `aabc592` (Phase B state). After Phase D sign-off is relayed by the Owner/PM, the WIP commit will be amended with the final message before merge (Owner-prescribed sequence); until then it is explicitly WIP, not final history.
-
-Source code was modified for the first time in this task, strictly within the approved 2-edit scope. All phases before C modified zero source.
+**Final history on `main`:** `aabc592` → `f7eb7e6` "MANGABD-002: fresh-run reliability fix …" (the WIP commit `829c383` amended with the final message; tree identical) → `05d9bc6` (Flash's Phase D record, original `e9802fb`, tree/author/message preserved) → `8deff7c` (DECISION.md marked complete). Merged artifact verified byte-identical to the Phase-C-verified notebook (blob `583fa89…`). Review branch `mangabd-002-phase-c` deleted after merge. Full closure record: agents/DECISION.md §B.13.
 
 ---
 
@@ -602,9 +600,9 @@ MANGABD-002 PHASE A COMPLETE — investigation + proposal documented in this fil
 
 MANGABD-002 PHASE B COMPLETE — second-pass review of GLM-5.3-Flash's investigation + review (agents/GLM_5_3_FLASH.md §F2.0–F2.7) performed; all four challenges C-1..C-4 independently verified against the repository and UPHELD (T2.12 below); final engineering proposal written to agents/DECISION.md (§B.6).
 
-MANGABD-002 **PHASE C COMPLETE — AWAITING PHASE D.** Owner approval received (§B.6 guard + bundled §B.11.2 cell-26 `force=False`); both edits applied programmatically to `MangaBD_V12_ipynb_txt.ipynb (3).txt` (T2.13 below). Verification: 29/29 checks PASS; runtime guard-equivalence re-proven against the edited file (fresh = clean skip, warm = byte-equivalent pipeline fire). Committed as WIP on branch `mangabd-002-phase-c` and pushed for reviewer access (Owner instruction, 2026-09-27); final amend + merge after Phase D sign-off.
+MANGABD-002 **COMPLETE — Phase D APPROVED and merged to main.** Owner approval received (§B.6 guard + bundled §B.11.2 cell-26 `force=False`); both edits applied programmatically to `MangaBD_V12_ipynb_txt.ipynb (3).txt` (T2.13 below). Verification: 29/29 checks PASS (GLM-5.3) + 5/5 steps PASS (GLM-5.3-Flash Phase D, fresh clone, commit `e9802fb`). Final history: WIP `829c383` amended → `f7eb7e6` (final message; tree identical), Flash's `e9802fb` replayed → `05d9bc6` (tree/author/message preserved), fast-forward merged to `main`, pushed. Trees verified identical by empty diff before any force-push.
 
-**No source code was modified during MANGABD-001 or MANGABD-002 Phases A/B (agent docs only, as permitted). Phase C modified the notebook for the first time — exactly the two Owner-approved hunks (T2.13); changes held as a WIP commit on `mangabd-002-phase-c`, `main` untouched at `aabc592`.**
+**No source code was modified during MANGABD-001 or MANGABD-002 Phases A/B/D (agent docs only, as permitted). Phase C modified the notebook exactly once — the two Owner-approved hunks (T2.13), now merged to main and closed (DECISION.md §B.13).**
 
 ---
 
@@ -721,4 +719,4 @@ RESULT: fresh-safe=True, warm-preserved=True. (Phase A/B reproductions E2/DR use
 
 ## T2.13.5 Phase C status
 
-**PHASE C COMPLETE — AWAITING PHASE D.** Deliverables returned via Owner: (1) edited notebook file; (2) full git diff (+12/−2, exactly 2 hunks, 1 file, file mode 100644); (3) verification checklist outputs above (29/29 PASS); (4) this record. **WIP commit:** per the Owner's reviewer-access instruction (2026-09-27, superseding the earlier no-push gate for this phase), the Phase C changes — the notebook and this record — are committed as a WIP (message: `WIP: MANGABD-002 Phase C — awaiting Phase D verification`) on branch `mangabd-002-phase-c` and pushed to origin so GLM-5.3-Flash can verify the exact bytes; `main` remains at `aabc592`. After Phase D sign-off is relayed by the Owner/PM, the WIP commit will be amended with the final message and merged (Owner-prescribed sequence). Next actor: GLM-5.3-Flash Phase D verification per DECISION §B.10, performed against the pushed WIP state.
+**PHASE C COMPLETE — PHASE D APPROVED — MERGED TO MAIN — TASK CLOSED.** Deliverables returned via Owner: (1) edited notebook file; (2) full git diff (+12/−2, exactly 2 hunks, 1 file, file mode 100644); (3) verification checklist outputs (29/29 PASS); (4) this record. **Phase D outcome:** GLM-5.3-Flash APPROVED (5/5 steps: diff/scope audit incl. mode-flip check, calibrated static re-check with 0 abort sites, 9/9 runtime guard-equivalence matrix incl. Drive state, 30/30 cell-26 citation checks, 25-cell byte-identity scope audit) — record at agents/GLM_5_3_FLASH.md §PD.0–PD.7, verification commit `e9802fb`. **Final merge (Owner-prescribed sequence):** WIP `829c383` reworded with the final message → `f7eb7e6` (tree identical; Flash's Phase D commit `e9802fb` replayed on top → `05d9bc6`, tree/author/message preserved; trees verified identical by empty diff before any push); branch force-pushed with lease; fast-forward merged to `main` (`aabc592 → 05d9bc6`); DECISION.md marked complete (`8deff7c`); review branch deleted. Merged notebook verified byte-identical to the Phase-C-verified artifact (blob `583fa89…`, file sha256 `448540f8…`). Deferred to the Owner's first Run All: §B.10.4 live Colab confirmation (T-8) and §B.10.5 warm-path UI functional check (per §B.10.6).
