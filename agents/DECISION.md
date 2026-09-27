@@ -2,12 +2,12 @@
 
 ## STATUS
 
-**WAITING_FOR_USER**
+**MANGABD-002 COMPLETE — Phase D verified, merged to main**
 
 MANGABD-001 COMPLETE (dual-agent audit + comparison; historical record below).
-MANGABD-002 PHASE B COMPLETE — second-pass technical review finished; final engineering proposal written (see "MANGABD-002 — PHASE B" section at the end of this file). Root cause dual-confirmed; one GLM-5.3 Phase A claim corrected (Drive-scenario, §B.5); proposal verdicts: GLM-5.3-Flash APPROVE_WITH_CORRECTED_JUSTIFICATION, GLM-5.3 accepts all four corrections after independent code verification + runtime reproduction.
+MANGABD-002 COMPLETE — Phase A (dual independent investigation) → Phase B (second-pass review, final proposal §B.6) → **Phase C (Owner-approved implementation, 2 hunks, +12/−2, one file — verified 29/29 checks)** → **Phase D (GLM-5.3-Flash independent verification: 5/5 steps PASS, APPROVED — commit `e9802fb` on the review branch)** → merged to `main` (fast-forward `aabc592 → 05d9bc6`, fix commit `f7eb7e6` with the final message; see §B.13).
 
-**No source code modified at any point. Implementation (Phase C) is gated on explicit Project Owner approval of the §B.6 patch.**
+**Source code was modified exactly once — in Phase C, strictly within the Owner-approved 2-edit scope (§B.6 guard + §B.11.2 cell-26 bundle). Phases A/B/D modified zero source.**
 
 ---
 
@@ -310,7 +310,7 @@ NOT DECIDED
 
 **Date: 2026-09-16. Participants: GLM-5.3 (second-pass review + proposal), GLM-5.3-Flash (independent investigation + review, commit 4e3d239), Project Owner (decision pending).**
 
-**DECISION STATUS: WAITING_FOR_USER.** Nothing in this section has been implemented. Phase C (implementation) starts only after the Project Owner explicitly approves the §B.6 patch.
+**DECISION STATUS (Phase B record, historical): resolved.** At the time this section was written, nothing had been implemented and Phase C awaited Owner approval. The Owner subsequently approved §B.6 and the bundled §B.11.2 cell-26 change; implementation (Phase C) and verification (Phase D) are complete — see §B.13 for the final record and hashes.
 
 Inputs compared: (1) GLM-5.3's original Phase A analysis (agents/GLM_5_3.md §T2.0–T2.11, commit d7622d7), (2) GLM-5.3-Flash's independent investigation + review (agents/GLM_5_3_FLASH.md §F2.0–F2.7, verdict APPROVE_WITH_CORRECTED_JUSTIFICATION, four challenges C-1..C-4), (3) the actual current repository. Per protocol, every disagreement was re-verified against the underlying code in a fresh session — not argued from memory.
 
@@ -484,4 +484,23 @@ else:
 
 Both agents independently investigated (statement-level fresh-kernel simulators + verbatim-code runtime reproductions), exchanged reviews, and converged on: root cause = three-layer (positional deferred-NameError / define-and-immediately-apply pattern / no fresh-run test); recommended fix = single-cell dependency guard; all four Phase A→B corrections resolved by repository evidence, with GLM-5.3's own Drive-state reproduction independently confirming Flash's decisive C-1 challenge. Zero source code modified during Phases A and B.
 
-**NEXT STEP: Project Owner decision on §B.11.1 (and optionally B.11.2–B.11.4). Status remains WAITING_FOR_USER until then.**
+**NEXT STEP (historical, Phase B): resolved.** The Owner decided §B.11.1 (approve) and §B.11.2 (bundle cell-26 `force=False`); Drive usage and workflow questions were answered on the record (Drive for packages/config/data, not manga outputs; warm workflow evidence-based, not canonical). Phases C and D followed — see §B.13.
+
+---
+
+## B.13 MANGABD-002 Phase C/D Completion Record (final)
+
+**Date: 2026-09-27. Participants: GLM-5.3 (implementation), GLM-5.3-Flash (Phase D verification, APPROVED 5/5), Project Owner (approvals + merge authorization), PM Qwen3.8-Max (semantic pre-verification, relays).**
+
+| Item | Record |
+|---|---|
+| Owner approvals | §B.6 dependency guard (verbatim, C-4-corrected comment) + bundled §B.11.2 cell-26 `force=False` (PM pre-verified resume-aware semantics against cell 10 cache logic). |
+| Implementation (Phase C) | Programmatic JSON edit, byte-faithful serializer (round-trip asserted); exactly 2 hunks / 1 file / +12/−2; 29/29 verification checks; runtime fresh-skip + warm-equivalence re-proven on the edited artifact. Record: agents/GLM_5_3.md §T2.13. |
+| Reviewer access | WIP commit `829c383` on branch `mangabd-002-phase-c`, pushed 2026-09-27 (Owner-instructed reviewer-access workflow). |
+| Phase D verification | GLM-5.3-Flash, fresh clone, calibrated simulator + 6-scenario runtime matrix + 30/30 citations + scope/mode audits: **PHASE D APPROVED**, commit `e9802fb` (+77 lines, agents/GLM_5_3_FLASH.md §PD.0–PD.7; no source touched). |
+| Final history on main | `aabc592` → **`f7eb7e6`** "MANGABD-002: fresh-run reliability fix …" (the amended WIP commit; tree identical to `829c383`) → **`05d9bc6`** (Flash's Phase D record; tree identical to `e9802fb`, authorship and message preserved). Merged fast-forward, pushed. |
+| Hash mapping (history rewrite) | Amending the WIP commit after Flash's review landed on top required a reword-rebase: `829c383 → f7eb7e6` (message only) and `e9802fb → 05d9bc6` (parent only). Trees verified identical by empty `git diff` both ways before any push. The final commit message's citation "(commit e9802fb)" refers to the original Phase D verification commit; its full record is permanently preserved in-tree via `05d9bc6`. |
+| Merged artifact integrity | notebook blob on `main` = `583fa89…` = Phase-C-verified blob; file sha256 `448540f8…`; 27 cells; guard §B.6 verbatim; cell 26 = 4 comments + `render_all_pages(force=False)`. |
+| Deferred (unchanged, by design) | §B.10.4 live fresh Colab Run All (closes T-8 with the Owner's first Run All) and §B.10.5 warm-path UI functional check — per §B.10.6; plus MANGABD-001 structural items (N-1(c) warm destructive re-apply, variant fork, sticky guards). |
+
+**MANGABD-002 CLOSED.** Success criteria met: root cause established (3-layer), fix proposed by GLM-5.3, independently reviewed by GLM-5.3-Flash (Phases A and D), Owner-approved, implemented within scope, and merged with zero required fixes.
