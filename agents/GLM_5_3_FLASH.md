@@ -714,3 +714,80 @@ MANGABD-002 PHASE A COMPLETE (GLM-5.3-Flash): independent investigation + review
 **Confidence: HIGH** for the abort mechanism, the single-abort completeness, and the guard's warm preservation (static simulation + verbatim-code runtime reproduction, independently executed). **MEDIUM** for Drive-scenario behavior in the real owner environment (FE2 models Drive state with stubbed IO; real Drive round-trip untested). **UNKNOWN** remains T-8 (one confirming fresh Colab Run All) and whether the owner's workflow uses Drive persistence.
 
 **Visual quality: NOT ASSESSABLE — NO_VISUAL_EVIDENCE_AVAILABLE** (re-verified this session: zero image outputs in the notebook, zero image files in the repository).
+
+---
+
+# MANGABD-002 — PHASE D INDEPENDENT VERIFICATION (GLM-5.3-Flash)
+
+Date: 2026-09-27. Object under review: commit `829c383` ("WIP: MANGABD-002 Phase C — awaiting Phase D verification") on branch `mangabd-002-phase-c`, base `main`@`aabc592`. Rules observed: TASK_002 Phase D + DECISION.md §B.10; **no source code modified**; **no amend, no merge** (gating per §B.9 preserved); evidence labels used throughout; GLM-5.3's self-report (T2.13) was NOT trusted — every check below was re-executed independently against the pushed artifact in a fresh clone.
+
+## PD.0 Method and Environment
+
+- Fresh clone of `iskultri-scans/MangaBD-`; local branch `mangabd-002-phase-c` created at `origin/mangabd-002-phase-c`; verified HEAD = `829c38376dc387521bcebd1bb37f0b314bd2397e` and merge-base with `main` = `aabc592` (branch is exactly one commit ahead; `main` untouched). [FACT]
+- Verification scripts rebuilt this session and persisted OUTSIDE the repo (workspace `scripts/`): `m002_sim_v2.py` (fresh-kernel simulator, FE1 contract rebuilt from F2.0), `m002_flash_repro.py` (six-scenario runtime reproduction, FE2 contract rebuilt from F2.0/F2.2), plus three purpose-built auditors (`m002_step1_audit.py`, `m002_step4_cites.py`, `m002_step5_scope.py`). [FACT]
+- **Simulator calibration (prerequisite):** the rebuilt FE1 was run FIRST against the BASE notebook and required to reproduce Phase A's finding before any branch claim. Result on base: **exactly ONE abort-class site — `cells[14]` line 40, names `run_inpaint_all`/`run_render_all`, chain `<module> -> run_inpaint_render_all` (def at 13:35)** — identical to F2.1.1/F2.1.3. The rebuilt simulator also independently reproduced F2.1.2's definition timeline verbatim (`run_inpaint_render_all` 11:190, 12:155, 13:35, 15:678, 23:71; `run_inpaint_all` 15:634; `run_render_all` 15:656; `kill_residual` 11:99, 13:4, 14:4). Only after this calibration was the branch result accepted. [TEST RESULT]
+- Numbering convention (verified against §B.9 "cells[14] … (physical cell 14; banner title 'kill_residual v3')"): all cell indices in this record are 0-based JSON `cells[N]` with 1-based line numbers. Under this convention the guard comment's "physical cell 15; banner numbering 'Cell 11'" is factually correct: `cells[15]` is the banner-"Cell 11" orchestrator that defines `run_inpaint_all` (15:634) and `run_render_all` (15:656). [FACT]
+
+## PD.1 Step 1 — DIFF & SCOPE AUDIT: **PASS**
+
+- `git diff main...HEAD --numstat`: exactly 2 files — `12 2  MangaBD_V12_ipynb_txt.ipynb (3).txt` and `86 5  agents/GLM_5_3.md`. Matches the expected +12/−2 and +86/−5 exactly. [FACT]
+- **Mode-flip check (critical):** `git diff main...HEAD --summary` is EMPTY (no mode/rename entries); grepping the raw `git show 829c383` patch for `^(old mode|new mode|deleted file|new file|rename )` returns nothing; `git ls-tree -r HEAD` shows ALL 7 tracked files at mode `100644`. The mode-flip artifact (cf. history commit 5342653) is completely absent from this commit. [FACT]
+- JSON parses (`nbformat=4, nbformat_minor=0`); cell count = 27; all 27 cells `ast.parse` cleanly, including the two edited cells (0-based `cells[14]`, 46 lines; `cells[26]`, 5 lines) — and under either indexing convention (sanity-checked both). [TEST RESULT]
+- Notebook-level `metadata`/`nbformat` byte-identical between base and branch; in BOTH edited cell objects, every field except `source` is unchanged (`cell_type`, `execution_count`, `metadata`, `outputs` — all verified equal; no stale outputs shipped, no key added/removed). [FACT]
+
+## PD.2 Step 2 — STATIC RE-CHECK (Cell 14 Guard): **PASS**
+
+- Fresh-kernel simulation of the EDITED branch notebook: **abort-class site count = 0** (0 missing-name records; 1773 module-level call sites traversed, transitive closure included). The base's single abort site (`cells[14]`:40) is gone. [TEST RESULT]
+- Definition timeline on branch is byte-for-byte the same def-site table as base (PD.0 calibration output) — §B.10.1's "definition timeline unchanged except cell 14's tail" holds; cells 15–26 remain name-resolution-safe (module-level calls at 20:1, 23:89, 26:1 all resolve; cell 15's module-level tail is self-test/prints + the intentional `raise RuntimeError` self-test gate). [TEST RESULT]
+- Guard text: `cells[14]` lines 40–46 equal the §B.6 block **VERBATIM**, line by line, including the C-4-corrected comment `# the orchestrator cell (physical cell 15; banner numbering "Cell 11") defines` — programmatically compared against the DECISION.md §B.6 code block, not eyeballed. [FACT]
+
+## PD.3 Step 3 — GUARD-LOGIC EQUIVALENCE (Runtime Matrix): **PASS** (9/9)
+
+Verbatim sources from the PUSHED branch file (Guarded = branch `cells[14]`) and from the `main` blob (Current = base `cells[14]`, `run_inpaint_render_all(force=True)`); verbatim helper defs from `cells[11]`/`cells[12]` executed in binding order so the namespace at `cells[14]` reproduces a sequential fresh kernel (cell-12 versions of `apply_container_types`/`restore_boxes`/`_snap_white_box` win; `kill_residual` v2 from `cells[13]`, overridden by v3 inside `cells[14]` itself). Artifact IO stubbed; numpy/pandas/cv2 real; synthetic Drive state = 1 page `p1` (inpaint/render stages done), 2 translation rows, original/inpainted/mask artifacts present, with a snappable white box so the C-1 mutation chain is exercisable. [TEST RESULT]
+
+| # | Scenario (disk, kernel, cells[14] variant) | Result | Evidence |
+|---|---|---|---|
+| S1 | Empty, Fresh, Current | **NameError: run_inpaint_all** (baseline) | `apply_container_types()` ran → 1× empty-CSV re-save; page loop no-op; 0 artifact writes; crash at the `run_inpaint_all` line |
+| S3 | Empty, Fresh, Guarded | **OK-with-skip, zero mutations** | skip banner printed; 0 pipeline calls, 0 helper calls, 0 saves, df unchanged |
+| S5 | Drive, Fresh, Current | **Mutate-then-crash (NameError)** | df row 0: `region_type` bubble→**narrator**, bbox (40,50,60,60)→(30,40,80,80) snapped; 1× `save_translation_df()` (persisted); **`save_image_artifact(p1, 'mask')`** with content visibly AND-shrunk; THEN `NameError: run_inpaint_all` — reproduces C-1/DR-A exactly |
+| S6 | Drive, Fresh, Guarded | **OK-with-skip, ZERO mutations** | skip banner printed; 0 calls; df unchanged; 0 artifact saves; store snapshot byte-identical |
+| S2 | Drive, Warm, Current | **Pipeline fires** | `run_inpaint_all(force=True, require_translation=False)` → `run_render_all(force=True, require_translation=False)` |
+| S4 | Drive, Warm, Guarded | **Pipeline fires — call sequence IDENTICAL to S2** | recorded call tuples equal element-for-element; helper-call sequence, df delta, artifact saves and stdout all identical to S2 |
+
+- Skip banner `⏭️ kill_residual v3 loaded; pipeline run skipped (orchestrator not loaded yet)` printed in BOTH fresh+guarded scenarios (S3, S6) — verified against the verbatim §B.6 string. [TEST RESULT]
+- S2==S4 independently re-confirms the E2/DR-B==DR-D warm-preservation claim against the pushed artifact (the gap T2.13.4 explicitly left for Phase D is now closed). [TEST RESULT]
+- Warm-path note: S2/S4 reproduce the known pre-existing warm destructive semantics (mask AND-shrink + inpainted rewrite on warm re-apply) — unchanged by this fix, exactly as §B.8's residual-scope note states. [TEST RESULT]
+
+## PD.4 Step 4 — CELL 26 SEMANTIC SPOT-CHECK (`force=False`): **PASS** (30/30 cite checks)
+
+- Cache gate verified at `cells[10]` (0-based; banner "Cell 10: Rendering Service"): `10:790 def render_page(page_id, force=False)`; `10:803 if is_stage_done(page_id, "render") and not force:` → `10:804 cached = load_image_artifact(page_id, "final")` → `10:806-808` early return "✅ Render cached" (no overwrite, no GPU work). **`force=False` is resume-aware: rendered+checkpointed pages cache-hit.** [FACT + TEST RESULT]
+- Un-rendered or reset pages still render: pages failing `is_stage_done` take the full path; checkpoint-without-file (10:810–816) WARNs and calls `reset_page(page_id, from_stage="render")`, then falls through to re-render. Eligibility filtering at `render_all_pages` (10:982): inpaint stage (10:999–1000), translate stage when required (10:1002–1003), per-page force pass-through (10:1024). [FACT]
+- `force=True` paths remain available: (a) UI 🎨 button — `on_final` (25:358) → same-idiom `in globals()` guard (25:363) → `run_render_all(force=True,require_translation=False)` (25:365) → forwards force via 15:669–672; (b) help text `render_all_pages(force=True)` (16:1340); (c) function-scoped recipe call (18:987). `render_all_pages` is defined exactly once (10:982) and never redefined. [FACT]
+- `cells[26]` content: exactly 4 Bengali MANGABD-002 comment lines + exactly ONE AST statement, `render_all_pages(force=False)`; the comment block is the resume-aware rationale with the force escape hatches (🎨 button / `render_all_pages(force=True)`), matching the approved §B.11.2 bundle as recorded in T2.13.1/§B.11.2 (see PD.7 note on the approval text's provenance). [FACT]
+
+## PD.5 Step 5 — SCOPE INVARIANT: **PASS**
+
+- Per-cell byte comparison (JSON-dumped cell objects, base vs branch): **25 cells byte-identical** (0–13, 15–25); **changed cells = [14, 26] only**. [TEST RESULT]
+- `cells[14]`: lines 1–39 byte-identical; base line 40 was exactly `run_inpaint_render_all(force=True)`; branch lines 40–46 = the §B.6 block. Single-region replacement. [FACT]
+- Notebook diff = **exactly 2 hunks** (`@@ -11700,7 +11700,13 @@`, `@@ -18037,7 +18043,11 @@`); files changed = {notebook, `agents/GLM_5_3.md`} only; no other agent docs or source files touched. [FACT]
+- Hash cross-check: base blob sha256 `1fee5e7c…` (803,682 B) → branch `448540f8…` (804,601 B), +919 B — **independently matches T2.13.1's recorded values**, and the git diff proves the delta is confined to the two edited regions. [TEST RESULT]
+
+## PD.6 Verdict
+
+**PHASE D APPROVED.** GLM-5.3's Phase C implementation is verified against the pushed artifact `829c383` in all five requested dimensions: scope & history hygiene (incl. zero mode flips), static fresh-kernel safety (0 abort sites on a calibrated simulator), runtime guard equivalence in both disk states with warm byte-equivalence, correct resume-aware `force=False` semantics at cell 26 with all force paths preserved, and a strictly minimal 2-hunk/25-cell-untouched diff. The implementation complies with TASK_002's forbidden-pattern rules (no try/except swallowing, no dummy variables, no silent fallback, no global hack — the `in globals()` idiom is the notebook's own, 25:363) and discharges the §B.6/R1(b) Run-All-time re-render disclosure via the Owner-approved §B.11.2 bundle.
+
+Per the Owner-prescribed sequence: GLM-5.3 may now amend the WIP commit with the final message and merge to `main`, **after** this sign-off is relayed through the PM (Qwen3.8-Max) to the Project Owner per DECISION.md §B.9. This commit adds ONLY this Phase D record to `agents/GLM_5_3_FLASH.md` (a permitted investigation file); no source file touched; the WIP commit itself was not amended.
+
+## PD.7 Scope notes, limitations, and non-blocking observations
+
+1. **Deferred by design (not a blocker; per §B.10.6):** §B.10.4 (one confirming fresh Colab Run All — closes T-8) and §B.10.5 (warm-path UI functional check with a real upload) structurally require a live Colab runtime and remain with the Owner's first Run All. Static + local-runtime evidence stands per §B.10.6, as in Phases A/B. [UNKNOWN — unchanged]
+2. **§B.11.2 approval text provenance:** the full 5-line cell-26 block is not quoted verbatim inside any repository document (T2.13.1 describes it; the original approval lives in the PM relay). Verified here against the repo evidence: 4-comment-lines + single-statement structure, resume-aware semantics, and the force escape hatches named in §B.11.2. [FACT for repo state; ASSUMPTION that the relayed approval text matches T2.13.1's description]
+3. **Post-fix fresh Run All with Drive data** now performs real module-level work at cells 20/23/26 (translation-file apply, stage sync, resume-aware render) — this is the disclosed, Owner-approved behavior (§B.6 disclosure as amended by the §B.11.2 bundle), not a new risk introduced by the guard. With the bundled `force=False`, already-rendered pages cache-hit; only un-rendered/reset pages render. [FACT + TEST RESULT]
+4. **Pre-existing conditions unchanged** (explicitly out of MANGABD-002 scope, tracked in MANGABD-001): the fresh-vs-warm `run_inpaint_render_all` variant fork (fresh-final binding = cell 23's plain variant — Owner Question 2), the warm-path destructive re-apply N-1(c) (reproduced unchanged in S2/S4), sticky QC guards, and the redefinition jungle. No regression in any of these was introduced by 829c383. [FACT]
+5. Minor cosmetic observation for the record: `25:365` is spelled `run_render_all(force=True,require_translation=False)` (no space after the comma) — semantically identical to the cite in T2.13.3; no action required. [FACT]
+
+## STATUS
+
+MANGABD-002 **PHASE D COMPLETE — PHASE D APPROVED** (all 5 verification steps PASS; zero required fixes). Awaiting PM relay of this sign-off to the Project Owner; GLM-5.3 may then amend the WIP commit message and merge. T-8 (live Colab confirmation) remains the Owner's first fresh Run All.
+
+**Confidence: HIGH** for all five verified dimensions (calibrated static simulation + verbatim-code runtime reproduction against the pushed bytes + programmatic verbatim/hash/diff audits). **MEDIUM** only for real-Drive/real-GPU environmental behavior, untestable outside Colab (deferred per §B.10.6).
