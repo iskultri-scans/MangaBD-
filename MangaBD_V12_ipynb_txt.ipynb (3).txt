@@ -11700,7 +11700,13 @@
         "globals()[\"kill_residual\"] = kill_residual\n",
         "print(\"✅ kill_residual v3 active: pixel-level, box-only, face/border-safe\")\n",
         "\n",
-        "run_inpaint_render_all(force=True)"
+        "# MANGABD-002: run_inpaint_render_all calls run_inpaint_all/run_render_all, which\n",
+        "# the orchestrator cell (physical cell 15; banner numbering \"Cell 11\") defines\n",
+        "# LATER in a fresh Run All. Skip the pipeline run until they exist.\n",
+        "if (\"run_inpaint_all\" in globals()) and (\"run_render_all\" in globals()):\n",
+        "    run_inpaint_render_all(force=True)\n",
+        "else:\n",
+        "    print(\"  ⏭️ kill_residual v3 loaded; pipeline run skipped (orchestrator not loaded yet)\")"
       ]
     },
     {
@@ -18037,7 +18043,11 @@
       },
       "outputs": [],
       "source": [
-        "render_all_pages(force=True)   # শুধু render আবার (inpaint লাগবে না)"
+        "# MANGABD-002: force=False → resume-aware. Run All-এ already-rendered page গুলো\n",
+        "# cache hit করবে (final.jpg overwrite / GPU work হবে না); যারা render হয়নি বা\n",
+        "# যাদের render stage reset হয়েছে তারাই render হবে। Force re-render দরকার হলে\n",
+        "# UI-এর 🎨 button বা render_all_pages(force=True) ব্যবহার করো।\n",
+        "render_all_pages(force=False)"
       ]
     }
   ],

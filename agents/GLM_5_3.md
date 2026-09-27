@@ -8,11 +8,13 @@ Lead Developer / Software Architect
 
 ## CURRENT PHASE
 
-MANGABD-002 — Phase B (Second-pass review + final proposal) COMPLETE — **WAITING_FOR_USER**
+MANGABD-002 — **PHASE C COMPLETE — AWAITING PHASE D** (GLM-5.3-Flash verification)
 
-Task: fresh-Colab execution reliability (see agents/TASK_002.md). Phase B record: agents/DECISION.md §“MANGABD-002 — PHASE B” (§B.1–B.12). Second-pass addendum below (T2.12).
+Task: fresh-Colab execution reliability (see agents/TASK_002.md). The Project Owner approved DECISION.md §B.6 (Cell 14 dependency guard, verbatim) and the bundled Cell 26 change (§B.11.2 → `force=False`, PM-pre-verified semantics). Both edits were applied programmatically on 2026-09-27: exactly 2 hunks, 1 file, +12/−2 JSON lines. Implementation record: T2.13 below.
 
-NO SOURCE CODE MODIFIED in any phase (investigation + review + proposal only, per TASK_002 rules). Implementation gated on explicit Project Owner approval.
+Per the Owner's 2026-09-27 instruction (reviewer-access workflow for gated verification), Phase C is committed as a **WIP on branch `mangabd-002-phase-c`** and pushed so GLM-5.3-Flash can inspect the exact artifact — commit message `WIP: MANGABD-002 Phase C — awaiting Phase D verification`. `main` stays at `aabc592` (Phase B state). After Phase D sign-off is relayed by the Owner/PM, the WIP commit will be amended with the final message before merge (Owner-prescribed sequence); until then it is explicitly WIP, not final history.
+
+Source code was modified for the first time in this task, strictly within the approved 2-edit scope. All phases before C modified zero source.
 
 ---
 
@@ -598,9 +600,11 @@ INVESTIGATION COMPLETE. Proposal (T2.7) ready for GLM-5.3-Flash's independent re
 
 MANGABD-002 PHASE A COMPLETE — investigation + proposal documented in this file (sections T2.0–T2.11).
 
-MANGABD-002 PHASE B COMPLETE — second-pass review of GLM-5.3-Flash's investigation + review (agents/GLM_5_3_FLASH.md §F2.0–F2.7) performed; all four challenges C-1..C-4 independently verified against the repository and UPHELD (T2.12 below); final engineering proposal written to agents/DECISION.md (§B.6). **DECISION STATUS: WAITING_FOR_USER.** No implementation until the Project Owner explicitly approves.
+MANGABD-002 PHASE B COMPLETE — second-pass review of GLM-5.3-Flash's investigation + review (agents/GLM_5_3_FLASH.md §F2.0–F2.7) performed; all four challenges C-1..C-4 independently verified against the repository and UPHELD (T2.12 below); final engineering proposal written to agents/DECISION.md (§B.6).
 
-**No source code modified during MANGABD-001, MANGABD-002 Phase A, or MANGABD-002 Phase B. Only agent documentation files were updated, as permitted.**
+MANGABD-002 **PHASE C COMPLETE — AWAITING PHASE D.** Owner approval received (§B.6 guard + bundled §B.11.2 cell-26 `force=False`); both edits applied programmatically to `MangaBD_V12_ipynb_txt.ipynb (3).txt` (T2.13 below). Verification: 29/29 checks PASS; runtime guard-equivalence re-proven against the edited file (fresh = clean skip, warm = byte-equivalent pipeline fire). Committed as WIP on branch `mangabd-002-phase-c` and pushed for reviewer access (Owner instruction, 2026-09-27); final amend + merge after Phase D sign-off.
+
+**No source code was modified during MANGABD-001 or MANGABD-002 Phases A/B (agent docs only, as permitted). Phase C modified the notebook for the first time — exactly the two Owner-approved hunks (T2.13); changes held as a WIP commit on `mangabd-002-phase-c`, `main` untouched at `aabc592`.**
 
 ---
 
@@ -641,3 +645,80 @@ See DECISION.md §B.6 for the final patch text and the corrected five-point just
 ### T2.12.5 Phase B status
 
 COMPLETE. DECISION.md carries the full merged record (§B.1–B.12), decision status **WAITING_FOR_USER**. Awaiting Project Owner approval of the §B.6 patch (and optional inputs §B.11.2–B.11.4: cell-26 force question, Drive usage, workflow questions) before any Phase C implementation.
+
+---
+
+# MANGABD-002 — PHASE C IMPLEMENTATION RECORD (GLM-5.3)
+
+Date: 2026-09-27. Authorization: Project Owner approval (relayed via PM) of **exactly two edits in one file** — (1) DECISION.md §B.6: Cell 14 dependency guard, verbatim, C-4-corrected comment; (2) the bundled §B.11.2 Cell 26 change: `render_all_pages(force=False)`, semantics pre-verified by the PM against render_page/render_all_pages cache logic in physical cell 10. Per the relayed protocol: no other cell, no refactor, no try/except, no dummy variables, no def/globals() rebind change, **no commit / no push** (Phase D gated).
+
+## T2.13.1 What changed
+
+| # | Location (notebook JSON) | Before | After |
+|---|---|---|---|
+| EDIT 1 | `cells[14].source`, line 40 (last of 40) | `run_inpaint_render_all(force=True)` | 7-line §B.6 block: 3-line MANGABD-002 comment (physical cell 15; banner "Cell 11" noted) + `if ("run_inpaint_all" in globals()) and ("run_render_all" in globals()):` → `run_inpaint_render_all(force=True)`; `else:` → `print("  ⏭️ kill_residual v3 loaded; pipeline run skipped (orchestrator not loaded yet)")`. Cell 14: 40 → 46 source lines. |
+| EDIT 2 | `cells[26].source` (entire, 1 line) | `render_all_pages(force=True)   # শুধু render আবার (inpaint লাগবে না)` | 4-line Bengali MANGABD-002 comment (resume-aware rationale + force escape hatches) + `render_all_pages(force=False)`. Cell 26: 1 → 5 source lines. |
+
+**Method (script: `scripts/phase_c_apply.py`, workspace):** `json.load` → assert hard preconditions on both targets → mutate `cells[14].source[39]` and `cells[26].source` → write `json.dumps(nb, indent=2, ensure_ascii=False)` with no trailing newline.
+
+**Serializer safety (decisive):** before any mutation, a round-trip assertion proved that this exact dump recipe reproduces the pre-edit file **byte-identically** (803,682 bytes; sha256 `1fee5e7c…`). Post-edit: 804,601 bytes (sha256 `448540f8…`), +919 bytes, git numstat **+12/−2** lines — the byte delta is provably confined to the two edited regions.
+
+**NOT done (scope discipline):** cells 0–13 and 15–25 byte-identical (full-sweep verified); no refactor; no try/except; no dummy variables; no def/globals() rebind changes; no key/metadata changes in either cell object; no commit, no push.
+
+## T2.13.2 Verification checklist outputs (DECISION §B.9, extended for 2 hunks) — 29/29 PASS
+
+```
+PASS | JSON re-parses after edit | 804601 bytes
+PASS | cell count still exactly 27 | count=27
+PASS | all cells still cell_type=code
+PASS | cell 14/26 keys unchanged (no key added/removed)
+PASS | cells[14] source AST-parses | 46 lines
+PASS | cells[26] source AST-parses | 5 lines
+PASS | BONUS: all 27 cells AST-parse (R5 hardening)
+PASS | cell 13 source byte-identical to pre-edit
+PASS | cell 14: lines 1-39 byte-identical (only line 40 replaced)
+PASS | cell 14: pre-edit line 40 was exactly the module-level call
+PASS | cell 14: new content is exactly lines 40-46 = §B.6 guard block
+PASS | cell 13 def/globals()-rebind statements byte-identical
+PASS | cell 14 def/globals()-rebind statements byte-identical | 2 statements compared
+PASS | BONUS: all 25 non-edited cells byte-identical (full sweep) | cells 0-13, 15-25 identical
+PASS | cell 26 text is exactly the approved 5-line block
+PASS | cell 26 has exactly ONE statement (the call) | 1 top-level statement(s)
+PASS | cell 26 statement is render_all_pages(force=False)
+PASS | cell 26 token stream: 4 comment lines, no other statements
+PASS | cite intact: cell 10:790 def render_page(page_id, force=False)
+PASS | cite intact: cell 10:803 cache check (is_stage_done and not force)
+PASS | cite intact: cell 10:804 final.jpg artifact load
+PASS | cite intact: cell 10:982 def render_all_pages(force=False, require_translation=True)
+PASS | cite intact: cell 10:1024 per-page force pass-through
+PASS | cite intact: cell 25:365 UI force path run_render_all(force=True, require_translation=False)
+PASS | cite intact: cell 15:656 def run_render_all (UI force target)
+PASS | git diff (notebook): EXACTLY TWO HUNKS | found 2 hunk(s)
+PASS | no other file changed (source scope; agent docs updated separately per protocol) | modified: ['MangaBD_V12_ipynb_txt.ipynb (3).txt']
+PASS | notebook diff = 12 insertions / 2 deletions (7+5 in, 1+1 out) | numstat: 12  2
+PASS | file mode preserved 100644 | mode=0o644
+TOTAL: 29 checks, 29 PASS, 0 FAIL
+```
+
+Log saved to workspace `phaseC/verification_log.txt`; full diff saved to `phaseC/notebook.diff`. Two measurement points, both recorded: (1) the scope check first ran BEFORE this doc update — strict snapshot: `modified: ['MangaBD_V12_ipynb_txt.ipynb (3).txt']`, 29/29 PASS; (2) after this doc update (the protocol-mandated non-source follow-up), the full checklist was re-run in the final state — 29/29 PASS with the scope invariant expressed precisely as "no file changed outside the approved scope (notebook + permitted agent-doc record)". Git status at completion: notebook + this file, both uncommitted, both mode 100644.
+
+## T2.13.3 Semantic re-confirmation of EDIT 2 (independent re-verification, line cites from the post-edit file)
+
+1. **Cache check — already-rendered pages become a no-op.** `render_page` (cell 10:790, `def render_page(page_id, force=False)`) gates on `if is_stage_done(page_id, "render") and not force:` (10:803), then `cached = load_image_artifact(page_id, "final")` (10:804); a non-None cached final returns immediately with "✅ Render cached" (10:806–808) — **no final.jpg overwrite, no GPU work**. With `force=False` at cell 26, every page whose render stage is done AND final.jpg exists is a cache hit.
+2. **Resume-awareness — un-rendered / reset pages still render.** Pages with a missing render stage fail `is_stage_done` (10:803) and take the full render path; the checkpoint-without-file case (10:810–816) WARNs and calls `reset_page(page_id, from_stage="render")` (10:812–816) then falls through to re-render. `render_all_pages(force=False, require_translation=True)` (10:982) filters eligibility (inpaint stage 10:999–1000; translate stage 10:1002–1003 when required) and forwards force per page — `render_page(page_id, force=force)` (10:1024). `render_all_pages` is defined exactly once (cell 10) and never redefined (only wrapper `run_render_all`, cell 15:656, forwards `force`/`require_translation` verbatim at 15:669–672).
+3. **Warm-caveat (intended, bounded behavior change).** A warm re-run of cell 26 no longer forces a full re-render; it now cache-hits. The force paths that remain: (a) Control Studio UI 🎨 button — `on_final` (cell 25:358) → same-idiom guard (25:363) → `run_render_all(force=True,require_translation=False)` (25:365) → `render_all_pages(force=True, …)` via 15:669–672 → `render_page(force=True)`; (b) explicit `render_all_pages(force=True)` (suggested by help text 16:1340; used inside the full-pipeline recipe function at 18:987, which is function-scoped, not module-level); (c) direct `run_render_all(force=True, …)` calls.
+4. **Net delta of EDIT 2, precisely:** on Run All, already-rendered pages skip re-render (cache hit); every other page renders exactly as before. This discharges the R1(b) Run-All-time GPU-hours / artifact-overwrite disclosure for cell 26 per the Owner's decision — and is independent of EDIT 1's guard semantics.
+
+## T2.13.4 Runtime re-verification against the EDITED file (not a hand-edited copy)
+
+`scripts/phase_c_runtime_check.py` (workspace) loads cells 13/14 **verbatim from the edited notebook JSON** and executes them in simulated kernel states:
+
+- **E (fresh + edited):** cell 14 executes OK — no NameError; stdout = `✅ kill_residual v3 active: …` followed by `  ⏭️ kill_residual v3 loaded; pipeline run skipped (orchestrator not loaded yet)`; **zero** pipeline calls recorded.
+- **F (warm + edited):** pipeline fires exactly as pre-fix: `apply_container_types` → `run_inpaint_all(force=True, require_translation=False)` → `run_render_all(force=True, require_translation=False)`.
+- **G (warm + PRE-EDIT cell 14 baseline):** call sequence **identical to F** — warm behavior preserved exactly.
+
+RESULT: fresh-safe=True, warm-preserved=True. (Phase A/B reproductions E2/DR used a hand-substituted guard string; this run is the first against the edited artifact itself, closing that gap for Phase C. The Drive-state six-scenario matrix against the edited file remains Flash's Phase D item, DECISION §B.10.3.)
+
+## T2.13.5 Phase C status
+
+**PHASE C COMPLETE — AWAITING PHASE D.** Deliverables returned via Owner: (1) edited notebook file; (2) full git diff (+12/−2, exactly 2 hunks, 1 file, file mode 100644); (3) verification checklist outputs above (29/29 PASS); (4) this record. **WIP commit:** per the Owner's reviewer-access instruction (2026-09-27, superseding the earlier no-push gate for this phase), the Phase C changes — the notebook and this record — are committed as a WIP (message: `WIP: MANGABD-002 Phase C — awaiting Phase D verification`) on branch `mangabd-002-phase-c` and pushed to origin so GLM-5.3-Flash can verify the exact bytes; `main` remains at `aabc592`. After Phase D sign-off is relayed by the Owner/PM, the WIP commit will be amended with the final message and merged (Owner-prescribed sequence). Next actor: GLM-5.3-Flash Phase D verification per DECISION §B.10, performed against the pushed WIP state.
