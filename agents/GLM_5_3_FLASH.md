@@ -799,3 +799,61 @@ Per the Owner-prescribed sequence: GLM-5.3 may now amend the WIP commit with the
 MANGABD-002 **PHASE D COMPLETE — PHASE D APPROVED** (all 5 verification steps PASS; zero required fixes). Awaiting PM relay of this sign-off to the Project Owner; GLM-5.3 may then amend the WIP commit message and merge. T-8 (live Colab confirmation) remains the Owner's first fresh Run All.
 
 **Confidence: HIGH** for all five verified dimensions (calibrated static simulation + verbatim-code runtime reproduction against the pushed bytes + programmatic verbatim/hash/diff audits). **MEDIUM** only for real-Drive/real-GPU environmental behavior, untestable outside Colab (deferred per §B.10.6).
+
+---
+
+## VISUAL REVIEW — S001_color_webtoon
+Date: 2026-09-29
+Reviewer: GLM-5.3-Flash
+
+Scope: independent visual + pixel-level audit of `samples/S001_color_webtoon/` (original.jpg, text_mask.png, inpainted.png, final.jpg, detections.json, ocr.json, translation.json, metadata.json) against PROJECT_CONTEXT §8. Method: full-image inspection, per-region 2x–6x crops of all 6 detections from original/inpainted/final, programmatic mask-coverage and ink measurements (all coordinates below are in the 844×1200 source space, origin top-left). No file in `samples/` was modified; no source code touched.
+
+### Per-Region Table
+
+| # | Region Type | Original Text | Mask Quality | Inpaint Quality | Render Quality | Issues |
+|---|-------------|---------------|--------------|-----------------|----------------|--------|
+| 1 | overlay (vertical T/L note, box 10,81,61×298) | "T/L note: Koganei in hiragani is spelt こがねい while Otearai is spelt as おてあらい and both "U" is pronounce as "I" which is a vowel" | ⚠️ 99.7% box coverage; missed bottom glyph tips (→ 11-px speck residue) | ✅ 0 residue inside mask | ✅ vertical rotated Bengali, correct shaping, zero overflow (0 ink px beyond y=81..379 in x=10..70); ⚠️ CJK fallback glyphs half-size and pale | 11 dark residue specks (lum. down to 18) at (34–47, 370–381); こがねい/おてあらい/しゅ rendered ~50% size, mean ink luminance ~90 vs ~47.5 original; panel-border AA edge darkened at x≈75 over ~229 rows (cosmetic); OCR mis-transcribed source (see Metadata/OCR notes) |
+| 2 | bubble (box 218,110,87×156) | "THE ONLY LETTER CORRECT IN THAT NAME WAS "!"" | ✅ 98.5% coverage; mask overreaches bubble edge at top-right (301–304, 110–126) | ✅ 32 "residual" px = preserved bubble-border strokes inside mask overlap, not text | ✅ 5 lines "এই নামের / একমাত্র / সঠিক / অক্ষর ছিল / "!"" inside bubble; 0 collateral px outside mask | Orphan last line `"!"` (typographic nit) |
+| 3 | bubble, spiky shout (box 403,340,204×216) | "MY NAME'S KOGANEI YOU DUMBASS!" | ✅ 82.4% coverage (text-line blobs) | ✅ 502 flagged px = spiky border strokes at mask edge (x≈403–420 / 585–606), borders preserved in inpainted.png — not text residue | ✅ 3 lines centered, conjuncts correct; descenders extend below original text bbox to y≈550 but stay inside bubble | New-text px outside original mask (cluster (419,479)–(463,492) =209 px, (545,486)–(577,493) =110 px) are rendered glyph bodies inside the bubble — benign, not damage |
+| 4 | bubble (box 76,361,103×109) | "WHO THE HELL IS THAT PERSON!?" | ✅ 91.2% | ✅ 0 residual px | ✅ "সেই ব্যক্তি কে?" 2 lines, clean fit; 0 collateral | Translation drops "the hell" intensity (MT quality, not render) |
+| 5 | bubble over cloud/sky (box 197,672,128×140) | "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?" | ✅ 96.1% | ✅ 14 flagged px = border overlap (318–322, 799–811); cloud texture at bubble edge preserved | ✅ 4 lines fit inside bubble; "OTEARAH" Latin retained per translation.json | ❌ MT garbage: "যৌনসঙ্গম" (= "sexual intercourse") for "fuck"; "এই বেশ্যা তাকে বা কিছু জানেন" garbled word order + wrong honorific register; punctuation spacing "! !" / "! ?" (tokenizer artifact) |
+| 6 | rectangular caption box over building (box 101,880,131×204) | "THIS WAS THE RESULT OF MY MISTAKE … MY GIRLFRIEND" | ✅ 98.1% (mask covers whole box incl. border lines) | ✅ box borders reconstructed by LaMa (bottom-border dark px 280 = original 280; left/right/top verified visually in inpainted.png) | ✅ 9 lines, render bbox (113–218, 901–1055) inside interior with ≥7 px side / 16 px top / ~35 px bottom margins; conjunct স্বীকারোক্তি renders correctly | ❌ MT literalism: "she was into me" → "সে আমার ভিতরে ছিল" ("she was inside me") |
+
+### Measurements
+
+- Residual text pixels: **11 px** true original-text residue in final.jpg (specks at (34–47, 370–381), darkest luminance 18/24 — mask-missed glyph tips, region 1 bottom). Inside-mask "residuals" flagged programmatically (32+502+14 = 548 px in regions 2/3/5) were verified at 3x to be **preserved bubble-border strokes under mask overreach, zero actual glyph remnants**.
+- Overflow lines: **0**. No rendered line crosses any bubble/box boundary; region 1 has 0 ink px beyond the original note's y-extent (81..379) within its column; region 6 render bbox clears all four borders.
+- Color artifacts: **none observable and none possible in this sample** — the image is 100% grayscale (0.000% of pixels with channel spread >30 in both original and final). No halo, no color bleed, no smudge detected around any rendered block; inpainted-vs-original diff outside mask = 4 px total; final-vs-original diff outside mask = 389 px (0.038%), of which the four largest clusters (≤209 px) are new Bengali glyph bodies inside bubble 3 — benign — plus one 11-px residue speck and ≤13-px JPEG edge-noise clusters.
+- Box-snap misfires: **0**. No synthetic white box drawn anywhere; all six regions rendered in place over inpainted artwork.
+- SFX / non-text artwork: the only SFX-like marks are monochrome handwritten speed-line accents near (660–820, 240–380) — **byte-identical original→final (0 changed px)**; no pink Korean SFX exists anywhere in this sample. SFX non-translation policy respected.
+- Mask global coverage: 13.5% of image (136,804 px). JPEG re-encode noise in final: negligible.
+
+### Metadata Verdict
+
+- Actual translation engine: **nllb** (translation.json is correct; metadata.json's `"translation_engine": "manual"` is **wrong**).
+- Evidence (machine-translation fingerprints in translation.json content):
+  1. R5: "WHO THE FUCK" → "কে ঐ যৌনসঙ্গম" — যৌনসঙ্গম = "sexual intercourse"; a literal noun-swap only an MT lexicon produces. Same line: "DOES THAT BITCH KNOW HIM OR SOMETHING" → "এই বেশ্যা তাকে বা কিছু জানেন! ?" — scrambled argument order and an unwarranted honorific verb (জানেন), a classic NLLB register error.
+  2. R6: "ASSUMING THAT SHE WAS INTO ME" → "সে আমার ভিতরে ছিল" ("she was inside me") — word-for-word literalism.
+  3. R1: "which is a vowel" → "যা একটি ভোকাল" — ভোকাল ("vocal", e.g. a singer) instead of স্বর ("vowel").
+  4. Punctuation spacing artifacts "! !" and "! ?" on every doubled mark — NLLB tokenizer signature.
+  5. If these were human post-edits, register/grammar errors of this density would not survive; the owner's own metadata note ("first fresh-run success") describes a pipeline run, not a manual pass.
+- Per §8 "Produce natural Bengali translations": **not met at human-final quality** for regions 1, 5, 6 (region 3's "আমার নাম কোগানাই, তুমি বোকা!" is serviceable; regions 2/4 acceptable but flattened).
+- Related OCR accuracy finding (§8 "Produce accurate OCR", region 1): the vertical note in original.jpg actually reads "…while **Otearai** is spelt as **おてあらい** and both **"U"** is pronounce as **"I"** which is a vowel", but ocr.json/translation.json record "Otarumi / おたるみ / しゅ / しゅ" — two mis-transcriptions by the `qwen` OCR engine that then propagated verbatim into the NLLB prompt and the rendered region-1 text.
+- Secondary metadata nit: metadata.json `source_type` says "color webtoon long strip", but the artifact is a pure-grayscale B/W manga page (0 chroma); sample ID/name should be understood as pipeline-variant labeling, not color content.
+
+### Plain-Text Summary (for GLM-5.3, who cannot see images)
+
+The detection→inpaint→render chain worked on all six regions. Masks fully cover the original text; LaMa left zero glyph remnants inside masked areas (all programmatic "residuals" are bubble-border strokes the mask overlaps, preserved intact); the Bengali renderer produced correctly shaped, non-overflowing text in every region, including the rotated vertical overlay and the 9-line caption box. SFX untouched. The page is presentable at normal viewing zoom. Four concrete, code-actionable defects remain, ordered by severity:
+
+1. Translation quality (regions 1, 5, 6; worst in 5): NLLB output is unusable-as-final for profanity/idiom: at region 5 (box 197,672 → 325,812) the rendered line 1 reads "কে ঐ যৌনসঙ্গম OTEARAH! !" — "যৌনসঙ্গম" (sexual intercourse) is a wrong-register noun for "fuck"; line 3–4 "বেশ্যা তাকে বা কিছু জানেন! ?" has scrambled syntax and an honorific verb. At region 6 (box 101,880 → 232,1084), line 3 "সে আমার ভিতরে ছিল" literally means "she was inside me". At region 1, "ভোকাল" replaces "vowel" (স্বর). Fix locus: translation stage (engine choice, profanity/idiom glossary, or human post-edit pass), not the render stage. Punctuation post-processing should also collapse NLLB's "! !" / "! ?" spacing, and region 2's wrap leaves an orphan line `"!"` (box 218,110 → 305,266) — a min-widow constraint in the line breaker would fix it.
+2. CJK fallback font mismatch in region 1 render (x≈22–70, y≈85–375): the retained Japanese terms こがねい / おてあらい( rendered as おたるみ per bad OCR) / しゅ draw at roughly half the Bengali cap height and much lighter weight (mean ink luminance ≈90 vs ≈47.5 for the original note glyphs; surrounding Bengali is near-black). Fix locus: renderer font-fallback stage — scale CJK runs to the Bengali font's x-height/cap-height and use a matching weight (e.g. bold CJK face) so inline Latin/CJK matches the surrounding type.
+3. Mask under-coverage at region 1 bottom: glyph tips the mask missed survive as ~11 dark specks (luminance 18–24) at x=34–47, y=370–381 in final.jpg. Fix locus: detection stage — dilate the region-1 mask a few px vertically (or extend the region quad to the text's true bottom ~y=384) so inpainting clears the tips; alternatively a post-render cleanup pass inside the detection box.
+4. OCR mis-transcription of region 1 (qwen engine): image says "Otearai / おてあらい" and `"U" … "I"`; ocr.json/translation.json say "Otarumi / おたるみ / しゅ / しゅ". This corrupted both the translation and the rendered note. Fix locus: OCR stage — vertical-text handling for rotated side notes (rotate-then-OCR or a VLM pass), plus a consistency check that cross-references quoted glyph runs.
+
+Cosmetic, non-blocking: panel-border AA edge at x≈75 (y≈120–350) darkened ~2 px where region-1 text strip re-encoded; region-3 descenders extend below the original text bbox to y≈550 but remain well inside the bubble interior. Neither requires action.
+
+### Overall Verdict
+
+**APPROVE_WITH_ISSUES.**
+
+The visual pipeline (detection, masking, LaMa inpainting, Bengali rendering, SFX preservation, boundary respect) passes §8 on this sample and the archive is valid evidence — zero residual glyphs inside masked regions, zero overflow, zero box-snap misfires, zero artwork damage. The issues that block "final quality" are upstream of rendering: NLLB translation naturalness (regions 1/5/6), the CJK fallback font metrics in region 1, the 11-px mask-miss residue at (34–47, 370–381), and the region-1 OCR mis-transcription. metadata.json's `"translation_engine": "manual"` claim is contradicted by the artifact content and should be corrected to `nllb` (a documentation fix in a new metadata revision, since samples/ is immutable evidence). Recommended follow-up: a fix task for translation quality + vertical-note OCR + CJK fallback metrics + mask dilation, then a new sample run archived as S002 for re-review.
