@@ -948,3 +948,123 @@ Verified facts:
 **APPROVE_WITH_CHANGES.**
 
 All five Phase A investigations are factually sound — every cited cell:line was re-verified against the notebook and every pixel claim re-measured against the S001 artifacts, with only one trivial factual slip (`re` import location). The architecture choices (live-path V-2 band, native OpenAI-compatible adapter, LiteLLM rejection, immutability-preserving metadata rev2) are endorsed. Phase C implementation is approved **subject to the required amendments**: (1) V-1 — post-scale line-width re-check (or scale-then-fit) + baseline alignment via font metrics; (2) V-3 Layer 1 — drop the upright candidate when the vertical predicate fires, explicit rotated-first tie-break, log chosen orientation + scores; (3) V-4b — defer Edit C (or amend to both parsers + docs + tests); (4) V-5 — `key_env` field rename (sanitizer compatibility) + closure-bound `engine` in the retry call. Items without amendments (V-2 entire, V-4a, V-3 Layer 2, V-5 architecture) may proceed as proposed. Per DECISION.md §C.3, Owner approval per V-item remains the gate before any Phase C code lands; this review discharges the Phase B verification step of that gate.
+
+## MANGABD-003 — PHASE E VERIFICATION
+
+**Reviewer:** GLM-5.3-Flash (Independent Reviewer) · **Date:** 2026-09-29
+**Object under review:** commit `f58cd3c` ("WIP: MANGABD-003 Phase C — awaiting Phase E verification", tree `3ac8d3a3`) on branch `mangabd-003-phase-c`; merge-base = `main @ 1cd8acf` (linear, single commit on top of base).
+**Rules:** TASK_002 Phase D discipline + DECISION.md §C. GLM-5.3's self-report (agents/GLM_5_3.md Phase C record) was **not trusted for any check** — every claim below was re-executed against the pushed bytes. No source changes; no amend; no merge.
+**Method:** reviewer-local scripts (repo-external, under reviewer `scripts/`): `m003_e1_audit.py`, `m003_e2_static.py`, `m003_e2_census2.py`, `m003_cell_diff.py`, `m003_e3_mirror.py`, `m003_v5_deep.py`, `m003_v5_branches.py`, `m003_e5_runtime.py`, `m003_e6_regression.py`. All executed code segments were extracted **verbatim** from `git show HEAD:` blobs with sha256 recorded at each step.
+
+### PE.1 E1 — DIFF & SCOPE AUDIT: **PASS**
+
+- `git diff main...HEAD --numstat`: notebook `287/23`; agents/GLM_5_3.md `75/2` (77 changed lines total); samples/README.md `2/0`; samples/S001_color_webtoon/metadata.json `6/3`; metadata.rev1.json `9/0` (status **A**, new file). **Total 5 files, +379/−28 — exact match to the Phase E brief.** [FACT]
+- Raw diff entries: all `100644 → 100644`; the new file is `000000 → 100644`. **Zero mode changes, zero renames/copies.** [FACT]
+- Secret-pattern scan of all **379 added lines** (GitHub PAT, `sk-`, AKIA, AIza, slack, PEM headers, bearer, JWT, hf_, DeepL): **0 hits**. No env-var *values* in code; added secret references are env-var *names* only (SECRET_SOURCES, cell 1). [TEST RESULT]
+- Cell-level scope: 27 cells both sides; changed cells = **exactly {1, 6, 7, 8, 11, 12, 16, 25}**; the other **19 cells byte-identical** to main (list verified cell-by-cell). Within every edited cell only the `source` field changed (outputs/metadata untouched). Notebook top-level metadata, nbformat 4.0 identical. [FACT]
+- `metadata.rev1.json` is **byte-identical** to `main:samples/S001_color_webtoon/metadata.json` (sha256 `eabe49b73ab3…`, 315 B, re-parses as JSON) — verbatim preservation proven at blob level. [FACT]
+
+### PE.2 E2 — STATIC RE-CHECK: **PASS** (with one letter-vs-spirit note, N1)
+
+- Notebook JSON re-parses; 27 cells; **all 27 AST-parse** clean. [TEST RESULT]
+- **MANGABD-002 artifacts intact VERBATIM:** `cells[14]` guard block lines 40–46 present word-for-word (⏭️ skip banner + `run_inpaint_render_all(force=True)` gate) and `cells[26]` = 4 Bengali comments + `render_all_pages(force=False)`; both cells **byte-identical to main** (and hence to the Phase D-approved state). [FACT]
+- try/except census (multiset AST diff of all 27 cells, HEAD minus main): **exactly 4 new handlers**, no fewer, no more:
+  1. cell 11 + cell 12: `except OSError: pass` around `set_variation_by_axes([wght])` — **the prescribed guard** (E2 brief explicitly sanctions it). Pass-body is by design; on OSError the variable font keeps its default instance and the stroke compensation carries the weight, per the in-code comment. [FACT]
+  2. cell 8: `except Exception → log_event(f"{engine} translation failed: …", level="WARN"); return ""` inside `translate_with_provider` — **exact shape-match of main's chatgpt adapter** (`except Exception → log_event("ChatGPT translation failed: …"); return ""`), verified against main's bytes. Non-silent: WARN log + empty-string contract identical to existing engines. [FACT]
+  3. cell 25: `except Exception as e: print(f"❌ {e}")` inside the new `on_provider` callback — **clone of the pre-existing `on_nllb` callback's error surface**. Non-silent: visible in the console output widget. [FACT]
+- **Note N1 (non-blocking):** the E2 brief's letter says "no NEW try/except anywhere except the prescribed OSError guard" — the letter is exceeded by the two handlers in (2)/(3). They are within Owner-approved V-5 scope (a provider adapter and a UI button callback cannot exist without them), they mirror pre-existing approved patterns exactly, and neither hides errors. Spirit upheld ("no dummy variables, no silent fallbacks, no error hiding" — verified: no bare `except:`, no pass-only *new* handlers outside the prescribed guards, no TODO/FIXME/Ellipsis stubs, no `_ =`/dummy assignments in added code). Flagged for Owner awareness only. [ASSESSMENT]
+
+### PE.3 E3 — MIRROR EQUIVALENCE: **PASS**
+
+Committed-state extraction (AST spans, exact source incl. decorators):
+
+| Function | cell 11 | cell 12 | Byte-identical |
+|---|---|---|---|
+| `get_font_fb` | 690 chars / 14 lines, sha256 `a7d2d5bd61309c78` | 690 chars / 14 lines, sha256 `a7d2d5bd61309c78` | **YES** |
+| `_qc_render_vertical` | 2267 chars / 40 lines, sha256 `e27f769797d8ff4f` | 2267 chars / 40 lines, sha256 `e27f769797d8ff4f` | **YES** |
+
+Both cells now carry ONE canonical block; cell 12's 4 dead preamble lines (`size, lines = 8, [text]`, `# fit with swapped dims`, local `ImageDraw as _D` import, dummy `d = _D.Draw(...)`) were removed exactly as documented in GLM's mirror-premise note — behavior-preserving (immediately rebound / unused). The single-hunk mirror discipline from Phase B Note 1 is satisfied. [TEST RESULT]
+
+### PE.4 E4 — PER-AMENDMENT VERIFICATION
+
+#### BATCH 1 (V-4a + V-2 + V-1): **PASS**
+
+**V-1 — all four required amendments present in the canonical block. [FACT]**
+- (a) Post-scale recheck + stepwise ladder: `while any(not im for _, im in runs) and total > int(h) - 2*padding and scale > 1.0: scale = 1.12 if scale > 1.12 else 1.0; widths, total = _measure_line(runs, scale)` — fires only when the line actually contains fallback runs, re-measures at every step, terminates at 1.0. Order verified: `fit_font_size` first (main-font metrics, swapped dims), scale applied per-line after.
+- (b) Baseline alignment: `asc_main = get_font(size, bold).getmetrics()[0]` before the loop; `ly_run = ly if im else ly + asc_main - f.getmetrics()[0]` — exactly the amended formula (ly_fb = ly + ascent_main − ascent_fb).
+- (c) THREE config setdefaults present at module level in **both** cells 11 and 12: `fallback_font_wght` (600), `fallback_cjk_scale` (1.25), `fallback_cjk_stroke` (1) — idempotent on sequential execution.
+- (d) Stroke: `sw = 0 if im else _fb_stroke` and `draw.text(..., stroke_width=sw, stroke_fill=text_color+(255,))` — applied to fallback runs only. `get_font_fb` additionally honors bold via `wght = max(600, 700 if bold)` through the prescribed OSError-guarded `set_variation_by_axes`; cache key `(int(size), bool(bold))` correctly separates the two variants.
+
+**V-2 — CONFIRMED in the live mask path. [FACT]**
+- Band inserted in `build_page_text_mask` (cell 6) **after** the `mask_clip_to_regions` clip block (lines 815–825) and **before** `return mask` (line 845); in-scope variables verified (`h` from `image_bgr.shape[:2]` at 783, `detection_cfg = MANGABD_CONFIG["detection"]` at 785, `regions` = function param).
+- Knob: `detection_cfg.setdefault("mask_vpad_vertical", 10)` (833); `if vpad > 0` gate; two filled `cv2.rectangle` bands at each column tip, clamped to image bounds.
+- Predicate (838): `rw < 90 and rh > 2 * max(1, rw)` on region dims. Live vertical-renderer predicate (11:215 / 12:172): `w < 90 and h > 2*max(1, w)`. **Semantically identical including the `max(1, ·)` guard**; textual form differs only by variable names (w→rw, h→rh) and `2 *` vs `2*` whitespace — see note N2.
+- Comment (827–832) documents the effective ceiling = `mask_clip_padding` (10) with the cell-9 re-clip to boxes+10 — matches the clip call (`padding=10`, line 819) and the Phase B arithmetic.
+
+**V-4a — CONFIRMED. [FACT]**
+- rev2 metadata.json: `translation_engine: "nllb"`, `source_type: "B/W manga page"`, `naming_note` (folder intentionally NOT renamed, Owner decision quoted, "0 chroma, Flash-measured"), plus `metadata_revision: 2` and a `revision_note` crediting the visual review — all present.
+- rev1 preserved verbatim (PE.1); README pointer line added (naming provenance + both metadata files); folder NOT renamed (no R entries; all sample paths unchanged).
+
+#### BATCH 2 (V-3): **PASS**
+
+**V-3 Layer 1 (cell 7, `ocr_region`) — CONFIRMED. [FACT]**
+- Candidate set = [ROTATE_90_CLOCKWISE, ROTATE_90_COUNTERCLOCKWISE] **only**; upright is excluded from the vertical path (preserved verbatim as the `else:` branch).
+- Selection: `chosen = candidates[0]` (CW) then `if cand["score"] > chosen["score"]` — strict `>`, deterministic rotated-first tie-break.
+- Audit trail: `vertical_ocr = {"chosen_orientation": …, "candidate_scores": {…}}` written into the OCR record (sidecar field, additive; `None` for non-vertical), plus a `warnings` entry naming the chosen orientation and both scores.
+- Predicate uses REGION dims (`rw_, rh_ = int(region.get("width", 0)), int(region.get("height", 1))`), NOT the preprocessed crop dims; the in-code reconciliation note (crop context + overlay border + preprocess padding widening S001 R1 to ~95–113 px, defeating a crop-dims test) matches the Phase B finding this amendment came from.
+
+**V-3 Layer 2 (cell 16, both branches) — CONFIRMED. [FACT]**
+- Severity `warning` only → `add_quality_issue` routes it into `manual_review_flags_dict` → `manual_review_flags` (🟡); `add_quality_issue` contains no raise paths; the checks themselves are dict lookups + `re.search` on strings with defaults — cannot raise/abort/block a page. Degrades safe: missing detections artifact → `det_geo={}` → geometry defaults → predicate false → no flag.
+- `import re` present **inside both snippets** (artifact branch line 371 with the Phase B attribution comment; df branch line 396) — cell-standalone-safe.
+- Geometry provenance: artifact branch uses `region = item.get("region", {})` (line 292) from the **ocr sidecar entries**; df branch builds `det_geo` from `load_json_artifact(page_id, "detections")` keyed by `int(dr["id"])` and looks up with the row's `region_id` (both int) — the Phase B amendment (detections are truth, df x/y/w/h may be box-snapped) is implemented as amended.
+
+#### BATCH 3 (V-5): **PASS**
+
+- **Registry field `key_env`:** 14 occurrences of `key_env` in cell 8, zero code references to `api_key_env` anywhere in the notebook. The raw substring `api_key_env` appears exactly **2×, both inside explanatory comments** (cell 8:82, 8:84) documenting the sanitizer hazard — no dict key, variable, or accessor uses it. [FACT]
+- **Adapter:** `translate_with_provider` (cell 8:555) uses the existing `openai` SDK (`from openai import OpenAI`, per-provider `base_url`/`model` from the registry, key from `MANGABD_SECRETS[key_env]`, ollama placeholder-key branch, missing-key → WARN + `""`).
+- **Dispatcher:** new `elif engine in MANGABD_CONFIG["translation"].get("providers", {}):` binds `translate_with_retry(lambda t, rt: translate_with_provider(t, rt, engine=engine), text, region_type=region_type)` — **verbatim the closure fix prescribed in Phase B amendment 1**. `translate_with_retry` is **byte-identical** main↔HEAD (46 lines, signature `(translate_func, text, region_type="bubble")`; def at main 8:371, positional invocation at main 8:390 — the two brief-cited lines) — no `**kwargs` widening. [FACT + TEST RESULT]
+- **switch_translator:** `valid_engines = ["manual", "gemini", "chatgpt", "nllb"] + list(providers.keys())` — dynamic from the registry.
+- **UI (cell 25):** `mode_sel` options extended (openrouter/deepseek/qwen/ollama; NLLB relabeled "experimental" per Owner policy); new `btn_provider` + `on_provider` (engine from `mode_sel.value`, `force=True`, error surface cloned from `on_nllb`); binding list extended by exactly one pair; mode_panel provider hint names the Colab secret `<m>_api_key` consistently with SECRET_SOURCES.
+- **SECRET_SOURCES (cell 1):** `qwen_api_key` (QWEN_API_KEY, DASHSCOPE_API_KEY), `deepseek_api_key` (DEEPSEEK_API_KEY), `openrouter_api_key` (OPENROUTER_API_KEY) added; ollama deliberately absent (commented).
+- **translator_model:** additive record-dict field (8:1201-area), row-level value wins via `or`-chain, provider model resolved from registry, manual/gemini/nllb leave it empty — sidecar-only, no wire-format change.
+- **Legacy branches byte-untouched:** `manual` / `gemini` / `chatgpt` / `nllb` branch bodies in `translate_text` extracted from both versions and compared — **byte-identical** (the only chain delta is the inserted providers `elif`; `else:` identical too). [TEST RESULT]
+- **clean_translation:** pre-existing normalizer (quote/prefix/whitespace) present and unchanged; the adapter applies it to model output (8:580). **Manual apply path:** `apply_manual_translation` and `translate_manual_upload` are **byte-identical to main** — Phase C added nothing to any manual path. See PE.7 for a required clarification of this gate item.
+
+### PE.5 E5 — INDEPENDENT RUNTIME SPOT-CHECKS: **5/5 PASS**
+
+Own harness; every executed segment extracted verbatim from the pushed bytes (sha256 recorded; e.g. `_qc_render_vertical` 2267 ch `e27f769797d8ff4f`; `ocr_region` vertical block 1244 ch `272e66e41f9f`; `save_config` 969 ch `87f2eb223ddc`; dispatcher elif 446 ch `66c92a3689ab` — the only transformations for standalone exec were dedent, leading `elif`→`if`, and dropping the outer-chain `else:`; condition/body bytes untouched). Dependencies stubbed at module boundaries (fake fonts/`ImageDraw`, fake `cv2`, fake `openai`, stubbed `qwen.recognize`); real PIL canvas for paste/rotate.
+
+- **(a) Ladder — PASS.** Overflowing scaled line (budget 392 px): fallback sizes requested `[12, 11, 10]` + final draw re-request at 10 → ladder walked 1.25→1.12→1.0 with a re-measure at **every** step; second scenario stopped at 1.12 once the re-measured total fit (`[12, 11]` + draw). Baseline exact: fb run y = 24 + 8 − 14 = 18 (= ly + ascent_main − ascent_fb); main run y = ly. Stroke: `1` on the fallback run, `0` on the main run, `stroke_fill = text_color + (255,)`.
+- **(b) Tie-break — PASS.** Equal scores (1.7 / 1.7) → **CW wins** (`rotate_90_clockwise`), 2 recognize calls, both scores + orientation written to `vertical_ocr`, warning appended. CCW strictly greater (1.75 > 1.7) → CCW wins. Wide region (100×300) → exactly **1** upright call, no rotated candidates, `vertical_ocr is None`.
+- **(c) Adapter shape — PASS.** qwen: `OpenAI(api_key=<qwen_api_key secret>, base_url="https://dashscope.aliyuncs.com/compatible-mode/v1")`, `model="qwen-plus"`, temperature 0.3, max_tokens 512, roles [system, user] — field-for-field the chatgpt pattern; the chatgpt reference adapter passes **no** `base_url` (SDK default), so the per-provider `base_url` is exactly the provider adapter's addition. Ollama: placeholder key, `http://localhost:11434/v1`. Dispatcher closure: retry stub captured `(func, text, region_type)` — engine **not** forwarded to `translate_with_retry`; calling the captured func produced the qwen-engine result (binding proven end-to-end).
+- **(d) Sanitizer control — PASS.** Committed `save_config` run against a probe registry: persisted keys = `['base_url', 'key_env', 'model']` — **`key_env` survives**, `api_key_env` (control) **stripped**, legacy `gemini_api_key`/`auth_token` still stripped. Key-name check confirmed keys-only (values untouched).
+- **(e) Predicate truth table — PASS.** All committed copies (cell 6 mask band; cell 7 selector; cell 16 artifact-branch and df-branch): 61×298 → **True**, 100×300 → **False**; the composite flag predicate additionally requires kana+latin (pure non-kana text suppresses the flag); the committed regexes fire on S001-like text `おてあらい U/I`. Grounding: S001 `detections.json` region 1 is exactly **61×298, region_type=overlay** (region 2, 87×156, correctly does NOT fire: 156 < 174).
+
+### PE.6 E6 — REGRESSION GUARDS: **PASS**
+
+- **NLLB (cell 19 version):** cell 19 **byte-identical** to main (sha256 `3e3153c2009d`). Cell 8's `translate_with_nllb` dispatcher branch byte-identical (PE.4 batch 3). [FACT]
+- **recover_coordinates (cell 11) / restore_boxes (cells 11+12) / apply_container_types (cells 11+12):** function bodies **byte-identical** main↔HEAD (shas `5ad21679c42e`, `c8a9f5f5419f`, `da3284c80be5`, `f82ca5047fc2`, `2d652385f521`) despite living in edited cells — V-1 edits did not perturb them. [FACT]
+- **Slicer + download patches:** slicer references confined to cell 24 (byte-identical); download defs in cells 3/4/5/17/24 (all byte-identical) and cell 25 (`download_all_pages_zip`, `download_ai_text_once` — both byte-identical). Cell-12/25 "patch" matches are the `_QC_RENDER_PATCHED` flag idiom / comments, not patch logic. (Method note: a first-pass substring sweep false-positived on "dis**patch**er" in cell 8; refined to word boundaries.) [FACT]
+- **Control Studio (cell 25):** `_safe` target set unchanged (`apply_translations_from_text`, `run_detection_ocr_all`, `run_translation_all`, `upload_images`) and **all resolve** to defs in the HEAD notebook; button bindings 13 → 14 with the only addition `btn_provider → on_provider`; every referenced callback defined; zero load-name globals dropped vs main (no renamed globals). [TEST RESULT]
+
+### PE.7 Self-correction of a Phase B record (reviewer's own)
+
+Phase B stated as [FACT]: "the manual path (`apply_manual_translation`) does not call `clean_translation` — manual text is never auto-edited." **That claim is wrong.** `apply_manual_translation` (cell 8:1092–1161) calls `clean_translation(translated_text)` at **8:1138 — on main, before Phase C** (the function is byte-identical in this commit). Phase C therefore satisfied the E4 item "manual apply path does NOT call clean_translation" in the only sense available to it: it introduced **no** `clean_translation` call into any manual path and modified nothing there. Practical impact is small — `clean_translation` strips surrounding quotes, `"Translation:"-style` prefixes, and collapses whitespace; it does not remove Bengali punctuation — but "manual text is never auto-edited" was inaccurate as written. If the Owner's intent is the strict end-state (manual input must bypass the normalizer), that is a **new change outside Phase C's approved scope** and should be an explicitly approved follow-up item, not a Phase E rejection ground. [ASSESSMENT]
+
+### PE.8 Non-blocking observations
+
+- **N2 — predicate textual form:** the V-2/V-3 predicates are semantically identical to the live renderer predicate but not byte-equal as raw strings (variable rename + `2 * ` whitespace). The brief's "byte-identical" is satisfied in the only realizable sense (same boolean expression over region dims, including `max(1, ·)`); runtime equivalence proven in E5e across all four sites. If the Owner wants literal text equality, it is a whitespace-only touch-up. [ASSESSMENT]
+- **N3 — flag regex coverage:** `[\u3040-\u30FF\u3400-\u4DBF]` covers kana + CJK Extension A but **not** the main CJK block (4E00–9FFF): a vertical note mixing **kanji-only** + Latin will not flag. Consistent with the issue title ("kana + Latin") and the S001 failure mode; warning-only feature; worth widening if kanji-heavy vertical notes appear in S002. [ASSESSMENT]
+- **N4 — sandbox boundary:** E5 executed committed bytes against stubbed module boundaries (qwen/`openai`/drive); live Colab behavior (real `qwen.recognize` confidence semantics, provider auth against real endpoints, `set_variation_by_axes` on Colab's Pillow) remains Owner-environment validation during the S002 fresh run — same limitation class as MANGABD-002 Phase D §B.10.4/§B.10.6. [ASSESSMENT]
+
+### PE.9 Overall verdict
+
+**PHASE E APPROVED.**
+
+| Batch | Scope | Verdict |
+|---|---|---|
+| batch1 | V-4a + V-2 + V-1 | **PASS** (all amendments implemented; mirror equality holds) |
+| batch2 | V-3 L1 + L2 | **PASS** (selector redesign + non-blocking flags as amended) |
+| batch3 | V-5 | **PASS** (key_env + closure + registry/UI/SECRET_SOURCES/sidecar as amended; legacy branches byte-untouched) |
+
+E1–E6 all PASS; zero required fixes. Notes N1–N4 are recorded for Owner awareness and none is a merge blocker. **Gating:** this sign-off is to be relayed through PM (Qwen3.8-Max) to the Project Owner; per DECISION.md §C, GLM-5.3 must NOT amend or merge until the Owner accepts. Recommended next steps: Owner-side live Colab validation (provider keys via SECRET_SOURCES bootstrap, `set_variation_by_axes` on Colab Pillow, fresh Run All) and the S002 acceptance run, which jointly attributes R1 improvements to batch-1 items as planned (Phase B Note 2).
