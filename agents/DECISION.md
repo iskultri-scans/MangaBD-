@@ -2,14 +2,16 @@
 
 ## STATUS
 
-**MANGABD-002 COMPLETE — Phase D verified, merged to main**
+**MANGABD-003 — PHASE A COMPLETE — investigation & proposals delivered; AWAITING OWNER APPROVAL for Phase B/C** (2026-09-29)
+
+S001 visual review: **DONE — GLM-5.3-Flash verdict APPROVE_WITH_ISSUES** (commit `f7aabbc`, full record in agents/GLM_5_3_FLASH.md §"VISUAL REVIEW — S001_color_webtoon"): pipeline PASS on detection/masking/inpaint/render/overflow/SFX, with 4 code-actionable defects (translation quality, CJK fallback metrics, 11-px mask-miss residue, vertical-note OCR) + metadata corrections. The Owner reviewed Flash's findings and issued binding policy decisions (§C.1). GLM-5.3 completed Phase A: per-V-item evidence, root causes, minimal proposed fixes, and regression risks (agents/GLM_5_3.md "# MANGABD-003 — PHASE A"), plus the S002 re-run plan (§C.4). **NO SOURCE CODE CHANGED in Phase A.**
 
 MANGABD-001 COMPLETE (dual-agent audit + comparison; historical record below).
 MANGABD-002 COMPLETE — Phase A (dual independent investigation) → Phase B (second-pass review, final proposal §B.6) → **Phase C (Owner-approved implementation, 2 hunks, +12/−2, one file — verified 29/29 checks)** → **Phase D (GLM-5.3-Flash independent verification: 5/5 steps PASS, APPROVED — commit `e9802fb` on the review branch)** → merged to `main` (fast-forward `aabc592 → 05d9bc6`, fix commit `f7eb7e6` with the final message; see §B.13).
 
-**VISUAL EVIDENCE AVAILABLE — NO_VISUAL_EVIDENCE gap CLOSED (2026-09-29).** The Project Owner uploaded the first sample artifacts to the repo root as a ZIP (commit `59be2ff`, "Add files via upload"); GLM-5.3 extracted and verified them into `samples/S001_color_webtoon/` (commit `5457f3f`): `original.jpg`, `text_mask.png`, `inpainted.png`, `final.jpg` (all 844×1200), sidecars `detections.json`, `ocr.json`, `translation.json` (6 regions each, valid JSON), and `metadata.json` (provenance: fresh Run All success, notebook commit `9f4d82a`, second test image). GLM-5.3-Flash has been assigned the independent visual review — see `agents/GLM_5_3_FLASH.md` (CURRENT PHASE).
+**VISUAL EVIDENCE AVAILABLE — NO_VISUAL_EVIDENCE gap CLOSED (2026-09-29).** The Project Owner uploaded the first sample artifacts to the repo root as a ZIP (commit `59be2ff`, "Add files via upload"); GLM-5.3 extracted and verified them into `samples/S001_color_webtoon/` (commit `5457f3f`): `original.jpg`, `text_mask.png`, `inpainted.png`, `final.jpg` (all 844×1200), sidecars `detections.json`, `ocr.json`, `translation.json` (6 regions each, valid JSON), and `metadata.json` (provenance: fresh Run All success, notebook commit `9f4d82a`, second test image). GLM-5.3-Flash completed the independent visual review (verdict above).
 
-**Source code was modified exactly once — in Phase C, strictly within the Owner-approved 2-edit scope (§B.6 guard + §B.11.2 cell-26 bundle). Phases A/B/D modified zero source.**
+**Source code was modified exactly once — in MANGABD-002 Phase C, strictly within the Owner-approved 2-edit scope (§B.6 guard + §B.11.2 cell-26 bundle). MANGABD-002 Phases A/B/D and MANGABD-003 Phase A modified zero source.**
 
 ---
 
@@ -28,9 +30,9 @@ The Project Owner has final authority over major changes.
 
 ## CURRENT TASK
 
-S001 VISUAL REVIEW (new; formal task ID pending Owner ratification) — GLM-5.3-Flash to independently review the archived visual evidence in `samples/S001_color_webtoon/` (initiated 2026-09-29 at the Project Owner's request via GLM-5.3; see agents/GLM_5_3_FLASH.md, CURRENT PHASE).
+MANGABD-003 — S001 Visual-Evidence Defect Remediation — **PHASE A COMPLETE, awaiting Owner approval per V-item** (initiated 2026-09-29 at the Owner's request; record §C below; full investigation in agents/GLM_5_3.md "# MANGABD-003 — PHASE A")
 
-(Historical: MANGABD-002 — Fresh-Colab Execution Reliability, complete; MANGABD-001 — Initial Codebase Audit, Phase 1, complete; records below)
+(Historical: S001 visual review — complete (Flash, APPROVE_WITH_ISSUES, `f7aabbc`); MANGABD-002 — Fresh-Colab Execution Reliability, complete; MANGABD-001 — Initial Codebase Audit, Phase 1, complete; records below)
 
 ---
 
@@ -506,3 +508,47 @@ Both agents independently investigated (statement-level fresh-kernel simulators 
 | Deferred (unchanged, by design) | §B.10.4 live fresh Colab Run All (closes T-8 with the Owner's first Run All) and §B.10.5 warm-path UI functional check — per §B.10.6; plus MANGABD-001 structural items (N-1(c) warm destructive re-apply, variant fork, sticky guards). |
 
 **MANGABD-002 CLOSED.** Success criteria met: root cause established (3-layer), fix proposed by GLM-5.3, independently reviewed by GLM-5.3-Flash (Phases A and D), Owner-approved, implemented within scope, and merged with zero required fixes.
+
+---
+
+# MANGABD-003 — S001 Visual-Evidence Defect Remediation
+
+## C.1 OWNER BINDING POLICY DECISIONS (2026-09-29, verbatim record)
+
+Issued by the Project Owner after reviewing GLM-5.3-Flash's S001 visual review (APPROVE_WITH_ISSUES, commit `f7aabbc`). These constrain all MANGABD-003 phases:
+
+1. **Translation Policy:**
+   - Manual translation is permanently available and part of the core workflow. Improve the manual workflow if possible.
+   - Production auto-translation must be provider/model-flexible. Supported providers: OpenAI, Qwen, DeepSeek, Ollama, OpenRouter.
+   - NLLB is strictly for testing/experimental use, NOT the canonical production engine.
+2. **Metadata & Folder Naming:**
+   - Correct the metadata (engine=nllb, source_type=B/W manga page) based on Flash's verified evidence.
+   - DO NOT rename the `samples/S001_color_webtoon` folder. Instead, document the naming discrepancy in the metadata/README.
+
+## C.2 Phase A Record (GLM-5.3, 2026-09-29 — investigation & proposals only; NO source changes)
+
+**Inputs:** Flash's S001 visual review; the archived sample artifacts (`samples/S001_color_webtoon/`, 7 files + metadata); the current notebook (cell extraction re-verified against the MANGABD-002-verified merge — only the two Phase-C cells differ, as expected).
+
+**Method:** Read-only code investigation of the exact pipeline path that produced S001 (effective function definitions traced through the notebook's layered monkey-patches — cell 12's QC patch is the live vertical renderer; cell 23's `run_inpaint_render_all` is the live inpaint+render wrapper used by the UI). Evidence citations use the *physical-cell:line* convention. Full per-V-item record with code snippets, exact proposed edits, and regression analysis: agents/GLM_5_3.md "# MANGABD-003 — PHASE A".
+
+**Findings and proposed minimal fixes (summary):**
+
+| Item | Root cause (evidence) | Proposed minimal fix | Risk |
+|------|----------------------|---------------------|------|
+| V-1 CJK fallback half-size/pale | `get_font_fb` ignores `bold`, NotoSansJP variable font loads at default wght=400, no size compensation (kana ink ~50-55% em vs Bengali ~70-80%), no stroke on vertical runs (cells 11/12) | Honor bold + `set_variation_by_axes([600/700])` (try/except), scale fallback runs ×1.25, stroke_width=1 on CJK runs; 3 config knobs; mirrored in cells 11+12 | LOW — CJK runs only, vertical notes only |
+| V-2 11-px mask-miss residue (34–47, 370–381) | CTD confidence map missed the bottom glyph tips (quad bottom 379 < true ink 384); +5 px dilation insufficient; **all three kill_residual implementations + box-restore are dead code in the effective fresh-run path** (cells 15/23 define plain wrappers; UI calls plain functions) | Config-gated vertical band (±10 px, column width only) for tall-narrow regions in `build_page_text_mask` (cell 6, after the region clip); NOT global dilation — bubble masks untouched | LOW — not the over-dilation class; single knob (`mask_vpad_vertical`) |
+| V-3 vertical-note OCR misread ("Otearai/おてあらい" → "Otarumi/おたるみ/しゅ") | Tall vertical strip passed unrotated to Qwen with an English-only prompt; confidently wrong (0.95, no warnings) — confidence gating cannot catch it | Layer 1: best-of-3 dual-rotation OCR for tall-narrow regions + vertical/mixed-script prompt variant (cell 7); Layer 2: cell-16 QA warning flag → mandatory manual review for mixed-script vertical notes (geometry+script predicate) | LOW — 2 extra VLM calls only for vertical notes; flag is warning-severity only |
+| V-4 metadata + manual workflow | Flash-verified: engine=nllb (5 MT fingerprints), 0% chroma (B/W page); manual loop gaps: silent parse loss, no coverage report, no context in export | metadata.json rev2 (exact JSON in the Phase A record) + rev1 preserved as `metadata.rev1.json` + README naming note (per Owner policy: folder NOT renamed); 3 small manual-loop edits (unparsed-line report, pre-render coverage report, optional `\|TYPE` in export header — backward-compatible) | NONE (docs) / LOW (report-only + backward-compatible format) |
+| V-5 provider-flexible translation | Cell 8 hardcodes gemini/chatgpt/nllb (dispatcher 8:747–770, valid_engines 8:783); UI offers 3 engines | Provider registry in CONFIG (openai/qwen/deepseek/ollama/openrouter, all OpenAI-compatible endpoints) + one ~35-line `translate_with_provider` adapter using the already-required OpenAI SDK + one dispatcher `elif` + dynamic `switch_translator` + UI options + `translator_model` in sidecars; prompt upgrade (profanity/idiom/register rules) + "! !" punctuation normalizer. **LiteLLM rejected** (dependency weight vs Colab fresh-run reliability; provider knowledge stays in CONFIG). NLLB relabeled experimental | MEDIUM-LOW — purely additive branches; existing engines unchanged |
+
+**Explicitly rejected approaches (over-dilation guard, per Owner constraint):** global `mask_base_dilate_radius` increase; lowering `ctd_mask_threshold`; re-enabling `redilate_artifact_mask` — all are the historical border-damage failure class. Rejected LiteLLM for V-5 (rationale above).
+
+## C.3 Awaiting Owner Decision
+
+Per the MANGABD-002 change-control precedent, **no Phase B/C implementation until the Owner approves each V-item**. Proposed batching (each independently verifiable/revertable): batch 1 = V-4a (docs-only) + V-2 (1 hunk, cell 6) + V-1 (2 mirrored functions, cells 11/12); batch 2 = V-3 (cells 7 + 16); batch 3 = V-5 (cells 8 + 25). Open items for the Owner: (a) per-provider default models for the V-5 registry (proposed: gpt-4o-mini / qwen-plus / deepseek-chat / qwen2.5:7b (local) / Owner's choice on OpenRouter); (b) S002 translation provider (GLM-5.3 recommends deepseek-chat; openrouter fallback); (c) confirm the V-4b manual-workflow edits (A/B/C) are in scope for this task or deferred.
+
+## C.4 S002 Re-run Plan (for Flash's re-review after implementation)
+
+Same page as S001 ("02.jpg" B/W page) for controlled A/B against S001's archived measurements; fresh Colab Run All on the Phase-C notebook commit; translation via the new provider path (recommended `deepseek`/`deepseek-chat`; NLLB not used per policy; manual post-edit available but S002 reviewed un-post-edited first to grade the raw LLM engine); archive as `samples/S002_bw_manga_llm/` with metadata recording engine+model; Flash re-reviews with S001's exact pixel checks. Acceptance targets: zero residue at the region-1 band; CJK ink height ≥0.8× Bengali and ink luminance ≤60; region-1 OCR correct or flagged (V-3 Layer 2); no new border damage; translation naturalness pass/fail vs S001 NLLB baseline on regions 1/5/6.
+
+**MANGABD-003 PHASE A STATUS: COMPLETE. Investigation and proposals only — zero source code changes (git-verified). Awaiting Owner approval.**

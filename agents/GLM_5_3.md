@@ -8,11 +8,11 @@ Lead Developer / Software Architect
 
 ## CURRENT PHASE
 
-MANGABD-002 — **COMPLETE — Phase D verified, merged to main** (task closed 2026-09-27)
+MANGABD-003 — **PHASE A COMPLETE — investigation & proposals delivered, awaiting Owner approval** (2026-09-29)
 
-Task: fresh-Colab execution reliability (see agents/TASK_002.md). The Project Owner approved DECISION.md §B.6 (Cell 14 dependency guard, verbatim) and the bundled Cell 26 change (§B.11.2 → `force=False`, PM-pre-verified semantics). Phase C applied both edits programmatically (exactly 2 hunks, 1 file, +12/−2; 29/29 checks PASS; record T2.13 below). GLM-5.3-Flash verified Phase D against the pushed artifact (5/5 steps PASS, APPROVED) and the Owner authorized the merge.
+Task: S001 visual-evidence defect remediation (5 V-items: CJK fallback metrics, mask-miss residue, vertical-note OCR, metadata correction + manual workflow, provider-flexible translation architecture). Input: Flash's S001 visual review (APPROVE_WITH_ISSUES, commit `f7aabbc`) + archived artifacts + notebook code investigation. Owner binding policies (translation engine flexibility; metadata correction without folder rename) recorded in DECISION.md §C.1 and honored throughout. Full record: "# MANGABD-003 — PHASE A INVESTIGATION & PROPOSALS (GLM-5.3)" below, incl. per-V-item evidence/root-cause/minimal-fix/regression-risk and the S002 re-run plan. **NO SOURCE CODE CHANGED.**
 
-**Final history on `main`:** `aabc592` → `f7eb7e6` "MANGABD-002: fresh-run reliability fix …" (the WIP commit `829c383` amended with the final message; tree identical) → `05d9bc6` (Flash's Phase D record, original `e9802fb`, tree/author/message preserved) → `8deff7c` (DECISION.md marked complete). Merged artifact verified byte-identical to the Phase-C-verified notebook (blob `583fa89…`). Review branch `mangabd-002-phase-c` deleted after merge. Full closure record: agents/DECISION.md §B.13.
+(Historical: MANGABD-002 — fresh-Colab execution reliability — **COMPLETE, Phase D verified, merged to main**, closed 2026-09-27; closure record below and in DECISION.md §B.13.)
 
 ---
 
@@ -720,3 +720,333 @@ RESULT: fresh-safe=True, warm-preserved=True. (Phase A/B reproductions E2/DR use
 ## T2.13.5 Phase C status
 
 **PHASE C COMPLETE — PHASE D APPROVED — MERGED TO MAIN — TASK CLOSED.** Deliverables returned via Owner: (1) edited notebook file; (2) full git diff (+12/−2, exactly 2 hunks, 1 file, file mode 100644); (3) verification checklist outputs (29/29 PASS); (4) this record. **Phase D outcome:** GLM-5.3-Flash APPROVED (5/5 steps: diff/scope audit incl. mode-flip check, calibrated static re-check with 0 abort sites, 9/9 runtime guard-equivalence matrix incl. Drive state, 30/30 cell-26 citation checks, 25-cell byte-identity scope audit) — record at agents/GLM_5_3_FLASH.md §PD.0–PD.7, verification commit `e9802fb`. **Final merge (Owner-prescribed sequence):** WIP `829c383` reworded with the final message → `f7eb7e6` (tree identical; Flash's Phase D commit `e9802fb` replayed on top → `05d9bc6`, tree/author/message preserved; trees verified identical by empty diff before any push); branch force-pushed with lease; fast-forward merged to `main` (`aabc592 → 05d9bc6`); DECISION.md marked complete (`8deff7c`); review branch deleted. Merged notebook verified byte-identical to the Phase-C-verified artifact (blob `583fa89…`, file sha256 `448540f8…`). Deferred to the Owner's first Run All: §B.10.4 live Colab confirmation (T-8) and §B.10.5 warm-path UI functional check (per §B.10.6).
+
+---
+
+# MANGABD-003 — PHASE A INVESTIGATION & PROPOSALS (GLM-5.3)
+
+## S001 Visual Evidence → Code-Actionable Defects (investigation only; NO source changes)
+
+**Mandate:** Owner task relayed 2026-09-29. Input evidence: GLM-5.3-Flash's S001 visual review (agents/GLM_5_3_FLASH.md §"VISUAL REVIEW — S001_color_webtoon", commit `f7aabbc`, verdict APPROVE_WITH_ISSUES), the archived artifacts in `samples/S001_color_webtoon/`, and the current notebook (blob identical to the MANGABD-002-verified merge; cells re-extracted and verified against the Phase-C state — only cells 14/26 differ, exactly the two Phase-C edit sites).
+
+**Owner binding policy decisions (recorded verbatim in DECISION.md §C.1):** (1) manual translation is permanent core workflow — improve, never remove; production auto-translation must be provider/model-flexible across OpenAI, Qwen, DeepSeek, Ollama, OpenRouter; NLLB is testing/experimental only, not canonical production. (2) metadata corrected to engine=nllb, source_type=B/W manga page; folder `S001_color_webtoon` NOT renamed — naming discrepancy documented in metadata/README.
+
+Citations below use the project convention *physical-cell:line* against the current notebook (cell N = zero-based notebook cell index; extraction verified this session).
+
+## V-1 — CJK Fallback Glyph Size/Weight (vertical T/L note)
+
+### Evidence
+
+- **[FACT]** The vertical-note render path is a 3-layer monkey-patch: cell 11 "QUALITY CORE FINAL" defines `_split_runs`/`get_font_fb`/`_qc_render_vertical` (11:138–174) and wraps `render_bengali_text` (11:176–187); cell 12 "QUALITY CORE (container-aware)" **redefines all three identically** (12:94–139) and wraps again (12:141–152). Cell 12 executes last, so the outermost wrapper uses the globals as last defined: the effective vertical renderer is **cell 12's** `_qc_render_vertical`, with cell 12's `get_font_fb`. The non-vertical path falls through to the cell-10 core `render_bengali_text`.
+- **[FACT]** `_main_font_ok` (12:89–92) classifies Bengali (0x0980–0x09FF), Latin (0x0000–0x00FF), and punctuation ranges as "main font"; **everything else — including kana/kanji — goes to the fallback font**. `_split_runs` (12:94–103) splits each line into main/fallback runs.
+- **[FACT]** `get_font_fb(size, bold=False)` (12:106–112) accepts `bold` but **never uses it**: it loads `MANGABD_CONFIG["rendering"]["font_fallback"]` at `int(size)` unconditionally. The fallback font is `NotoSansJP[wght].ttf` — a **variable font** downloaded to `NotoSansJP.ttf` (12:19–23). PIL's `ImageFont.truetype` loads a variable font at its **default instance (wght=400, Regular)**; no `set_variation_by_axes` call exists anywhere in the notebook (grep: 0 hits).
+- **[FACT]** The main font pair is NotoSansBengali-Regular/Bold static hinted TTFs (cell 4:398–408; variable font is only the 3rd URL fallback). `fit_font_size` (10:365–443) measures and calibrates the font size **using only the main font** (`get_font(mid, bold)` 10:415, `split_text_to_lines` 10:416, `measure_text` 10:424) — fallback runs then render at that same pixel size with **no compensation** (12:129, 12:133).
+- **[FACT]** `_qc_render_vertical` draws every run with `draw.text(..., fill=text_color+(255,))` — **no `stroke_width` on any run** (12:134), even though the core path gives overlay regions `stroke_width=1` (10:74 `stroke_width_overlay`, 10:578–579, 10:523). So the vertical path renders BOTH scripts lighter than the core path would.
+- **[TEST RESULT — Flash, pixel-measured]** Region 1 CJK runs (こがねい / おたるみ / しゅ) render at ~50% of Bengali visual height, mean ink luminance ≈90 (pale gray) vs Bengali near-black; the ORIGINAL note's glyphs measured 47.5. Rendering used bold=False (wrapper 12:147: overlay not in ["sfx","narrator"]).
+
+### Root cause (two independent components)
+
+1. **Size:** at equal em size, NotoSansBengali glyph ink (conjunct stacks) fills ~70–80% of the em, while NotoSansJP kana ink fills ~50–55% (kana are lowercase-height glyphs). `fit_font_size` calibrates to the Bengali metrics, so CJK runs inherit a size one visual-step smaller. Flash's "~50%" measurement matches this metric gap.
+2. **Weight/paleness:** the JP variable font renders at default wght=400 with thinner hairline strokes than NotoSansBengali Regular at the same size; anti-aliased ~1px strokes average to mid-gray (luminance ≈90). `get_font_fb`'s ignored `bold` parameter and the missing `stroke_width` on fallback runs leave no mechanism to compensate.
+
+### Proposed minimal change (Phase C candidate — 2 functions, mirrored in cells 11 AND 12 so the shadowed copy cannot resurface)
+
+**Edit 1 — `get_font_fb` (cell 11:149–155 and cell 12:106–112, identical text):** honor bold and the variable-font weight axis, with config knobs and hard failure fallback:
+
+```python
+_FB_CACHE = {}
+def get_font_fb(size, bold=False):
+    key = (int(size), bool(bold))
+    if key in _FB_CACHE: return _FB_CACHE[key]
+    try:
+        f = ImageFont.truetype(MANGABD_CONFIG["rendering"]["font_fallback"], int(size))
+        # MANGABD-003 V-1: match Bengali visual weight (variable font default is wght=400)
+        wght = int(MANGABD_CONFIG["rendering"].get(
+            "fallback_font_wght", 700 if bold else 600))
+        try:
+            f.set_variation_by_axes([wght])          # no-op on static fonts / old Pillow
+        except Exception:
+            pass                                      # stroke fallback below compensates
+    except Exception:
+        f = get_font(size, bold)
+    _FB_CACHE[key] = f
+    return f
+```
+
+**Edit 2 — `_qc_render_vertical` CJK draw calls (cells 11:164–171 and 12:126–134):** scale fallback runs and add a matched stroke. Replace the two `f = get_font(size, bold) if im else get_font_fb(size, bold)` sites' fallback branch and the draw call:
+
+```python
+        _fb_scale = float(MANGABD_CONFIG["rendering"].get("fallback_cjk_scale", 1.25))
+        _fb_stroke = int(MANGABD_CONFIG["rendering"].get("fallback_cjk_stroke", 1))
+        for t2, im in runs:
+            f = get_font(size, bold) if im else get_font_fb(int(size * _fb_scale), bold)
+            widths.append(draw.textlength(t2, font=f)); total += widths[-1]
+        ...
+        for (t2, im), ww in zip(runs, widths):
+            f = get_font(size, bold) if im else get_font_fb(int(size * _fb_scale), bold)
+            sw = 0 if im else _fb_stroke
+            draw.text((lx, ly), t2, font=f, fill=text_color+(255,),
+                      stroke_width=sw, stroke_fill=text_color+(255,)); lx += ww
+```
+
+Plus two config setdefaults next to the existing `font_fallback` (11:26–27 / 12:26–27): `fallback_font_wght=600`, `fallback_cjk_scale=1.25`, `fallback_cjk_stroke=1`.
+
+### Regression risk — LOW
+
+- The scale/stroke apply **only to fallback (CJK) runs inside vertical notes** — the horizontal core path, all Bengali runs, and the wrap logic are untouched. Run widths are measured per-run with the actual font used, so centering (`lx = (int(h)-total)//2`) self-adjusts (12:131).
+- Vertical fit: CJK ink at 1.25× em ≈ 65–70% em, still under the line height (1.18× em from the main font, 12:121) — no line overlap.
+- `set_variation_by_axes` is wrapped in try/except (static font or old Pillow → no-op; stroke then carries the weight). Calibrated against Flash's measurements: 1.25× addresses the ~50% ink-height gap; wght 600 + stroke 1 addresses the ≈90 vs ≈47.5 luminance gap. Both knobs are CONFIG-tunable for S002 calibration without further code edits.
+- Known non-goal: the variable-font default instance also means bold CJK currently cannot exist; Edit 1 fixes that too (wght 700 when bold).
+
+## V-2 — 11-px Mask-Miss Residue at Region 1 Bottom
+
+### Evidence
+
+- **[TEST RESULT — Flash]** 11 dark residue specks (luminance 18–24) at x=34–47, y=370–381 in final.jpg — mask-missed glyph tips of the vertical note's bottom glyphs; true ink bottom ≈ y=384 while the detection quad bottom is y=379 (box 10,81,61×298, detections.json).
+- **[FACT]** Mask build (cell 6, `detect_page` → `build_page_text_mask` 6:769–834): CTD raw confidence map → threshold 55 (6:792; set to 55 by 11:11/12:11) → MORPH_CLOSE 5×5 ×2 (6:796–806) → `clean_binary_mask` min_area=3 (6:808) → `adaptive_dilate_mask` (6:813) with **base radius 5** (6:716–742; cells 11/12 set 5, adaptive cap 15 from stroke width) → clip to region boxes +10 (6:815–826). Saved as the `mask` artifact (6:1214).
+- **[FACT]** Inpaint prepare (cell 9 `prepare_mask_for_inpaint` 9:268–312): cleans (9:294–300, close 3×3 + drop components <3 px), does **NOT** re-dilate artifact masks (9:302–303, `redilate_artifact_mask=False`), clips again to boxes+10 (9:305–309, `mask_clip_padding=10`). LaMa then consumes this mask. Cell 9 therefore faithfully preserves whatever cell 6 produced — the miss originates upstream.
+- **[FACT]** The glyph tips are dark ink (lum 18) but outside the CTD **confidence** map's flagged region; +5 px dilation from the last covered row (~y≈368–370) reaches only ~y≈373–375, leaving y≈375–381 uncovered inside the box and y=380–384 outside it.
+- **[FACT]** The residue-sweep safety nets are **dead code in the effective fresh-run path**: `kill_residual` is defined three times (cell 11:99–118 mask-based dilate=13; cell 13:4–32 same; cell 14:4–35 "v3" pixel-level), and `run_inpaint_render_all` is defined five times (cells 11, 12, 13, 15, 23) — the last two definitions are **plain** `run_inpaint_all + run_render_all` with no cleanup (15:678–691, 23:71–84). The Control Studio 🎨 button (25:358–370) calls `run_inpaint_all`/`run_render_all` directly. So in the S001 fresh Run All, **no residue sweep, no box restore, and no mask-filtering ran at all**. (This was already flagged as the "orphaned quality-core" hazard in the MANGABD-001 review; S001 is the first archived confirmation that a real defect slips through because of it.)
+- **[FACT]** Even if cell 14's v3 sweep ran, region 1 would be skipped: its solid-box gate `uniform_frac > 0.8` (14:23) fails on a dense vertical text column; margin=5 (14:28–29) strips the bottom rows of the crop; and the crop is box-limited so y≥380 is out of reach. All three sweeps are structurally blind to this residue.
+
+### Root cause
+
+Under-coverage at the bottom of tall vertical-note columns: the CTD confidence map + 5 px adaptive dilation + the detection quad (bottom 379 < true ink 384) collectively miss the bottommost glyph tips; every later stage either preserves the mask faithfully (cell 9) or is unreachable (dead kill_residual chain).
+
+### Proposed minimal change — config-gated vertical band extension in `build_page_text_mask` (cell 6, after the clip block at 6:822–825, before `return mask` at 6:827)
+
+```python
+        # MANGABD-003 V-2: vertical-note tip coverage — extend the mask a few px
+        # along the column axis ONLY for tall-narrow regions (no global dilation).
+        vpad = int(detection_cfg.get("mask_vpad_vertical", 10))
+        if vpad > 0:
+            for region in regions:
+                rw, rh = int(region["width"]), int(region["height"])
+                if rw < 90 and rh > 2 * max(1, rw):   # same predicate as the vertical renderer
+                    x, y = int(region["x"]), int(region["y"])
+                    cv2.rectangle(mask, (x, max(0, y - vpad)),
+                                  (x + rw, min(h, y + vpad)), 255, -1)
+                    cv2.rectangle(mask, (x, max(0, y + rh - vpad)),
+                                  (x + rw, min(h, y + rh + vpad)), 255, -1)
+```
+
+with `MANGABD_CONFIG["detection"].setdefault("mask_vpad_vertical", 10)` (cell 6 config block). Justification for 10: Flash's residue spans y=370–381 vs box bottom 379 — the band [y+h−10, y+h+10] = [369, 389] covers every measured speck with 1–2 px margin; 10 also equals the existing clip padding (6:819, 9:236), so the band survives cell 9's re-clip exactly (y+h+10 ≤ clip bound).
+
+### Regression risk — LOW, and specifically NOT the historical over-dilation class
+
+- The extension is confined to the region's **own column width (x..x+rw)** and only along the column axis; only tall-narrow regions (the vertical-note predicate already used by the renderer, 12:146) are touched. Bubble masks — where the historical border-damage failures happened — are untouched (the predicate excludes them), and the global `mask_base_dilate_radius` stays 5.
+- Region 1 specifics: column x=10..71; the panel border Flash measured at x≈75 is outside the x-range; the band re-inpaints ≤20 rows of a 298-row white column (≤7% of region area) that the renderer immediately overdraws.
+- Worst case if a vertical note sits flush against artwork below: the band would inpaint ≤10 px of that artwork's top edge. Mitigation: `mask_vpad_vertical` is a single config knob (set 0 to disable, or 6 for conservative mode); S002 re-review will verify with the same pixel measurements Flash used on S001.
+- Explicitly rejected alternatives: raising `mask_base_dilate_radius` globally (reintroduces the over-dilation failure class on every region); lowering `ctd_mask_threshold` (adds noise pixels page-wide with no geometric guarantee); re-enabling `redilate_artifact_mask` (same global-dilation class at the inpaint stage).
+
+## V-3 — OCR Mis-transcription of the Vertical Mixed-Script Note
+
+### Evidence
+
+- **[TEST RESULT — Flash]** The original region-1 note reads "…while **Otearai** is spelt as **おてあらい** and both **"U"** is pronounce as **"I"** which is a vowel"; ocr.json/translation.json record "**Otarumi** … **おたるみ** … **しゅ … しゅ**" — two kana-romanization mis-transcriptions that propagated verbatim into the NLLB prompt and the rendered note.
+- **[FACT]** ocr.json region 1: `confidence 0.95, status "ok", warnings []` — the engine was **confidently wrong**. Any confidence-gated QA (existing cell 16 thresholds: low 0.65 / critical 0.35, 16:270–282) cannot catch this failure.
+- **[FACT]** `ocr_region` (7:324–427) crops with `crop_bubble_with_context(context_ratio=0.15)` (7:349–353) — region 1's `angle=0.0` (detections.json), so the rotated-crop branch (7:346–347, requires |angle|>5) never engages; the tall 61×298 strip is passed as-is to the VLM.
+- **[FACT]** `preprocess_for_ocr` (7:208–313) upscales/denoises/CLAHE/pads — **no rotation for vertical text**; overlay regions get BORDER_REPLICATE padding (7:279–287).
+- **[FACT]** The OCR prompt (7:75–85) is: "Extract all English text visible in this image exactly as written. Do not translate. …" — an English-only instruction with no vertical-text or mixed-script guidance, while the note is English + kana typeset vertically (rotated 90°).
+
+### Root cause
+
+A geometric/linguistic double mismatch: the VLM receives a rotated (vertical) mixed-script strip but is prompted for horizontal English-only extraction, and VLMs systematically garble rotated CJK (romanizing kana by shape-adjacency: おてあらい→おたるみ, quoted "U"/"I"→"しゅ"). The pipeline has no vertical-region special-casing at OCR time (even though the renderer already special-cases exactly these regions — same predicate 12:146).
+
+### Proposed change — two independent layers (Owner offered either/or; both are small)
+
+**Layer 1 (preprocess, primary) — dual-orientation OCR for tall-narrow regions** (cell 7, inside `ocr_region`, replacing 7:392–394):
+
+```python
+    # MANGABD-003 V-3: vertical notes — try both orientations, keep the better read
+    rh, rw = preprocessed.shape[:2]
+    is_vertical_note = rw < 90 and rh > 2 * max(1, rw)
+    if is_vertical_note:
+        rot_cw = cv2.rotate(preprocessed, cv2.ROTATE_90_CLOCKWISE)
+        rot_ccw = cv2.rotate(preprocessed, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        results = []
+        for cand in (preprocessed, rot_cw, rot_ccw):
+            r = qwen.recognize(cand, prompt=prompt)
+            score = float(r.get("confidence", 0.0)) + float(
+                r.get("language_score", {}).get("en", 0.0))
+            results.append((score, r))
+        result = max(results, key=lambda t: t[0])[1]
+    else:
+        result = qwen.recognize(preprocessed, prompt=prompt)
+```
+
+Best-of-three by confidence + English score; the correct orientation of a vertical note reads horizontally after one of the two 90° rotations, and the wrong rotation degrades both metrics — the max is a robust selector. Prompt tweak (same edit): when `is_vertical_note`, swap in `MANGABD_CONFIG["ocr"]["vertical_prompt"]` — the default prompt plus "The text may contain Japanese kana mixed with English. Transcribe every character exactly as written; do not romanize kana."
+
+**Layer 2 (QA safety net, per the Owner's explicit option) — mandatory manual-review flag in cell 16's `inspect_ocr_quality`** (insert after the short-text check, artifact branch ~16:365; mirror in the translation_df branch ~16:431):
+
+```python
+            # MANGABD-003 V-3: mixed-script vertical notes are misread-prone (S001 evidence)
+            rw_, rh_ = int(region.get("width", 0)), int(region.get("height", 1))
+            has_kana = bool(re.search(r"[\u3040-\u30FF\u3400-\u4DBF]", text))
+            has_latin = bool(re.search(r"[A-Za-z]", text))
+            if rw_ < 90 and rh_ > 2 * max(1, rw_) and has_kana and has_latin:
+                issues.append(add_quality_issue(
+                    page_id, region_id, "ocr",
+                    "Vertical mixed-script note (kana + Latin) — OCR unreliable",
+                    severity="warning",
+                    suggestion="Mandatory manual verification of this OCR text",
+                ))
+```
+
+(`re` is already imported in cell 16; severity "warning" auto-adds the region to `manual_review_flags` via 16:172–185.) Even if Layer 1's best-of-three still misreads, Layer 2 guarantees the region lands on the manual-review list — the S001 failure mode (confident 0.95, silent) becomes impossible to miss.
+
+### Regression risk — LOW
+
+- Layer 1 costs 2 extra VLM calls **only for tall-narrow regions** (typically 0–1 per page); same Qwen instance, no new dependency. Non-vertical regions take the identical single call path. Mis-selection risk: the wrong orientation scored higher — bounded by Layer 2's flag and by S002 re-review; the two metrics (confidence + en score) both degrade on rotated text, and S001's wrong-orientation baseline scored 0.95 only because NO rotation was offered.
+- Layer 2 can only ADD a warning-severity flag; it cannot fail a page (score weight is the existing "warning" class) and fires only on the narrow geometry+script predicate. False positives (a correctly-read vertical note) cost one manual glance — intended per Owner policy (manual review is the core workflow).
+
+## V-4 — Metadata Correction & Manual Workflow Improvement
+
+### V-4a — Corrected `samples/S001_color_webtoon/metadata.json` (rev 2, exact proposed content)
+
+- **[FACT]** Current metadata (rev 1, written verbatim per the Owner's instruction) says `translation_engine: "manual"` and `source_type: "color webtoon long strip"`.
+- **[TEST RESULT — Flash, evidence-based]** engine is **nllb** (translation.json `translator_engine: "nllb"` on all 6 regions + 5 MT fingerprints: "যৌনসঙ্গম" for "fuck", "সে আমার ভিতরে ছিল" for "she was into me", "ভোকাল" for "vowel", "! !" / "! ?" tokenizer spacing, honorific-register errors); the page is **100% grayscale (0 chroma pixels)** — a B/W manga page, not a color webtoon.
+- Flash's review also required that samples remain immutable evidence and the fix land as "a new metadata revision". The Owner's policy: correct the values, do NOT rename the folder. Proposal satisfies all three: **revise metadata.json in place to rev 2, preserve the original as `metadata.rev1.json`** (the pipeline artifacts — images and the three sidecars — remain byte-untouched):
+
+```json
+{
+  "sample_id": "S001_color_webtoon",
+  "captured_at": "2026-09-29",
+  "notebook_commit": "9f4d82a",
+  "pipeline_variant": "fresh Run All success (MANGABD-002 verified)",
+  "source_type": "B/W manga page",
+  "translation_engine": "nllb",
+  "owner_notes": "first fresh-run success; second test image",
+  "metadata_revision": 2,
+  "revision_note": "rev2 (2026-09-29, MANGABD-003 Phase A): corrected translation_engine manual->nllb and source_type color webtoon long strip->B/W manga page per GLM-5.3-Flash visual review (commit f7aabbc); rev1 preserved verbatim in metadata.rev1.json",
+  "naming_note": "Folder name S001_color_webtoon is pipeline-variant labeling from rev1 and is intentionally NOT renamed (Owner decision 2026-09-29); the actual content is a grayscale B/W manga page (0 chroma, Flash-measured)"
+}
+```
+
+Also one line added to `samples/README.md`'s Contents table: "(S001's folder name is a rev1 pipeline-variant label retained by Owner decision; content is a B/W manga page — see its metadata.json naming_note.)"
+
+**Risk — NONE** (documentation only; no code; evidence chain preserved via rev1 sidecar).
+
+### V-4b — Manual translation workflow improvements (preserve the core loop)
+
+**[FACT]** Current manual loop: `export_ai_text()` (8:870–973) writes `[page.jpg:1] English → Bengali` one line per region + JSON sidecar; the translator edits in any text editor (or the Control Studio COPY-PASTE textarea, 25:286–289); `parse_ai_text` (8:812–867) re-reads it with `rsplit("→", 1)` (8:855–857 — correctly tolerant of arrows inside the English side); `apply_translations_from_text` (22:185–264) adds a rescue for Bengali-pasted-before-the-arrow (22:230–233); `apply_manual_translation` (8:1023–1092) validates Bengali (8:1076) and stamps `translator_engine="manual"`. The UI (25:261–289) has load-original / paste / apply / file-upload buttons; cell 20/21 apply+display.
+
+**[FACT]** Gaps found (all cheap to fix, none require touching the core loop):
+
+1. **Silent line loss** — `parse_ai_text` skips any line that does not match `^\[page:id\]` (8:843–846) with no report; a translator's hard-wrapped line (mobile editors wrap long text with real newlines) is **silently dropped**, and a typo'd header loses that region's translation. This is the single biggest correctness risk in the manual path.
+2. **No diff feedback on import** — the apply step reports only a count (22:257); nothing tells the translator WHICH regions are still missing before render.
+3. **No context in the export** — one flat line per region: no region type, no confidence/low-confidence marker, no page-position hint, so the translator cannot triage (e.g. the S001-style vertical note that needs the most care).
+
+**Proposed improvements (3 small edits, all preserving the format and loop):**
+
+- **Edit A (validation, cell 8 `parse_ai_text`, ~8:843–846 + return):** count non-comment, non-empty lines that fail the header regex and return them in the dict under a `("_unparsed", 0)` sentinel key; `apply_translations_from_text` (22:235–238 print block) then prints them as `⚠️ N unparsed lines (check headers/line-wraps): <first 3 shown>`. Silently-lost translations become visible losses.
+- **Edit B (coverage report, cell 22 after 22:257):** after apply, compute `missing = regions without valid Bengali` from `translation_df` and print `⚠️ M of T regions still untranslated — page:id list (first 10)` so the Owner knows whether pressing 🎨 is safe. (Data already in the df; 6 lines of code.)
+- **Edit C (context, cell 8 `export_ai_text`, ~8:941):** change the line prefix to `[page:id|TYPE] ` (e.g. `[02.jpg:1|overlay]`) **keeping the arrow suffix identical**; extend the header comment (8:907–913) to document it; `parse_ai_text` regex becomes `^\[([^:\]|]+):(\d+)(?:\|([a-z_]+))?\]` — old headerless files still parse (the `|TYPE` group is optional), so **old exports remain valid inputs**. Region type already exists per row (8:949 records include it). Translators can now see which lines are overlays/vertical notes.
+
+**Rejected (scope discipline):** per-region crop thumbnails in the export (would change the file format materially), inline editor widgets in the UI (Colab-textarea instability; the paste box already works on mobile), and auto-translation pre-fill of the manual export (Owner keeps manual pure; can be done by choice via the NLLB button then exporting).
+
+**Regression risk — LOW.** Edits A/B are print/report-only. Edit C is backward-compatible by construction (optional regex group) and its failure mode is cosmetic (unknown type → group None). The core apply path (`apply_manual_translation`) is untouched.
+
+
+## V-5 — Translation Engine Architecture (provider/model flexibility)
+
+### Evidence
+
+- **[FACT]** Cell 8 hardcodes exactly three auto engines: `translate_with_gemini` (google-genai SDK, 8:427–464), `translate_with_chatgpt` (OpenAI SDK, default base_url, 8:475–526), `translate_with_nllb` (transformers, 8:537–666). The dispatcher `translate_text` branches on literal engine names (8:747 gemini / 8:754 chatgpt / 8:761 nllb / 8:768–770 unknown-engine → empty). `switch_translator` validates against a hardcoded list `["manual", "gemini", "chatgpt", "nllb"]` (8:783). UI offers manual/gemini/nllb only (25:276).
+- **[FACT]** The OpenAI SDK is already a dependency (chatgpt path), and `OpenAI(api_key=…, base_url=…)` accepts any OpenAI-compatible endpoint — which covers **all five Owner-required providers**: OpenAI (native), DeepSeek (`https://api.deepseek.com`, OpenAI-compatible per their docs), Qwen DashScope compatible-mode (`https://dashscope.aliyuncs.com/compatible-mode/v1`), Ollama (`http://localhost:11434/v1`, key optional), OpenRouter (`https://openrouter.ai/api/v1`; also fronts qwen/deepseek/gemini models).
+- **[FACT]** Shared translation assets are already provider-neutral: `build_translation_prompt` (8:244–301, region-type aware + glossary lines), `translate_with_retry` (8:378–416, 3 retries w/ backoff), `clean_translation` (8:154–187), SFX glossary short-circuit (8:733–737).
+- **[TEST RESULT — Flash]** NLLB quality is unusable-as-final for profanity/idiom (S001 regions 1/5/6: "যৌনসঙ্গম" for "fuck", "সে আমার ভিতরে ছিল" for "she was into me", "! !" tokenizer spacing) — confirming the Owner's policy to demote NLLB to experimental.
+- **[FACT]** `MANGABD_SECRETS` is a flat dict with runtime key injection already proven in the UI (25:343 writes `gemini_api_key` from a Password widget); the sanitizer strips keys before config save, so adding provider keys follows an established pattern.
+
+### Proposed architecture — provider registry + one OpenAI-compatible adapter (NO new dependencies; NO core-loop rewrite)
+
+**Why not LiteLLM:** it would add a large dependency tree to a Colab notebook whose fresh-run reliability MANGABD-002 just stabilized (dependency surface = pip-install failure modes), and its model-string routing would move provider knowledge OUT of the Owner's CONFIG. The native adapter is ~35 lines, uses the already-required OpenAI SDK, and keeps every knob in `MANGABD_CONFIG`. (If the Owner later wants LiteLLM's provider list, the adapter's call site is a single function to swap.)
+
+**Design (Phase C candidate — 3 edits in cell 8 + 1 in cell 25):**
+
+1. **Registry (cell 8 config block, after 8:78):**
+
+```python
+MANGABD_CONFIG["translation"].setdefault("providers", {
+    "openai":     {"base_url": "https://api.openai.com/v1",
+                   "model": "gpt-4o-mini",        "api_key_env": "openai_api_key"},
+    "qwen":       {"base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                   "model": "qwen-plus",           "api_key_env": "qwen_api_key"},
+    "deepseek":   {"base_url": "https://api.deepseek.com",
+                   "model": "deepseek-chat",       "api_key_env": "deepseek_api_key"},
+    "ollama":     {"base_url": "http://localhost:11434/v1",
+                   "model": "qwen2.5:7b",           "api_key_env": None},
+    "openrouter": {"base_url": "https://openrouter.ai/api/v1",
+                   "model": "google/gemini-2.0-flash-001", "api_key_env": "openrouter_api_key"},
+})
+```
+
+   Models are CONFIG values — switching DeepSeek-chat→DeepSeek-reasoner or pointing OpenRouter at any of its 300+ models is a config edit, zero code. (Default models to be confirmed by the Owner in Phase B.)
+
+2. **Adapter (cell 8, after `translate_with_chatgpt` ~8:526):**
+
+```python
+def translate_with_provider(text, region_type="bubble", engine="openai"):
+    """OpenAI-compatible provider adapter (openai/qwen/deepseek/ollama/openrouter)."""
+    prov = MANGABD_CONFIG["translation"].get("providers", {}).get(engine)
+    if not prov:
+        log_event(f"Unknown provider: {engine}", level="WARN"); return ""
+    api_key_env = prov.get("api_key_env")
+    api_key = MANGABD_SECRETS.get(api_key_env, "") if api_key_env else "ollama"
+    if api_key_env and not api_key:
+        log_event(f"{engine} API key not set ({api_key_env})", level="WARN"); return ""
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key, base_url=prov["base_url"])
+        prompt = build_translation_prompt(text, region_type=region_type)
+        response = client.chat.completions.create(
+            model=prov.get("model", "gpt-4o-mini"),
+            messages=[
+                {"role": "system", "content": (
+                    "You are a professional English-to-Bengali manga translator. "
+                    "Return only the Bengali translation.")},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.3, max_tokens=512,
+        )
+        return clean_translation(response.choices[0].message.content.strip())
+    except Exception as exc:
+        log_event(f"{engine} translation failed: {str(exc)[:120]}", level="WARN")
+        return ""
+```
+
+   Note: Ollama accepts any non-empty key string as auth placeholder; real auth is the local server. `translate_with_chatgpt` remains as a legacy alias for saved configs and is behaviorally identical to `translate_with_provider(engine="openai")`.
+
+3. **Dispatcher (cell 8, insert before the `else` at 8:768):**
+
+```python
+    elif engine in MANGABD_CONFIG["translation"].get("providers", {}):
+        result = translate_with_retry(
+            translate_with_provider, text, region_type=region_type, engine=engine,
+        )
+```
+
+   and `switch_translator` valid list (8:783) becomes `["manual", "gemini", "chatgpt", "nllb"] + list(MANGABD_CONFIG["translation"].get("providers", {}).keys())`. Sidecar fidelity: `translate_page` already records `translator_engine`; **add `"translator_model"` to the record dict** (8:1128–1136 build_translation_records_from_df — one line, backward-compatible additive field) so S002+ evidence shows which model produced each run.
+
+4. **UI (cell 25, 25:276):** extend options to `[("📝 MANUAL","manual"), ("💎 GEMINI","gemini"), ("🌐 OPENROUTER","openrouter"), ("🐉 DEEPSEEK","deepseek"), ("☁️ QWEN","qwen"), ("🖥️ OLLAMA (local)","ollama"), ("📚 NLLB (experimental)","nllb")]`, and add one Password box + handler mirroring the gemini-key pattern (25:290–291, 25:341–349) for the selected provider's key. NLLB relabeled "experimental" per Owner policy.
+
+5. **Prompt upgrade for LLM providers (quality, addresses Flash's translation findings):** extend `build_translation_prompt`'s rules (8:262–270) with two lines: "Render profanity/idiom with natural colloquial Bengali equivalents — never clinical/literal word swaps." and "Fix grammar and word order into natural Bengali; preserve the speaker's register (casual manga dialogue, not honorific unless clearly politeness-marked)." Plus a 2-line punctuation normalizer in `clean_translation` (8:184–186 whitespace block): `text = re.sub(r"!\s+!", "!!", text); text = re.sub(r"!\s+\?", "!?", text)` — kills the NLLB "! !" tokenizer artifact class on every engine at zero risk.
+
+**Switching providers via CONFIG (Owner requirement, verbatim satisfied):** `MANGABD_CONFIG["translation"]["engine"] = "deepseek"` (or `switch_translator("deepseek")`, or the UI selector) — the core loop (`translate_page` → `translate_text` → adapter) is untouched; model/base_url/key all live in the providers dict. Multi-provider A/B: change `engine` between runs; sidecars record engine+model per run.
+
+### Regression risk — MEDIUM-LOW
+
+- Existing engines (manual/gemini/chatgpt/nllb) keep their exact branches — the new `elif` only adds a branch, so saved sessions and configs behave identically. The adapter is additive; the OpenAI SDK call mirrors the proven chatgpt path (8:487–517) with only base_url/model parameterized.
+- Real risks: (a) per-provider auth quirks (Ollama key placeholder, OpenRouter optional `HTTP-Referer` header) — surfaced as logged WARN + empty translation, which the existing retry/failure path already handles; (b) provider models' output style variance — mitigated by the shared prompt + `clean_translation`, and per-run `translator_model` in sidecars keeps S002 evidence honest; (c) key management surface grows by 4 keys — same pattern as gemini (Password widget → MANGABD_SECRETS, sanitizer strips on save).
+- Prompt additions apply to gemini/provider paths only if appended to the shared builder — they also reach NLLB's… no: `build_translation_prompt` is used by gemini/chatgpt/provider only; `translate_with_nllb` passes raw text (8:640s) — NLLB is unaffected (experimental, unchanged).
+
+## S002 Re-run Plan (proposal for Flash's re-review after Phase C)
+
+1. **Page:** the SAME page as S001 (the "02.jpg" B/W page). Rationale: identical quads/detections make every V-fix a controlled A/B against S001's archived measurements — Flash can re-run the exact pixel checks (region-1 CJK ink height/luminance, residue scan at 34–47×370–381, OCR cross-check, border integrity at x≈75) and any delta is attributable to the fix, not the input.
+2. **Translation engine:** **an LLM provider through the new adapter — recommend `deepseek` (`deepseek-chat`) as primary**, with `openrouter` as fallback if the Owner's key situation prefers it; **NLLB explicitly NOT used** (Owner policy: experimental only). The Owner supplies the API key via the UI Password box at runtime (same as the gemini-key flow). Manual post-edit of the three S001-garbage regions (1/5/6) remains available per the core-workflow policy — but S002 should first be reviewed un-post-edited to grade the raw LLM engine.
+3. **Procedure:** fresh Colab session → fresh Run All (MANGABD-002-verified flow, notebook at the Phase-C commit) → upload 02.jpg → detect+OCR → translate with deepseek → inpaint+render (Control Studio 🎨 or cell 26) → export → Owner ZIPs the same 7 artifact types → GLM-5.3 archives as `samples/S002_bw_manga_llm/` (name carries corrected conventions from the start; metadata.json rev1 with engine=deepseek, source_type="B/W manga page", model recorded) → Flash re-reviews against the S001 baseline.
+4. **Acceptance targets for Flash (from S001 measurements):** zero residue specks at the region-1 band; CJK ink height ≥ 0.8× Bengali run height and ink luminance ≤ 60 (vs S001's ~50%/≈90); region-1 OCR contains "Otearai"/"おてあらい" (or is flagged for manual review via V-3 Layer 2); no new border damage anywhere (diff-vs-S001 outside masks); translation naturalness on regions 1/5/6 graded pass/fail vs the S001 NLLB baseline.
+
+## Phase A Status
+
+**COMPLETE — INVESTIGATION & PROPOSALS ONLY. NO SOURCE CODE CHANGED** (verified: `git status` clean on the notebook; all notebook evidence cited from a read-only re-extraction). Awaiting Owner approval per V-item before any Phase B/C implementation. Suggested phasing for Phase C: V-4a (docs-only, zero risk) + V-2 (1 hunk, cell 6) + V-1 (2 mirrored functions, cells 11/12) as batch 1; V-3 (cell 7 + cell 16) as batch 2; V-5 (cell 8 + cell 25) as batch 3 — each batch independently verifiable and revertable, per the MANGABD-002 change-control precedent.
