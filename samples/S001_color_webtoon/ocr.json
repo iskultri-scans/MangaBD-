@@ -1,0 +1,278 @@
+[
+  {
+    "region": {
+      "id": 1,
+      "page_id": "02.jpg",
+      "x": 10,
+      "y": 81,
+      "width": 61,
+      "height": 298,
+      "quad": [
+        [
+          10,
+          81
+        ],
+        [
+          71,
+          81
+        ],
+        [
+          71,
+          379
+        ],
+        [
+          10,
+          379
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "overlay",
+      "detector_class": "text_free",
+      "detector_score": 0.8977066278457642,
+      "parent_bubble_id": null
+    },
+    "ocr": {
+      "text": "T/L note: Koganei in Hiragani is spelt こがねい while Otarumi is spelt as おたるみ and both しゅ is pronounced as しゅ which is a vowel",
+      "confidence": 0.95,
+      "engine": "qwen",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok"
+    }
+  },
+  {
+    "region": {
+      "id": 2,
+      "page_id": "02.jpg",
+      "x": 218,
+      "y": 110,
+      "width": 87,
+      "height": 156,
+      "quad": [
+        [
+          218,
+          110
+        ],
+        [
+          305,
+          110
+        ],
+        [
+          305,
+          266
+        ],
+        [
+          218,
+          266
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9503509402275085,
+      "parent_bubble_id": 2
+    },
+    "ocr": {
+      "text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!",
+      "confidence": 0.95,
+      "engine": "qwen",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok"
+    }
+  },
+  {
+    "region": {
+      "id": 3,
+      "page_id": "02.jpg",
+      "x": 403,
+      "y": 340,
+      "width": 204,
+      "height": 216,
+      "quad": [
+        [
+          403,
+          340
+        ],
+        [
+          607,
+          340
+        ],
+        [
+          607,
+          556
+        ],
+        [
+          403,
+          556
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9521141052246094,
+      "parent_bubble_id": 5
+    },
+    "ocr": {
+      "text": "MY NAME'S KOGANEI YOU DUMBASS!",
+      "confidence": 0.95,
+      "engine": "qwen",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok"
+    }
+  },
+  {
+    "region": {
+      "id": 4,
+      "page_id": "02.jpg",
+      "x": 76,
+      "y": 361,
+      "width": 103,
+      "height": 109,
+      "quad": [
+        [
+          76,
+          361
+        ],
+        [
+          179,
+          361
+        ],
+        [
+          179,
+          470
+        ],
+        [
+          76,
+          470
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9581359028816223,
+      "parent_bubble_id": 3
+    },
+    "ocr": {
+      "text": "WHO THE HELL IS THAT PERSON!?",
+      "confidence": 0.95,
+      "engine": "qwen",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok"
+    }
+  },
+  {
+    "region": {
+      "id": 5,
+      "page_id": "02.jpg",
+      "x": 197,
+      "y": 672,
+      "width": 128,
+      "height": 140,
+      "quad": [
+        [
+          197,
+          672
+        ],
+        [
+          325,
+          672
+        ],
+        [
+          325,
+          812
+        ],
+        [
+          197,
+          812
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9660468697547913,
+      "parent_bubble_id": 4
+    },
+    "ocr": {
+      "text": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?",
+      "confidence": 0.95,
+      "engine": "qwen",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok"
+    }
+  },
+  {
+    "region": {
+      "id": 6,
+      "page_id": "02.jpg",
+      "x": 101,
+      "y": 880,
+      "width": 131,
+      "height": 204,
+      "quad": [
+        [
+          101,
+          880
+        ],
+        [
+          232,
+          880
+        ],
+        [
+          232,
+          1084
+        ],
+        [
+          101,
+          1084
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.972594141960144,
+      "parent_bubble_id": 1
+    },
+    "ocr": {
+      "text": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+      "confidence": 0.95,
+      "engine": "qwen",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok"
+    }
+  }
+]
