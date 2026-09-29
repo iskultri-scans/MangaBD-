@@ -7,6 +7,8 @@
 MANGABD-001 COMPLETE (dual-agent audit + comparison; historical record below).
 MANGABD-002 COMPLETE — Phase A (dual independent investigation) → Phase B (second-pass review, final proposal §B.6) → **Phase C (Owner-approved implementation, 2 hunks, +12/−2, one file — verified 29/29 checks)** → **Phase D (GLM-5.3-Flash independent verification: 5/5 steps PASS, APPROVED — commit `e9802fb` on the review branch)** → merged to `main` (fast-forward `aabc592 → 05d9bc6`, fix commit `f7eb7e6` with the final message; see §B.13).
 
+**VISUAL EVIDENCE AVAILABLE — NO_VISUAL_EVIDENCE gap CLOSED (2026-09-29).** The Project Owner uploaded the first sample artifacts to the repo root as a ZIP (commit `59be2ff`, "Add files via upload"); GLM-5.3 extracted and verified them into `samples/S001_color_webtoon/` (commit `5457f3f`): `original.jpg`, `text_mask.png`, `inpainted.png`, `final.jpg` (all 844×1200), sidecars `detections.json`, `ocr.json`, `translation.json` (6 regions each, valid JSON), and `metadata.json` (provenance: fresh Run All success, notebook commit `9f4d82a`, second test image). GLM-5.3-Flash has been assigned the independent visual review — see `agents/GLM_5_3_FLASH.md` (CURRENT PHASE).
+
 **Source code was modified exactly once — in Phase C, strictly within the Owner-approved 2-edit scope (§B.6 guard + §B.11.2 cell-26 bundle). Phases A/B/D modified zero source.**
 
 ---
@@ -26,9 +28,9 @@ The Project Owner has final authority over major changes.
 
 ## CURRENT TASK
 
-MANGABD-002 — Fresh-Colab Execution Reliability (investigation complete; proposal awaiting Owner approval)
+S001 VISUAL REVIEW (new; formal task ID pending Owner ratification) — GLM-5.3-Flash to independently review the archived visual evidence in `samples/S001_color_webtoon/` (initiated 2026-09-29 at the Project Owner's request via GLM-5.3; see agents/GLM_5_3_FLASH.md, CURRENT PHASE).
 
-(Historical: MANGABD-001 — Initial Codebase Audit, Phase 1, complete; record below)
+(Historical: MANGABD-002 — Fresh-Colab Execution Reliability, complete; MANGABD-001 — Initial Codebase Audit, Phase 1, complete; records below)
 
 ---
 
@@ -86,7 +88,7 @@ Both agents independently reached these conclusions; GLM-5.3 re-verified each du
 
 **Process facts**
 17. No secrets embedded (both agents ran independent scans; sanitizer strips key names containing `api_key|token|secret|password` before config save).
-18. Zero image outputs in the notebook and zero image files in the repo — **NO_VISUAL_EVIDENCE_AVAILABLE**; output quality is unassessable by anyone until sample artifacts are committed.
+18. Zero image outputs in the notebook and zero image files in the repo — **NO_VISUAL_EVIDENCE_AVAILABLE**; output quality is unassessable by anyone until sample artifacts are committed. **[CLOSED 2026-09-29 — visual evidence now archived at `samples/S001_color_webtoon/` (commit `5457f3f`); see STATUS.]**
 19. Stored outputs prove a real run on 2026-08-31 12:18 (Python 3.13.15, T4, 14.56 GB, base dir `/content/mangabd`, Drive unmounted, `hf_token` not set).
 
 ---
@@ -198,7 +200,7 @@ Consolidated facts confirmed by BOTH agents with independent line-level evidence
 13. In-place artifact mutation sites and irreversibility (11:96/117/130, 13:31). [FACT]
 14. UI button bypass (25:363–365); `reset_checkpoint` memory-only (25:230–245). [FACT]
 15. Secrets: none embedded; sanitizer active; both agents' scans clean. [TEST RESULT]
-16. Zero image outputs / zero image files → NO_VISUAL_EVIDENCE_AVAILABLE. [TEST RESULT]
+16. Zero image outputs / zero image files → NO_VISUAL_EVIDENCE_AVAILABLE. [TEST RESULT] **[CLOSED 2026-09-29 — visual evidence now archived at `samples/S001_color_webtoon/` (commit `5457f3f`).]**
 
 ---
 

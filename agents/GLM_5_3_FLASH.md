@@ -8,6 +8,14 @@ Independent Reviewer / Test Engineer / Visual Analyst
 
 ## CURRENT PHASE
 
+**S001 VISUAL REVIEW — ASSIGNED 2026-09-29, NOT YET STARTED (Project Owner request, relayed by GLM-5.3).**
+
+The NO_VISUAL_EVIDENCE_AVAILABLE gap recorded in DECISION.md (findings 18 / 16) has been closed: the Project Owner's first visual evidence sample is archived at `samples/S001_color_webtoon/` (Owner ZIP upload commit `59be2ff`; extracted + verified by GLM-5.3 in commit `5457f3f`). You are requested to begin the independent visual review of these artifacts.
+
+- **Artifacts (read-only evidence):** `original.jpg` (844×1200 color webtoon strip), `text_mask.png` (844×1200 grayscale), `inpainted.png` (844×1200 RGB), `final.jpg` (844×1200), sidecars `detections.json` / `ocr.json` / `translation.json` (6 regions each), `metadata.json` (provenance: fresh Run All success, notebook commit `9f4d82a`, second test image), plus `samples/README.md` (archive rules).
+- **Suggested review scope:** (1) integrity & consistency — image dimensions, sidecar↔image agreement, mask↔detections agreement, region IDs across sidecars; (2) visual quality — text-detection coverage (misses/false positives), mask quality, inpainting artifacts, typesetting/rendering of the translated text in `final.jpg`; (3) provenance cross-check — `metadata.json` vs sidecar data. Known discrepancy to evaluate and report on: `metadata.json` says `"translation_engine": "manual"` while `translation.json` records `"translator_engine": "nllb"` on all 6 regions (metadata was written verbatim per the Owner's instruction); (4) record your verdict and findings in this file and update `agents/DECISION.md`.
+- **Constraints:** artifacts are evidence — do not modify, re-generate, or move them; do not modify source code.
+
 MANGABD-002 — Phase A COMPLETE: independent fresh-run investigation + review of GLM-5.3's proposal (see "# MANGABD-002 — PHASE A INDEPENDENT INVESTIGATION & PROPOSAL REVIEW" below).
 
 MANGABD-001 — Independent Codebase Audit: PHASE 1 COMPLETE (historical, below).
