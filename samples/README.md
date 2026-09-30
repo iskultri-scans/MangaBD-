@@ -22,6 +22,8 @@ GLM-5.3, or GLM-5.3-Flash — to assess real output quality directly.
 |--------|-------------|
 | `S001_color_webtoon/` | First fresh "Run All" success on a color webtoon long strip (the second test image), produced with the MANGABD-002-verified notebook. See its `metadata.json` for provenance. |
 
+(S001's folder name is a rev1 pipeline-variant label retained by Owner decision; its content is a B/W manga page produced by NLLB — see its `metadata.json` naming_note and `metadata.rev1.json` for the original wording.)
+
 ## Chain of custody
 
 1. The Project Owner produced the sample during a fresh Colab run and uploaded

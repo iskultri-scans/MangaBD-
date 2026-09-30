@@ -1,0 +1,9 @@
+{
+  "sample_id": "S001_color_webtoon",
+  "captured_at": "2026-09-29",
+  "notebook_commit": "9f4d82a",
+  "pipeline_variant": "fresh Run All success (MANGABD-002 verified)",
+  "source_type": "color webtoon long strip",
+  "translation_engine": "manual",
+  "owner_notes": "first fresh-run success; second test image"
+}
