@@ -948,3 +948,110 @@ Verified facts:
 **APPROVE_WITH_CHANGES.**
 
 All five Phase A investigations are factually sound — every cited cell:line was re-verified against the notebook and every pixel claim re-measured against the S001 artifacts, with only one trivial factual slip (`re` import location). The architecture choices (live-path V-2 band, native OpenAI-compatible adapter, LiteLLM rejection, immutability-preserving metadata rev2) are endorsed. Phase C implementation is approved **subject to the required amendments**: (1) V-1 — post-scale line-width re-check (or scale-then-fit) + baseline alignment via font metrics; (2) V-3 Layer 1 — drop the upright candidate when the vertical predicate fires, explicit rotated-first tie-break, log chosen orientation + scores; (3) V-4b — defer Edit C (or amend to both parsers + docs + tests); (4) V-5 — `key_env` field rename (sanitizer compatibility) + closure-bound `engine` in the retry call. Items without amendments (V-2 entire, V-4a, V-3 Layer 2, V-5 architecture) may proceed as proposed. Per DECISION.md §C.3, Owner approval per V-item remains the gate before any Phase C code lands; this review discharges the Phase B verification step of that gate.
+
+# MANGABD-003 — PHASE D VERIFICATION — BATCH 1 (GLM-5.3-FLASH, Independent Reviewer)
+
+**Date:** 2026-09-30 · **Under review:** commit `2066dea` ("WIP: MANGABD-003 Phase C Batch 1 — awaiting Flash Phase D verification"), branch `mangabd-003-batch1` · **Base:** main @ `c2e5754` (TASK_003.md task book commit; merge-base = base, linear, single commit) · **Discipline:** TASK_003.md "VERIFICATION PROTOCOL (Phase D)" + RULES OF ENGAGEMENT 2–4 + DECISION.md §C gating. **No source code modified; no amend; no merge.**
+
+**Method:** every check re-executed against the pushed bytes of `2066dea` (git-blob extraction, AST spans, byte compares, and a fresh runtime harness exec'd from those bytes). GLM-5.3's self-report (GLM_5_3.md T3.20–T3.24) was read for claims inventory only and NOT trusted; all numbers below are independently re-derived. Verification scripts: `m003b1_d1_audit.py`, `m003b1_d3_mirror_v1.py`, `m003b1_d6_v4a.py`, `m003b1_d8_runtime_v1v2.py`, `m003b1_d8_runtime_v4a.py`, `m003b1_d9_meta_ast.py` (reviewer sandbox), plus the MANGABD-002 Phase D instruments `m002_sim_v2.py` / `m002_flash_repro.py` re-run against this branch's notebook.
+
+## PD.1 — DIFF & SCOPE AUDIT — PASS (35/35)
+
+- **Topology:** HEAD `2066dea27864407e…`, parent = `c2e5754…`, `rev-list --count base..HEAD = 1`, merge-base = base. Linear, single WIP commit. [FACT]
+- **numstat exact:** notebook +142/−21; GLM_5_3.md +50/−2; samples/README.md +2/0; samples/S001_color_webtoon/metadata.json +6/−3; metadata.rev1.json +9/0 (NEW). Total 5 files, **+209/−26**. [FACT]
+- **Modes/renames:** exactly 4 M + 1 A; `create mode 100644` for the new file; zero D/R/C, zero mode-change lines; all five blobs 100644. [FACT]
+- **Secret scan:** all 209 added lines scanned (ghp/github_pat/sk-/AKIA/AIza/hf_/PEM/bearer/xox/glab patterns) — **0 hits**. [FACT]
+- **Changed cells exactly {6, 8, 11, 12, 22}** (source-field compare AND full-object compare agree; only `source` changed in every edited cell). **The other 22 cells byte-identical to main** — including Batch 2/3 cells {1, 7, 16, 25} (their content is NOT on this branch, per the PM's scope limit) and MANGABD-002 artifacts cells 14/26 (guard block 40–46 and cell-26 bundle verbatim). [FACT]
+- Factual precision on GLM's report: it says "the other 23 cells byte-identical" — **the correct count is 22** (27 − 5). Arithmetic slip in prose only; the byte-identity claim itself holds for every unchanged cell. → Note N-A.
+
+## PD.2 — TRANSPLANT FIDELITY vs the Phase-E-approved bytes — PASS
+
+- Cells 6, 11, 12: source byte-identical to `f58cd3c` (branch `mangabd-003-phase-c`), sha16 `6db80c10…` / `8f17b472…` / `d6178521…`. The V-2 and V-1 changes on this branch are therefore the exact bytes that carry Phase E E3/E4 verification. [FACT]
+- samples/S001_color_webtoon/metadata.json and samples/README.md byte-identical to `f58cd3c`; metadata.rev1.json byte-identical to main's rev1 metadata blob (sha16 `eabe49b7…`, matches Flash PE.1). Both JSONs re-parse. [FACT]
+
+## PD.3 — MIRROR DISCIPLINE (Cells 11 & 12) — PASS
+
+The TASK_003.md Rule-of-Engagement-2 check, re-derived on this branch:
+
+- **`get_font_fb`: 690 chars, sha256-16 `a7d2d5bd61309c78`, byte-identical cells 11↔12.** **`_qc_render_vertical`: 2267 chars, sha256-16 `e27f769797d8ff4f`, byte-identical cells 11↔12.** Both shas equal the Phase E E3 record — no stale shadow, no drift. [FACT]
+- Runtime mirror parity (RT-4): both cells' `_qc_render_vertical` exec'd in isolated namespaces with identical inputs → **output images byte-identical** (`tobytes()` equal). [TEST RESULT]
+- The three module-level knob registrations (`MANGABD_CONFIG["rendering"].setdefault("fallback_font_wght", 600)` / `("fallback_cjk_scale", 1.25)` / `("fallback_cjk_stroke", 1)`) present in BOTH cells. [FACT]
+
+## PD.4 — V-1 AMENDMENTS — PASS
+
+**Amendment 2 — baseline alignment (headline check).** Shipped code: `asc_main = get_font(size, bold).getmetrics()[0]` … `ly_run = ly if im else ly + asc_main - f.getmetrics()[0]` — main runs keep the top-left anchor; fallback runs shift by the ascent difference of the ACTUAL drawn (scaled) fallback font, exactly the prescribed `ly_fb = ly + ascent_main − ascent_fb`. Runtime proof (RT-2, recorded draw calls on the pushed bytes): fallback run y − main run y = 4 − 15 = **−11 = asc_main − asc_fb = 21 − 32** (exact integer match). [TEST RESULT]
+
+**Amendment 1 — scale-then-fit / overflow ladder (headline check).** Shipped code: `_measure_line(runs, scale)` measures the line WITH scaled fallback fonts; `while any(not im for _, im in runs) and total > int(h) - 2*padding and scale > 1.0: scale = 1.12 if scale > 1.12 else 1.0; widths, total = _measure_line(runs, scale)` — re-check against `int(h) − 2*padding`, stepped downgrade 1.25→1.12→1.0, re-measure INSIDE the loop, drawn widths taken from the post-ladder measurement (`zip(runs, widths)` after the ladder). Runtime proof (RT-1, 11-glyph CJK line in a 61×298 column): independent pre-measure confirms overflow at 1.25×; the pushed renderer requested fb size 27 (=1.25×22) then **24 (=1.12×22) for the final draw**; post-ladder width 264 ≤ limit 290. [TEST RESULT]
+
+- **Residual (N-F, non-blocking):** a line that still overflows at the 1.0 floor draws at 1.0 (e.g. CJK-only lines that `fit_font_size` under-measures because it calibrates on main-font metrics — the very defect the ladder mitigates). The amendment's letter (stepwise retry with 1.0 floor) is fully implemented; the fold-into-fit alternative was optional and not taken. Accepted as designed.
+- Knobs/stroke/wght: `sw = 0 if im else _fb_stroke` (stroke on fallback runs only), `stroke_fill` wired; `fallback_font_wght` default 600 with `if bold: wght = max(wght, 700)`; `set_variation_by_axes` wrapped in an OSError guard — **try/except delta vs main inside the mirror block = exactly 1** (main's `get_font_fb` truetype-fallback try is pre-existing). BICUBIC rotate and swapped-dims canvas `(int(h), int(w))` preserved. Variable-font wght accepted at runtime on NotoSansSC[wght] (RT-3). [FACT + TEST RESULT]
+
+## PD.5 — V-2 (CELL 6 VERTICAL BAND) — PASS
+
+- Band sits inside `build_page_text_mask` **after** the `mask_clip_to_regions` clip and **before** `return mask`; `detection_cfg.setdefault("mask_vpad_vertical", 10)`; `if vpad > 0` gate; two `cv2.rectangle` tip bands clamped via `max(0, …)`/`min(h, …)`; ceiling comment documents the effective cap = `mask_clip_padding` (cell-9 re-clip). [FACT]
+- **Predicate on REGION dims:** `rw, rh = int(region["width"]), int(region["height"])` then `if rw < 90 and rh > 2 * max(1, rw):` — region dims, not crop dims, per the Phase B requirement. The renderer-side predicate (`w < 90 and h > 2*max(1, w)`, cells 11/12, 2 sites each, expression-identical across the mirror) is **semantically identical** (var-rename + whitespace only) — carried from Phase E N2; the shipped comment's "byte-identical" wording is imprecise. → Note N-B. [FACT]
+- Runtime (RT-5/RT-6, band block exec'd verbatim): 61×298 region (S001 R1 shape) → bands set at BOTH column tips, clamped to image bounds, mid-column untouched; 100×300 → predicate silent, mask untouched; vpad=0 → no band; vpad=50 → extends, clamped, no OOB (ceiling is downstream, as documented); setdefault never overrides an existing knob value. [TEST RESULT]
+
+## PD.6 — V-4a FRESH EDITS (CELLS 8 & 22 — first-time implementation) — PASS
+
+**Cell 8 — Edit A (sentinel).** Diff vs main is **+15/−0 lines, all inside the `parse_ai_text` span**: docstring note, `unparsed = []` collector, `unparsed.append(line)` at the former silent skip (`if not match: continue` preserved), and the sentinel block — **conditional** (`if unparsed:`), added AFTER the parse loop, payload `{"original_text": "", "translated_text": "", "unparsed_lines": unparsed}` under key `("_unparsed", 0)`. Zero removed lines (pure insertion — parse behavior otherwise unchanged), zero V-5 identifiers anywhere in the diff (no engine/registry/provider residue in cell 8). [FACT]
+
+**Sentinel safety — every consumer of `parse_ai_text` traced and exercised:**
+- cell-22 `apply_translations_from_text`: reads the sentinel explicitly (`parsed.get(("_unparsed", 0))` + `isinstance` guard); its own `parsed.items()` loop safely falls through the sentinel's empty sides (both branches require non-empty text); printed parsed-count **excludes** the sentinel (`len(parsed) − (1 if unparsed_lines else 0)`). [FACT + TEST RESULT RT-12]
+- cell-19 `apply_translations_from_ai_file` (unchanged bytes): iterates `parsed.items()`; sentinel has empty original/translated → neither branch fires → never enters the apply dict. Only impact: the pre-existing `🔎 Parsed entries` print includes the sentinel (+1) — cosmetic. → Note N-C. [FACT]
+- cell-8 `translate_manual_upload`: `translations.update(parsed)` passthrough into the df-row-driven `apply_manual_translation` (byte-identical to main; looks up only `(page, region_id)` keys from df rows) — sentinel never looked up; the `✅ Parsed … entries` print is +1 cosmetic (N-C). [FACT]
+- cell-8 module self-tests: samples contain zero unparsable lines → no sentinel → `len(parsed) == 3` regression holds (RT-9). [TEST RESULT]
+- Degenerate crafted line `[_unparsed:0] …`: alone → survives as a normal entry (benign); with junk present → shadowed by the sentinel (benign, no crash). Standard flow cannot produce it (export emits real page filenames + df ids). → Note N-D. [TEST RESULT RT-10/RT-11]
+
+**Cell 22 — Edit A report + Edit B coverage.** Touched lines (29) ALL inside `apply_translations_from_text`: (a) report block prints `⚠️ N unparsed line(s) …` with ≤3 previews (60 chars); (b) Edit B coverage after the apply count and before the next-command hint: iterates `translation_df`, skips empty originals and the six special markers (same set as `is_special_marker`), flags rows failing `_validate_bengali_local`, prints the `⚠️ M of T regions …` list (≤10) + render-safety hint. Report-only — no df mutation, no wire-format change, no new failure path (no `translation_df` reassignment). End-to-end runtime (RT-12, real `parse_ai_text` + real `apply_manual_translation` on a synthetic 4-row df): applied=2; warning printed with the junk line; `Parsed entries: 2` (sentinel excluded); coverage flags exactly `01.jpg:4`; **[SFX]-original row NOT flagged**; df rows 1–2 updated with engine=manual, row 4 untouched; `save_translation_df` called once. [TEST RESULT]
+
+**Edit C DEFERRED — proven absent.** Parse regex line byte-identical to main (`^\[([^:\]]+):(\d+)\]`); zero `|TYPE` occurrences in cells 8/22; `_parse_ai_text_local` AST-identical to main (its path degrades to no sentinel report — RT-13: fallback parser applies 2/2, no warning, no crash). `export_ai_text`, `apply_manual_translation`, `build_translation_records_from_df`, `translate_manual_upload` all byte-identical to main. [FACT + TEST RESULT]
+
+## PD.7 — FRESH-RUN REGRESSION (TASK_003 protocol item 1) — PASS
+
+- **`m002_sim_v2.py` (fresh-kernel AST replay) on the Batch-1 notebook: abort-class SITE count = 0** (1773 module-level calls mapped; kill_residual/run_inpaint_render_all def sites all present in the 11→12→13→14→15→23 timeline). **Calibration intact:** the same instrument on the pre-002 base (`base@aabc592`) reports exactly 1 site at cells[14]:40 (`run_inpaint_all`) — the MANGABD-002 Phase D result, so the 0-site result is meaningful. [TEST RESULT]
+- **`m002_flash_repro.py` (guard-logic equivalence, verbatim pushed bytes) on the Batch-1 notebook: ALL 9 EXPECTED-MATRIX CHECKS PASS** — S1 baseline NameError reproduced; S3/S6 fresh+guarded OK-with-skip with ZERO mutations (skip banner in both); S5 mutate-then-crash with persisted mutations reproduced; S2==S4 call-sequence identical (`force=True`, `require_translation=False`). Guard behavior is bit-for-bit the MANGABD-002-verified matrix. [TEST RESULT]
+
+## PD.8 — RUNTIME HARNESS (reviewer's own, 30 checks) — PASS (14/14 + 16/16)
+
+| # | Check | Result |
+|---|---|---|
+| RT-1 | ladder fires on overflow; 1.25× attempted (27) → 1.12× drawn (24); post-ladder width 264 ≤ 290 | PASS |
+| RT-2 | baseline: fb_y − main_y == asc_main − asc_fb (exact, recorded draws) | PASS |
+| RT-3 | wght accepted on variable font; bold/regular cached distinctly | PASS |
+| RT-4 | mirror runtime parity: cell-11 vs cell-12 renders byte-identical | PASS |
+| RT-5 | band: 61×298 fires (both tips, clamped); 100×300 silent | PASS |
+| RT-6 | vpad=0 gate; vpad=50 clamped; setdefault semantics | PASS |
+| RT-7/8/9 | sentinel lifecycle: mixed → exact junk list; all-valid → none; self-test sample → len==3 | PASS |
+| RT-10/11 | crafted `[_unparsed:0]` edge → benign in both shapes | PASS |
+| RT-12 | end-to-end apply: warning, count-exclusion, df-driven apply, coverage flags, [SFX] skip | PASS |
+| RT-13 | fallback-parser path: applies, no sentinel report, no crash | PASS |
+
+Sandbox boundary (carried from Phase E N4 → N-E): fonts stubbed to local files (DejaVu main, variable NotoSansSC fallback); the notebook's production font URLs, live Colab Pillow, and the full pipeline remain Owner-side validation.
+
+## PD.9 — METADATA REV2 + FULL AST SWEEP — PASS (10/10)
+
+`metadata_revision: 2`, `translation_engine: "nllb"`, `source_type: "B/W manga page"`, `naming_note` + `revision_note` present; `metadata.rev1.json` retains the original values (engine "manual", "color webtoon long strip"); README carries the naming-provenance pointer; **S001 directory NOT renamed**. All 27 cells AST-parse on the pushed bytes. [FACT]
+
+## NOTES (all non-blocking)
+
+- **N-A** — GLM_5_3.md prose slip: "the other 23 cells" → 22. Byte-claims unaffected.
+- **N-B** — cell-6 comment "predicate byte-identical to the live vertical renderer" is semantically true, byte-imprecise (rw/rh vs w/h + whitespace). Phase E N2 adjudication carried forward; behavior verified identical over the same region population.
+- **N-C** — pre-existing count prints (+1 with sentinel present): cell-8 upload prints, cell-19:46. Cosmetic; cell-22's new print correctly excludes the sentinel. A strict end-state fix would be a new Owner-approved item (same class as PE.7).
+- **N-D** — sentinel key collision edge (`[_unparsed:0]` hand-written): benign in all traced paths; unreachable from the export flow. GLM's "(ids >= 1)" rationale is conventional (df ids are 1-based in practice), not enforced — acceptable given benign failure modes.
+- **N-E** — sandbox boundary: live Colab validation (production fonts, SECRET_SOURCES bootstrap, full pipeline) remains Owner-side; recommended during the S002 acceptance run.
+- **N-F** — ladder floor residual: lines overflowing even at 1.0 draw at 1.0 (re-wrap out of scope of the approved amendment; fold-into-fit alternative not taken).
+
+## OUTSTANDING (per TASK_003 protocol, not satisfiable in this sandbox)
+
+**S002 visual acceptance** (protocol item 2) — a fresh pipeline run archived under `samples/S002_…/` proving residue/CJK-size/OCR improvements. Requires the live Colab environment (Owner-side). This sign-off discharges the code-level Phase D; **merge to main should remain gated on the Owner's S002 acceptance**, per the same deferred-live-items structure as MANGABD-002 Phase D.
+
+## OVERALL VERDICT
+
+**PHASE D APPROVED.**
+
+- **batch1 / V-4a (Edit A + Edit B, Edit C deferred): PASS** — first-time implementation verified statically and at runtime; sentinel safe in every consumer; wire format untouched.
+- **batch1 / V-2 (cell-6 vertical band): PASS** — live path, region-dims predicate, knob + documented ceiling; runtime-verified firing population.
+- **batch1 / V-1 (cells 11/12 CJK fallback): PASS** — mirror discipline held byte-for-byte (both shas == Phase E record); baseline alignment exact at runtime; overflow ladder steps 1.25→1.12→1.0 with in-loop re-measure.
+- Scope: single commit on the task-book base; changed cells exactly {6, 8, 11, 12, 22}; Batches 2/3 provably absent (cells 1/7/16/25 byte-identical to main); MANGABD-002 artifacts verbatim; zero required fixes; 6 non-blocking notes.
+- **Gating:** per DECISION.md §C and the PM relay — GLM-5.3 must NOT amend this commit or merge until the Owner accepts this sign-off; S002 visual acceptance remains the merge gate. Batches 2/3 remain unauthorized on this branch; the Phase-E-approved bytes on `mangabd-003-phase-c @ f58cd3c` stay available for verbatim transplantation when authorized.

@@ -3,7 +3,10 @@
   "captured_at": "2026-09-29",
   "notebook_commit": "9f4d82a",
   "pipeline_variant": "fresh Run All success (MANGABD-002 verified)",
-  "source_type": "color webtoon long strip",
-  "translation_engine": "manual",
-  "owner_notes": "first fresh-run success; second test image"
+  "source_type": "B/W manga page",
+  "translation_engine": "nllb",
+  "owner_notes": "first fresh-run success; second test image",
+  "metadata_revision": 2,
+  "revision_note": "rev2 (2026-09-29, MANGABD-003 Phase A): corrected translation_engine manual->nllb and source_type color webtoon long strip->B/W manga page per GLM-5.3-Flash visual review (commit f7aabbc); rev1 preserved verbatim in metadata.rev1.json",
+  "naming_note": "Folder name S001_color_webtoon is pipeline-variant labeling from rev1 and is intentionally NOT renamed (Owner decision 2026-09-29); the actual content is a grayscale B/W manga page (0 chroma, Flash-measured)"
 }
