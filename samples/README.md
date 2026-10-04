@@ -21,6 +21,7 @@ GLM-5.3, or GLM-5.3-Flash — to assess real output quality directly.
 | Sample | Description |
 |--------|-------------|
 | `S001_color_webtoon/` | First fresh "Run All" success on a color webtoon long strip (the second test image), produced with the MANGABD-002-verified notebook. See its `metadata.json` for provenance. |
+| `S002_batch1/` | MANGABD-003 Batch 1 acceptance run — the same source page as S001 (`02.jpg`, 844×1200) re-run for controlled A/B, produced with the Batch-1 notebook (branch `mangabd-003-batch1`, head `a007581`: V-1 CJK fallback metrics + V-2 vertical mask band + V-4a; squash-merged to `main` in `f158091`). Fresh Run All + Control Studio UI, plain path (quality wrap not invoked), engine `nllb`. See its `metadata.json` for provenance. |
 
 (S001's folder name is a rev1 pipeline-variant label retained by Owner decision; its content is a B/W manga page produced by NLLB — see its `metadata.json` naming_note and `metadata.rev1.json` for the original wording.)
 

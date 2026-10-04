@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "region_type": "overlay",
+    "original_text": "T/L note: Koganei in Hiragani is spelt こがねい while Otarumi is spelt as おたるみ and both しゅ is pronounced as しゅ which is a vowel",
+    "translated_text": "টি / এল নোটঃ হিরাগানিতে কোগানাই উচ্চারণ করা হয় こがねい যখন ওটারুমি উচ্চারণ করা হয় おたるみ এবং উভয় しゅ উচ্চারণ করা হয় しゅ যা একটি ভোকাল",
+    "translator_engine": "nllb",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 2,
+    "region_type": "bubble",
+    "original_text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!",
+    "translated_text": "এই নামের একমাত্র সঠিক অক্ষর ছিল \"!!",
+    "translator_engine": "nllb",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 3,
+    "region_type": "bubble",
+    "original_text": "MY NAME'S KOGANEI YOU DUMBASS!",
+    "translated_text": "আমার নাম কোগানাই, তুমি বোকা!",
+    "translator_engine": "nllb",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 4,
+    "region_type": "bubble",
+    "original_text": "WHO THE HELL IS THAT PERSON!?",
+    "translated_text": "সেই ব্যক্তি কে?",
+    "translator_engine": "nllb",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 5,
+    "region_type": "bubble",
+    "original_text": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?",
+    "translated_text": "কে ঐ যৌনসঙ্গম OTEARAH! ! এই বেশ্যা তাকে বা কিছু জানেন! ?",
+    "translator_engine": "nllb",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 6,
+    "region_type": "bubble",
+    "original_text": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+    "translated_text": "এটা আমার ভুল অনুমানের ফল ছিল যে সে আমার ভিতরে ছিল, সে ক্লাসের পরে আমাকে ডেকেছিল আমার গার্লফ্রেন্ড হওয়ার জন্য আমার স্বীকারোক্তি অস্বীকার করার জন্য",
+    "translator_engine": "nllb",
+    "bengali_valid": true,
+    "status": "translated"
+  }
+]

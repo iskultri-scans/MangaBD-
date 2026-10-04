@@ -1,0 +1,10 @@
+{
+  "sample_id": "S002_batch1",
+  "captured_at": "2026-10-03",
+  "branch": "mangabd-003-batch1",
+  "notebook_commit": "a007581",
+  "pipeline_variant": "fresh Run All + Control Studio UI (plain path; quality wrap not invoked)",
+  "translation_engine": "nllb",
+  "source_page": "02.jpg",
+  "owner_notes": "batch1 acceptance run; same page as S001 for A/B"
+}
