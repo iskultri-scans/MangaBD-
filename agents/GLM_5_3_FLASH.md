@@ -1055,3 +1055,69 @@ Sandbox boundary (carried from Phase E N4 → N-E): fonts stubbed to local files
 - **batch1 / V-1 (cells 11/12 CJK fallback): PASS** — mirror discipline held byte-for-byte (both shas == Phase E record); baseline alignment exact at runtime; overflow ladder steps 1.25→1.12→1.0 with in-loop re-measure.
 - Scope: single commit on the task-book base; changed cells exactly {6, 8, 11, 12, 22}; Batches 2/3 provably absent (cells 1/7/16/25 byte-identical to main); MANGABD-002 artifacts verbatim; zero required fixes; 6 non-blocking notes.
 - **Gating:** per DECISION.md §C and the PM relay — GLM-5.3 must NOT amend this commit or merge until the Owner accepts this sign-off; S002 visual acceptance remains the merge gate. Batches 2/3 remain unauthorized on this branch; the Phase-E-approved bytes on `mangabd-003-phase-c @ f58cd3c` stay available for verbatim transplantation when authorized.
+
+# MANGABD-003 — S002 BATCH1 ACCEPTANCE MEASUREMENT (GLM-5.3-FLASH, Independent Reviewer)
+
+**Date:** 2026-10-04 · **Artifacts under review:** `samples/S002_batch1/` (Owner upload `6b2d4ba`, extracted `f11a6eb`, main) — `final.jpg`, `inpainted.png`, `text_mask.png`, `original.jpg`, sidecars · **Render bytes:** metadata `notebook_commit: a007581` = the Phase-D-approved Batch-1 bytes; verified the main-branch notebook blob (carried by `f158091`) is byte-identical to `a007581`'s (empty diff) — the S002 run provably executed the verified code. **Baseline:** `samples/S001_color_webtoon/` (same page `02.jpg`). **Discipline:** TASK_003.md protocol item 2 + samples/README rules. **No source modified; samples untouched; no amend/merge.**
+
+**Method:** all numbers re-derived by this reviewer from the pushed artifact bytes (numpy/PIL/cv2 instruments `m003_s002_p1_ab_residue_mask.py`, `m003_s002_p1b_probe.py`, `m003_s002_p1c_rendermaps.py`, `m003_s002_p1d_true_residue.py`, `p2_region1/p2v2_clean/p3_sweep/p4_metrics.py`, reviewer sandbox). Reading-frame convention: region-1 crop (10,81,61×298) un-rotated from `vertical_rotate=-90`; axis0 = advance (0..297 = img y−81), axis1 = across (glyph-height direction); glyph height = across extent. Luminance = PIL "L".
+
+## S0 — A/B VALIDITY — PASS
+
+- `original.jpg` byte-identical between S001/S002 (tobytes sha equal; max |diff| = 0). [FACT]
+- Region geometry identical (all 6 boxes); only 3 `detector_score` float tails differ (~1e-7 detector nondeterminism, no coordinate impact). [FACT]
+- Region-1 `translated_text` **byte-identical** between runs → every region-1 pixel difference isolates exactly the Batch-1 rendering changes (fallback scale/wght/stroke/baseline/ladder), with identical input text and identical main-font sizing. [FACT]
+- Region-1 OCR text differs slightly between runs (S001 "…Otearai … おてあらい…", S002 "…Otarumi … おたるみ…"); `translation.json` `original_text` is identical for both. OCR is Batch-2 (V-3) scope, has no bearing on the rendered image (identical `translated_text`), and is not an acceptance gate here. → Note N-S2-A. [FACT]
+
+## S1 — GATE 1 (V-2 RESIDUE WINDOW x34–47, y370–381): measured 19 px, expected 0 — LITERAL FAIL; FORENSIC RE-ATTRIBUTION: gate premise void, true residue = 0 in BOTH runs
+
+- **Measurement (method validated):** S001 window = **11 px < lum 160, min 18.0, at (40–44, 375–378)** — reproduces the S001 review record exactly (same 11 coordinates). S002 window = **19 px, min lum 0.0**: the same 11 coordinates (values ±1) **plus 8 new pure-black px at (39–44, 370–371)**. [TEST RESULT]
+- **Layer provenance at all 19 px:** `original` = 255 (white) at every one; `inpainted` = 254–255 at every one (both runs); dark only in `final`. → **all 19 px are RENDER INK drawn over a clean inpaint, not original-ink residue.** [TEST RESULT]
+- **The 11 "specks" re-identified:** they are the right-clipped fragment of the flowed word **"যা"** at the end of rendered line 2 (the line fills the full 298-px column and is clipped at the canvas edge; the fragment `##/#####/######/####.#` at advance 294–297 is byte-stable ±1 across both runs). Present identically in S001. **Not residue; never was.** [TEST RESULT + visual at 8×]
+- **The 8 new px:** tail of S002's bigger/darker しゅ (ゅ lower bar, advance 282–291) — i.e. the *intended* V-1 ink increase intruding into the window, not a defect. [TEST RESULT]
+- **True-residue audit (whole region-1 box):** original-ink px left unmasked by the mask: **S001 = 0, S002 = 0**; `inpainted.png` dark px in x10–70/y355–385: **S001 = 0, S002 = 0**; original note's ink actually ends at y=371 (not ~384 as my S001 review estimated) and was already fully masked+inpainted in S001. [TEST RESULT]
+- **RECORD CORRECTION (self, PE.7 precedent):** my S001 visual review's "11 px true original-text residue … mask-missed glyph tips" and the derived "extend the quad to the text's true bottom ~y=384" fix locus were **WRONG** — the specks were render ink (clipped "যা" fragment), there was no mask hole and no original-ink residue. Phase A's V-2 motivation and the Batch-1 gate metric inherited that mis-diagnosis. The V-2 band is therefore a **functional no-op for region-1 residue** (there was none to remove); the literal "0 px in window" target is **unachievable by any mask-side fix** because the px are renderer output. [FACT + TEST RESULT]
+
+## S2 — GATE 2 (V-1 CJK INK/GEOMETRY): PASS on every specified criterion
+
+| Metric | Gate | S002 measured | S001 reference |
+|---|---|---|---|
+| CJK ink mean luminance | ≤ 60 | **52.9** (A/B zones); pure-CJK comps 19.1–47.4 | 92.1 same zones (reproduces "~90") |
+| CJK height vs Bengali runs | ≥ 80% | **11–13 px vs 7 px ink-median → 1.57–1.86** (100% of the line band) | zone across-extent 7–10 px, pale |
+| Baseline alignment | ok | bottom Δ +3 px (JP glyph below-baseline ink overshoot; top Δ −3/−1) — code-level `ly_fb = ly + asc_main − asc_fb` was runtime-verified exact (Phase D RT-2) | — |
+| Column-boundary overflow | none new | line1 [7..289] fits; line3 [120..176] **pixel-identical** both runs; line2 [0..297] clipped at the canvas edge **identically in S001** (pre-existing); render-ink bbox x[22..67] ⊂ box, y ≤ 378 | line1 [11..285]; line2 [0..297] |
+
+- Line-1 shift [11..285]→[7..289] is the centered-layout signature of a wider line (bigger CJK), symmetric ±4 px — no overflow. [TEST RESULT]
+- **Ladder evidence:** line-2 CJK height 11 px vs line-1's 13 px — consistent with a step-down (1.12 or the 1.0 floor) on the overflowing line, per the approved ladder design; line 2 still clips because it overflows even at the floor (Bengali-dominated content) — exactly the Phase D N-F residual. The clip is **not a Batch-1 regression** (identical in S001, whose CJK was half-size). [TEST RESULT]
+- Visual (reading frame, 2×/8×, both runs): S001 CJK pale-gray, small; S002 CJK black, bold, seated on the line, clearly readable — the V-1 defect is visibly fixed. [TEST RESULT]
+
+## S3 — GATE 3 (MASK BAND SAFETY): PASS
+
+- Added mask px = **1011, all within x[10..71]** (0 outside; 0 in border strip x72–76); removed = 0; totals 136 804 → 137 815. Rows: top tip band 71–85, bottom tip band 374–389 — matches the approved `mask_vpad_vertical=10` tip bands. [TEST RESULT]
+- `inpainted.png` A/B: 37 px changed (|d|>8) in 3 clusters — band edge (x70–71, y71–77) and border-AA (x75, y82–102 / y108–112), i.e. LaMa context effects around the new band; final border strip: 11 px changed (−13..−17), border dark-count 1092 → 1059 (marginally lighter overall); side-by-side at 3×: the double rule-line is visually identical, no encroachment, no new damage. **Panel border x≈72–76 untouched.** [TEST RESULT + visual]
+- Whole page outside region-1's columns: **17 changed px** (x71–75 band/border AA only). [TEST RESULT]
+
+## S4 — GATE 4 (NO NEW RESIDUALS / OVERFLOW / MISFIRES ELSEWHERE): PASS
+
+- **Regions 2–6: ZERO changed px** between S001 and S002 finals — pixel-identical re-render; no regression, no misfire, no SFX/bubble damage anywhere else on the page. [TEST RESULT]
+- Render ink outside any region box (+6 px pad): **0 px in both runs, all 6 regions** — zero box overflow anywhere. [TEST RESULT]
+- New dark ink outside boxes (dark in S002, light in S001): 4 px at x=75 (border AA); "truly new ink over artwork": 1 px. Negligible. [TEST RESULT]
+- Region-3/5 mask holes (321/33 px = the known preserved bubble-border strokes): byte-identical between runs — unchanged, as expected. [FACT]
+- Top band area (rows 66–92): dark-over-light-original 57 px vs S001's 39 — the growth is line-1's re-centered/bolder render inside the region; no misfire. [TEST RESULT]
+
+## NOTES (non-blocking)
+
+- **N-S2-A** — Region-1 OCR wording differs between runs (S001/S002 ocr.json); Batch-2 (V-3) scope; no render impact; `translation.json` identical. The S002 acceptance says nothing about OCR accuracy.
+- **N-S2-B** — **Pre-existing line-2 column-end clip (newly documented):** rendered line 2 fills the entire 298-px column in both runs; the trailing word "যা" is clipped to "য" (the "া" and part of য are lost; line 3 reads "একটি ভোকাল"). Identical in S001 — NOT a Batch-1 regression and outside the ladder's reachable range (overflow persists at the 1.0 floor; the fallback ladder only scales CJK). Candidate follow-up: re-wrap / fold-into-fit per the Phase B alternative (Owner-approved scope change required).
+- **N-S2-C** — S002 metadata records the "plain path; quality wrap not invoked" Control-Studio variant; the rendered output (bold/dark CJK + baseline shift + centered wider lines) is only producible by the Batch-1 renderer, corroborating provenance. Live-font/production environment caveats remain Owner-side per N-E (Phase D).
+- **N-S2-D** — CJK overshoots the ≥80% gate (157–186% of Bengali ink-median) — this is the approved `fallback_cjk_scale=1.25` design, not a defect; flagged only so the Owner can judge the aesthetic balance on the live sample.
+
+## OVERALL VERDICT
+
+**BATCH1 ACCEPT.**
+
+- Every change Batch 1 actually introduced is verified correct in the rendered artifact: V-1 CJK is dark (52.9 ≤ 60; was 92.1), large (157–186% ≥ 80%; was ~50%), baseline-aligned (±3 px, code-exact per Phase D), no new overflow; V-2 band landed exactly as approved and is safe (0 px outside x10..71, border untouched); regions 2–6 are pixel-identical; zero new artifacts page-wide.
+- The single literal gate miss (window 19 px ≠ 0) is **void as a residue metric**: forensics prove the window contains zero original-ink residue in either run — 11 px are a pre-existing clipped-glyph fragment (unchanged since S001) and 8 px are the intended V-1 ink. The metric was calibrated on my S001 mis-diagnosis, corrected above (S1, RECORD CORRECTION). No code or knob change can or should chase it.
+- **No config tuning required** — `fallback_font_wght=700` / `fallback_cjk_stroke=2` are NOT needed: CJK ink (19–47 lum) is already darker than the Bengali body (~90) at the shipped defaults; raising weight/stroke would overshoot.
+- Follow-ups queued (non-blocking): N-S2-B line-2 end-clip (pre-existing; needs an Owner-approved re-wrap item), N-S2-A OCR wording (Batch 2 territory).
+- **Gating:** this acceptance discharges TASK_003 protocol item 2 for Batch 1; Batch 2 (V-3) may proceed per the task book's batch order. Samples/ and source untouched by this review; verdict recorded in a NEW commit (no amend/merge).
