@@ -1121,3 +1121,72 @@ Sandbox boundary (carried from Phase E N4 → N-E): fonts stubbed to local files
 - **No config tuning required** — `fallback_font_wght=700` / `fallback_cjk_stroke=2` are NOT needed: CJK ink (19–47 lum) is already darker than the Bengali body (~90) at the shipped defaults; raising weight/stroke would overshoot.
 - Follow-ups queued (non-blocking): N-S2-B line-2 end-clip (pre-existing; needs an Owner-approved re-wrap item), N-S2-A OCR wording (Batch 2 territory).
 - **Gating:** this acceptance discharges TASK_003 protocol item 2 for Batch 1; Batch 2 (V-3) may proceed per the task book's batch order. Samples/ and source untouched by this review; verdict recorded in a NEW commit (no amend/merge).
+
+---
+
+# MANGABD-003 — PHASE D VERIFICATION — BATCH 2 / V-3 (GLM-5.3-FLASH, Independent Reviewer)
+
+Date: 2026-10-08. WIP verified: `5e87050` ("WIP: MANGABD-003 Phase C Batch 2 — awaiting Phase D verification", 2026-10-08), branch `mangabd-003-batch2`, parent = main `0d3bc57`, single linear commit. Method per DECISION.md §C + TASK_003.md VERIFICATION PROTOCOL: independent re-verification of pushed bytes; **own analysis first, GLM-5.3's self-report (T3.25–T3.29) read only afterwards** for claims comparison. Instruments persisted OUTSIDE the repo (`scripts/m003b2_d1_audit.py`, `m003b2_d3_mirror_v3.py`, `m003b2_d6_v3.py`, `m003b2_d8_runtime_v3.py`). No source changes; NEW commit only.
+
+## D1 — DIFF & SCOPE AUDIT: PASS (28/28)
+
+- Topology: HEAD=`5e87050`, parent=`0d3bc57`, rev-list count=1, merge-base=base (linear). [TEST RESULT]
+- numstat exact: notebook **+84/−1**, `agents/GLM_5_3.md` +54/−2; **2 files only**; no samples/ or metadata changes. [TEST RESULT]
+- All blobs 100644 (repo-wide 26 files); only M entries; **no mode changes, no renames**; secret scan of all 138 added lines: **0 hits**. [TEST RESULT]
+- **Changed cells (source AND object level) = exactly {7, 16}**; the other 25 cells byte-identical to main. [TEST RESULT]
+- **Transplant fidelity:** cells 7/16 byte-identical to the Phase-E-approved `f58cd3c` (sha16 `4522a89c18f5ee8d` / `e31bfdc3a03ec9e2`). [TEST RESULT]
+- Scope invariant: batch1 cells {6,8,11,12,22} + batch3 cells {1,25} byte-identical to main; mirror cells 11/12 identical to main AND `f58cd3c`. [TEST RESULT]
+- MANGABD-002 artifacts: cells 14/26 byte-identical to main, guard lines 40–46 verbatim; cells 13/19 untouched. [TEST RESULT]
+
+## D3 — MIRROR DISCIPLINE (cells 11 & 12, if applicable): PASS (15/15)
+
+- Batch 2 does not edit the mirror pair; discipline = **no drift**. `get_font_fb` (690 ch, sha16 `a7d2d5bd61309c78`) and `_qc_render_vertical` (2267 ch, sha16 `e27f769797d8ff4f`) **byte-identical cells 11↔12**, equal to the Phase-E / Batch-1-Phase-D records. [TEST RESULT]
+- Cells 11/12 byte-identical to main `0d3bc57` AND `f58cd3c` — the 11↔12 full-cell delta remains exactly the Phase-E-approved documented dead-preamble removal in cell 12. [TEST RESULT]
+- 3 V-1 knob setdefaults (`fallback_font_wght`/`fallback_cjk_scale`/`fallback_cjk_stroke`) present in both cells; renderer-family predicate sites unchanged vs main (cell-6 mask band intact). [TEST RESULT]
+
+## D6 — V-3 SEMANTIC CHECKS (static): PASS (30/30)
+
+**Layer 1 (cell 7 `ocr_region`):**
+- **L1a upright excluded when predicate fires:** vertical-branch candidates = `rotate_90_clockwise` + `rotate_90_counterclockwise` ONLY; the upright `qwen.recognize` exists solely in the `else` branch. [TEST RESULT]
+- **L1b rotated-first tie-break:** `chosen = candidates[0]` (CW first); loop over `candidates[1:]` with **strict `>`** (no `>=` anywhere in the selection block) → ties go to CW. [TEST RESULT]
+- **L1c audit trail:** `vertical_ocr = {"chosen_orientation": …, "candidate_scores": {…}}` + `result.setdefault("warnings", []).append("vertical OCR: chose … (candidates: …)")`; returned as the additive field `"vertical_ocr"` (None = not vertical); `ocr_page` persists the full result via `save_json_artifact(page_id, "ocr", ocr_results)` → warnings + vertical_ocr reach the **OCR sidecar**; translation_df row schema untouched (V-4 Edit C deferral respected). [TEST RESULT]
+- **L1d predicate = REGION geometry** (`region.get("width"/"height")`), formula `rw_ < 90 and rh_ > 2 * max(1, rw_)` — the renderer-family predicate; the comment documents why crop dims would defeat the test (S001 R1 widens to ~95–113 px with context+padding). [TEST RESULT]
+
+**Layer 2 (cell 16 `inspect_ocr_quality`):**
+- **L2a `import re` in BOTH branches** (records branch annotated "cell-standalone-safe"; df branch `import re`). [TEST RESULT]
+- **L2b region geometry from detection records:** records branch via the ocr sidecar's embedded region record (`ocr_page` writes `{"region": …, "ocr": …}`); df branch via `det_geo = {int(dr.get("id",-1)): dr for dr in load_json_artifact(page_id, "detections", default=[])}` — the df's own x/y/w/h deliberately NOT trusted ("detections are truth"); `load_json_artifact(page_id, artifact_name, default=None)` signature verified (cell 3). [TEST RESULT]
+- **L2c severity="warning" at both flag sites;** `add_quality_issue` has **no raise path**; warning/critical route into `manual_review_flags_dict` (🟡/🔴) — never blocks a page; try/except census delta vs main = **0 new handlers**. [TEST RESULT]
+- **L2d composite predicate identical at both sites** (`rw_<90 and rh_>2*max(1,rw_) and has_kana and has_latin`, ×2 each; kana `[\u3040-\u30FF\u3400-\u4DBF]`, Latin `[A-Za-z]`). [TEST RESULT]
+
+**Call-count amendment:** 2 static recognize sites (1 rotated-loop + 1 upright else) → **runtime 2 VLM calls for vertical regions** (loop × 2 orientations), 1 for upright — TASK_003 amendment "2 VLM calls, not 3" satisfied. [TEST RESULT]
+
+## D8 — RUNTIME REPRODUCTION + GUARD EQUIVALENCE: PASS (35/35)
+
+- **Guard equivalence:** cells {11,12,13,14,26} byte-identical batch2↔main ⇒ the Phase-D-approved `m002_flash_repro` 9/9 matrix carries over by identity. `m002_sim_v2` on `5e87050`: **0 abort sites**; calibration on `aabc592`: exactly 1 site (instrument meaningful). TASK_003 protocol item 1: PASS. [TEST RESULT]
+- Runtime harness = **verbatim exec of pushed bytes** (`ocr_region` + deps from cell 7; `add_quality_issue`/`qa_is_special_marker`/`inspect_ocr_quality` from cell 16; real cv2/numpy/pandas; stubs only at the environment boundary: model_manager/qwen, crop fns, artifact IO, is_english_text, log_event):
+  - **RT-1** wide 200×100 → exactly 1 upright call; `vertical_ocr` None. **RT-2** vertical 61×298 (S001 R1 REGION dims) → exactly 2 calls; received image #1 == true CW rotation, #2 == true CCW (`np.array_equal`), upright never sent. [TEST RESULT]
+  - **RT-3** tie (equal scores) → chosen `rotate_90_clockwise` (CW text returned). **RT-4** CCW strictly greater (0.75+0.3 > 0.7+0.3) → chosen `rotate_90_counterclockwise` (CCW text returned). [TEST RESULT]
+  - **RT-5** warning names chosen orientation + both scores; `candidate_scores` = `round(conf + language_score.en, 4)` exactly. **RT-7** sidecar receives the full ocr_result incl. `vertical_ocr` + warnings. [TEST RESULT]
+  - **RT-6 predicate boundaries:** rw=90 → upright (strict <); rh == 2·rw → upright (strict >); rh == 2·rw+1 → vertical; 61×298 → vertical. [TEST RESULT]
+  - **RT-8** records branch: vertical kana+Latin (61×298) → exactly 1 flag, severity warning, category ocr, routes to `manual_review_flags` 🟡. **RT-9 negatives:** kana-only / Latin-only / horizontal-mixed / rh==2·rw mixed → NO flag. [TEST RESULT]
+  - **RT-10** df branch: df row claims 200×300 (box-snapped), detection record 61×298 → flag fires from **detection geometry**. **RT-11** missing detection → `geo={}` → predicate false → no flag, no crash. **RT-12** non-vertical detection → no flag. **RT-13** warning-only path never raises. [TEST RESULT]
+
+## D9 — AMENDMENT COVERAGE + SELF-REPORT COMPARISON
+
+- PM Layer 1 (a)/(b)/(c) + Layer 2 (a)/(b) and TASK_003.md Strict Amendments 1–5: **all implemented and runtime-proven** (D6/D8). Optional Phase-B items (kana-preservation scoring, vertical prompt variant) correctly NOT implemented — not part of the mandated minimum, and the Phase-E-approved bytes never carried them. [FACT]
+- Self-report comparison (read only AFTER my analysis): GLM-5.3 T3.25–T3.29 checked against my measurements — changed-cell set, numstat, transplant shas, mirror shas, REGION-dims predicate rationale, runtime behaviors, negative controls, df-branch detections-as-truth, secret scan, MANGABD-002 artifacts: **all consistent** with my independent results; line citations verified (cell 7: 394–435 / 417–419 / 421–430 / 465–466; cell 16: 371 / 396 / 375–387 / 460–476). Grounding claims independently re-verified against real artifacts: S001 `detections.json` — R1 61×298 fires, R2 87×156 correctly silent (156 < 174), R3–R6 non-vertical; main cells 7/16 byte-identical to `1cd8acf` (transplant-source stability). **No unsupported claims found.** [FACT]
+
+## NOTES (all non-blocking)
+
+- **N-B2-1 (reviewer instrument self-corrections):** my D3a first asserted full-cell 11↔12 identity and D6-X2 first asserted 3 static recognize sites — both were wrong instrument expectations, corrected during the run (cell-12 dead-preamble removal is the Phase-E-approved state; 2 static sites = 1 loop × 2 orientations = the amendment's "2 VLM calls"). No repo impact. [FACT]
+- **N-B2-2:** candidate score = `confidence + language_score["en"]` — deterministic, applied equally to both candidates; as an English-ness proxy for Japanese content it is semantically unusual, but the comparative use is sound and matches the Phase-E-approved bytes. Owner awareness only. [FACT]
+- **N-B2-3 (carried from Phase E N3):** kana regex covers kana + CJK Ext-A, NOT the main CJK block 4E00–9FFF — kanji-only vertical notes will not trigger the Layer-2 flag; consistent with the S001 failure mode; unchanged by this batch. [FACT]
+- **N-B2-4:** `import re` executes per loop iteration in the records branch — harmless (module cache), style-only. [FACT]
+
+## OVERALL VERDICT
+
+**PHASE D — BATCH 2 (V-3): APPROVED.**
+
+- **108/108 instrument checks PASS** (D1 28 · D3 15 · D6 30 · D8 35); zero required fixes; all 5 TASK_003.md Strict Amendments + both Phase B Layer-2 factual amendments implemented and runtime-proven; scope invariant and MANGABD-002 artifacts intact; fresh-run safety maintained (0 abort sites, calibrated).
+- **Gating preserved:** GLM-5.3 must NOT amend/merge until Owner acceptance is relayed via PM/Owner. **Merge gate = Owner-side S003 visual acceptance run** (live Colab + live `qwen.recognize`) proving the region-1 OCR fix on a fresh sample — TASK_003 protocol item 2, same pattern as Batch 1 (Flash Phase D `a007581` → merge gate S002 `48cdadd`). N-S2-A's S002 region-1 misread is exactly the defect this batch targets; Layer 2 will flag any residual misread for mandatory manual review even where Layer 1's rotated reads may still err.
+- Batch 3 (V-5, cells 8/25) remains unauthorized on this branch; the Phase-E-approved bytes stay available on `mangabd-003-phase-c @ f58cd3c` for transplantation when the PM authorizes. Samples/ and source untouched by this review; verdict recorded in a NEW commit (no amend/merge).
