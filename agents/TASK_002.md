@@ -6,7 +6,7 @@ MANGABD-002
 
 ## STATUS
 
-OPEN
+COMPLETE — closed 2026-09-27: Phase C WIP `829c383` amended → `f7eb7e6` (final message, tree identical), Flash Phase D approved (`e9802fb` replayed as `05d9bc6`, 5/5 steps PASS), fast-forward merged to `main`, close-out docs `8deff7c` + `9f4d82a` (DECISION.md §B.13, GLM_5_3.md closure record). STATUS synced from OPEN 2026-10-08 (PM Task 1 audit found this field stale; all other finalization actions were already done).
 
 ## TASK TYPE
 
