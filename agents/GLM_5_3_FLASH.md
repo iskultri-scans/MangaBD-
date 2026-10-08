@@ -1121,3 +1121,37 @@ Sandbox boundary (carried from Phase E N4 → N-E): fonts stubbed to local files
 - **No config tuning required** — `fallback_font_wght=700` / `fallback_cjk_stroke=2` are NOT needed: CJK ink (19–47 lum) is already darker than the Bengali body (~90) at the shipped defaults; raising weight/stroke would overshoot.
 - Follow-ups queued (non-blocking): N-S2-B line-2 end-clip (pre-existing; needs an Owner-approved re-wrap item), N-S2-A OCR wording (Batch 2 territory).
 - **Gating:** this acceptance discharges TASK_003 protocol item 2 for Batch 1; Batch 2 (V-3) may proceed per the task book's batch order. Samples/ and source untouched by this review; verdict recorded in a NEW commit (no amend/merge).
+
+---
+
+# MANGABD-002 — MERGE VERIFICATION ON MAIN @ 0d3bc57 (GLM-5.3-FLASH, Independent Reviewer)
+
+Date: 2026-10-08. Trigger: PM Task 1 assignment (Qwen3.8-Max) — verify MANGABD-002 finalization on main. Method per DECISION.md §C: every claim re-verified against pushed bytes, no source changes, NEW commit only.
+
+## M1 — MAIN HEAD CONTAINS THE MANGABD-002 CHANGES: PASS
+
+- `f7eb7e6` ("MANGABD-002: fresh-run reliability fix", 2026-09-27, parent `aabc592`) is an **ancestor of main HEAD `0d3bc57`**. [TEST RESULT]
+- PM-referenced `829c383` (Phase C WIP) vs `f7eb7e6`: **tree diff empty** — same parent, same tree, different message only. TASK_002.md's "amended → `f7eb7e6` (tree identical)" narrative verified byte-exact; `829c383` is a superseded pre-amend object (present locally on the stale `mangabd-002-phase-c` branch; the remote branch is deleted as the docs-sync message states). [TEST RESULT]
+- Both fix regions byte-present in main HEAD's notebook: cell-14 dependency guard (`if ("run_inpaint_all" in globals()) and ("run_render_all" in globals()):` — JSON-escaped form, 1 occurrence) + skip-print + cell-26 `render_all_pages(force=False)` + Bengali comment block. All diff hunks `f7eb7e6..main` (old lines 5532..17255 = MANGABD-003 Batch 1 cells) do not intersect the fix regions (old lines ~11700 / ~18043). [TEST RESULT]
+- Reviewer self-correction: my first grep for the guard line used unescaped quotes and falsely reported it missing; the JSON-escaped form is present. Instrument artifact, not repo damage. [TEST RESULT]
+
+## M2 — FRESH-RUN RELIABILITY MAINTAINED ON MERGED MAIN: PASS
+
+- `m002_sim_v2.py` on main HEAD (`0d3bc57`): **abort-class SITE count = 0** (27 code cells simulated; call map 1773). [TEST RESULT]
+- Calibration: same instrument on the pre-002 base `aabc592` reports **exactly 1 site** (cells[14]:40, `run_inpaint_all`/`run_render_all` via `run_inpaint_render_all`) — the instrument remains meaningful. [TEST RESULT]
+
+## M3 — DOCS ACCURACY (TASK_002.md + DECISION.md): PASS
+
+- `agents/TASK_002.md` STATUS now reads **COMPLETE** with the closure narrative; every hash in it independently verified: `829c383`→`f7eb7e6` amend (tree identical), `e9802fb` (Phase D on the review branch) **replayed as `05d9bc6`** on main (both exist, both +77 lines to GLM_5_3_FLASH.md, same message), fast-forward merge to main, close-out docs `8deff7c` + `9f4d82a` — all four dated 2026-09-27; the 2026-10-08 sync note accurately describes the stale STATUS field as the only gap. [FACT + TEST RESULT]
+- `agents/DECISION.md` **§B.13 "MANGABD-002 Phase C/D Completion Record (final)"** exists (line 497) with dates, participants, Owner approvals, and hash records; cross-references from the header and §B/§B.11 resolve. [FACT]
+
+## M4 — NO UNINTENDED FILE CHANGES: PASS
+
+- `0d3bc57` diff: **exactly 1 file (agents/TASK_002.md), 1 insertion / 1 deletion** — the STATUS line only. [FACT]
+- `git diff --summary 48cdadd..0d3bc57`: empty — **no mode flips, no renames**. Repo-wide `ls-tree`: 26 files, **all 100644**. No other commits on main between `48cdadd` (my S002 acceptance) and `0d3bc57`. [TEST RESULT]
+
+## M5 — OVERALL VERDICT (TASK 1)
+
+**MANGABD-002 MERGE VERIFICATION: PASS.**
+
+Main HEAD `0d3bc57` fully contains the MANGABD-002 finalization (code + docs); 0 abort sites maintained; TASK_002.md / DECISION.md updates accurate; zero unintended changes. The 2026-10-08 docs-sync commit is a faithful, minimal STATUS sync of work that had been on main since 2026-09-27. **MANGABD-002 remains CLOSED**, and its artifacts (cells 14/26) remain the protected baseline for MANGABD-003 batches. Samples/ and source untouched by this review; record in a NEW commit (no amend/merge).
