@@ -1155,3 +1155,55 @@ Date: 2026-10-08. Trigger: PM Task 1 assignment (Qwen3.8-Max) — verify MANGABD
 **MANGABD-002 MERGE VERIFICATION: PASS.**
 
 Main HEAD `0d3bc57` fully contains the MANGABD-002 finalization (code + docs); 0 abort sites maintained; TASK_002.md / DECISION.md updates accurate; zero unintended changes. The 2026-10-08 docs-sync commit is a faithful, minimal STATUS sync of work that had been on main since 2026-09-27. **MANGABD-002 remains CLOSED**, and its artifacts (cells 14/26) remain the protected baseline for MANGABD-003 batches. Samples/ and source untouched by this review; record in a NEW commit (no amend/merge).
+
+---
+
+# S003 ACCEPTANCE MEASUREMENT — MANGABD-003 BATCH 2 (V-3) vs S002 BASELINE
+
+Date: 2026-10-11. Trigger: PM assignment — GLM-5.3 archived `samples/S003_batch2/` (commit `28da345`; metadata `notebook_commit: 671e5d3`, i.e. exactly the batch-2 state this reviewer Phase-D-approved in `74f5d8c`). Independent pixel-level + sidecar audit against `samples/S002_batch1/`. Method: artifact forensics (md5, normalized JSON diff, per-region pixel diff via numpy/scipy connected components), cell-code re-extraction from `origin/mangabd-003-batch2`, and Layer-2 predicate re-simulation from the archived sidecars. No self-report consulted. `samples/` and source code untouched; analysis scripts persisted outside the repo.
+
+## P — PRE-CHECKS
+
+- md5 across the 8 archived artifacts: `original.jpg`, `inpainted.png`, `text_mask.png` are **BYTE-IDENTICAL** S002==S003; only `final.jpg` (+4 sidecars) differ. Same source page, same inpaint, same mask — the A/B isolates the batch-2 delta to OCR→render of region 1. [TEST RESULT]
+
+## G1 — V-3 (VERTICAL OCR) SIDECAR AUDIT: PASS
+
+- `ocr.json` region 1 contains the `vertical_ocr` audit field: `chosen_orientation: "rotate_90_clockwise"`, `candidate_scores: {"rotate_90_clockwise": 1.95, "rotate_90_counterclockwise": 1.95}`. [TEST RESULT]
+- Region 1 text now reads "…Otearai is spelt as おてあらい…"; zero occurrences of the S001/S002 misreads "Otarumi" / "おたるみ" / "しゅ" anywhere in the sidecar set. [TEST RESULT]
+- Code cross-check @ `671e5d3` cell 7 (L394-432): predicate uses REGION geometry (`rw < 90 and rh > 2 * max(1, rw)` — not preprocessed dims), upright excluded (rotated-only candidate list), strict `>` tie-break with CW first. R1 geometry 61×298 → 61<90 ∧ 298>122 → vertical path fires; scores tied 1.95/1.95 → strict `>` keeps CW. Artifact semantics match code semantics exactly. [FACT + TEST RESULT]
+- Regions 2-6 carry `"vertical_ocr": null` — field added uniformly, `None` = not vertical, per the Phase-D-approved design. [TEST RESULT]
+
+## G2 — LAYER-2 QA FLAG: PASS
+
+- Code @ `671e5d3` cell 16: records branch L367-383 and df branch L460-474 flag "Vertical mixed-script note (kana + Latin) — OCR unreliable" with `severity="warning"`; `add_quality_issue` maps warning → 🟡 (L180) and routes to `manual_review_flags` only (comment L369-370: "can never fail/block the page"). `import re` present at L371 (cell-standalone-safe); df-branch geometry sourced from `det_geo` detection records. Both Phase-B amendments in place. [FACT]
+- Predicate re-simulated against the archived sidecars: **exactly region 1 fires** (geom ✓, kana ✓, latin ✓) → 🟡 warning; regions 2-6 do not fire (geometry non-vertical). Expected flag count = 1. [TEST RESULT]
+- Non-blocking empirically confirmed: all 6 regions `"status": "ok"`, and the pipeline ran to completion producing the full artifact set including `final.jpg`. [TEST RESULT]
+
+## G3 — NO REGRESSIONS OUTSIDE REGION 1: PASS
+
+- Per-region diff of `final.jpg` (S002 vs S003, 1200×844): **regions 2-6 diff = 0 exactly** (max 0 — pixel-identical, not even JPEG noise). [TEST RESULT]
+- Outside the exact R1 quad: 238 px differ at all, amplitude distribution {1: 134, 2: 59, 3: 34, 4: 10, 6: 1} — max amplitude 6. All 45 px with diff>2 hug the R1 quad boundary (y=80 top edge, x=71 right edge, y=379-383 bottom edge) → JPEG 8×8 block spill of the re-rendered region, not independent defects. Zero clusters ≥ threshold 8; zero new mask/render defects outside region 1. [TEST RESULT]
+- `text_mask.png` byte-identical → zero new mask defects anywhere on the page. [TEST RESULT]
+
+## G4 — V-1 / V-2 PRESERVATION: PASS
+
+- **V-2 mask band**: mask active columns include the full band x[10..71] (62/62 columns active; activity rows y[71..422] ⊇ R1 quad y[81..379]); byte-identity with S002 proves the batch-1 band is untouched. [TEST RESULT]
+- **V-1 dark CJK ink**: S003 R1 ink statistics — px(lum<60)=948 mean 14.2; px(lum<80)=1346 mean 31.1; darkest cluster 197 px, mean lum 9.0, min 0. Near-black kana present, far under the ≤60 gate; parity with S002 (means 27.2 / 12.7) under changed text content. Visual crop (evidence: `R1_S001/S002/S003` upscales) confirms dark こがねい and おてあらい glyph runs embedded in the vertical Bengali layout. [TEST RESULT]
+
+## SCOPE / SIDECAR DELTAS (S002 → S003)
+
+- `ocr.json`: region 1 text + warning + `vertical_ocr`; `page_id` "02.jpg" → "02_2.jpg" on all regions (cosmetic; documented in metadata "rendered as 02_2.jpg"). Nothing else changed — confidences, language scores, texts of regions 2-6 untouched. [TEST RESULT]
+- `translation.json`: region 1 only (correction propagates to Bengali). `detections.json`: page_id only; all 6 region geometries identical — detector deterministic across runs. `metadata.json`: expected sample fields. [TEST RESULT]
+- `pipeline_variant` no longer carries S002's "(plain path; quality wrap not invoked)" note — metadata wording only; the exact pixel-identity of regions 2-6 proves render-path equivalence empirically. [FACT]
+
+## OBSERVATIONS (NON-BLOCKING)
+
+- Region 1 OCR nits persist: stray ")" in "こがねい)", "hiragani"/"pronounce" spellings. Mixed-script OCR imperfection is precisely why the mandatory 🟡 manual-review flag exists; no gate violated. [FACT]
+- The CW/CCW tie at 1.95 made the strict-`>` tie-break carry real weight: CW is the correct orientation for tategaki (top-to-bottom) and the empirically correct reading おてあらい validates the choice. [TEST RESULT]
+- Region 5 bubble "OTEARAH" spelling is pre-existing S002 OCR output (byte-unchanged), outside batch-2 scope. [FACT]
+
+## VERDICT
+
+**BATCH2 ACCEPT.**
+
+All four gates PASS on measured evidence: V-3 sidecar audit complete with correct orientation audit trail and the corrected reading; 🟡 manual-review flag fires exactly once, non-blocking; regions 2-6 pixel-identical with zero defects elsewhere; batch-1 V-1/V-2 fixes intact. The batch-2 merge gate is satisfied from this reviewer's seat.
