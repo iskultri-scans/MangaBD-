@@ -1,0 +1,10 @@
+{
+  "sample_id": "S003_batch2",
+  "captured_at": "2026-10-11",
+  "branch": "mangabd-003-batch2",
+  "notebook_commit": "671e5d3",
+  "pipeline_variant": "fresh Run All + Control Studio UI",
+  "translation_engine": "nllb",
+  "source_page": "02.jpg (rendered as 02_2.jpg)",
+  "owner_notes": "batch2 acceptance run; V-3 vertical OCR fix test; same page as S001/S002 for A/B"
+}
