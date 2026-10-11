@@ -1276,3 +1276,54 @@ Date: 2026-10-11. Trigger: PM assignment — GLM-5.3 archived `samples/S003_batc
 **BATCH2 ACCEPT.**
 
 All four gates PASS on measured evidence: V-3 sidecar audit complete with correct orientation audit trail and the corrected reading; 🟡 manual-review flag fires exactly once, non-blocking; regions 2-6 pixel-identical with zero defects elsewhere; batch-1 V-1/V-2 fixes intact. The batch-2 merge gate is satisfied from this reviewer's seat.
+
+---
+
+# MANGABD-003 BATCH 3 (V-5: PROVIDER-FLEXIBLE TRANSLATION) — PHASE D VERIFICATION
+
+Date: 2026-10-11 (session TZ Asia/Dhaka). Target: `mangabd-003-batch3` @ `1753b1a` (WIP), base = main @ `6ce6cd2` (ancestry verified). Scope of evidence: git blobs of both refs, cell-level AST analysis, verbatim-code runtime harness (scripts persisted outside the repo), fresh-kernel simulation, guard-equivalence repro. GLM-5.3's self-report (`agents/GLM_5_3.md`, changed in the WIP commit) was NOT read — verdict is independent. No source code modified; no amend/merge.
+
+## D1 — SCOPE & REGRESSION: PASS
+
+- Cell-level diff `6ce6cd2..1753b1a`: **changed cells = exactly {1, 8, 25}** (+6, +80/-1, +19/-1 lines); 27 cells in both refs; notebook top-level metadata unchanged (nbformat 4, same metadata keys); file-level: notebook + `agents/GLM_5_3.md` only; **no mode flips, no renames** (`git diff --summary` empty). [TEST RESULT]
+- All 24 unchanged cells **byte-identical** to main, explicitly including the protected baselines: MANGABD-002 cells 14 (guard) & 26 (`force=False`); Batch-1 mirror cells 11/12; Batch-2 V-3 cells 7 & 16. [TEST RESULT]
+- **V-4a `_unparsed` sentinel (cell 8) fully intact**: occurrence count 3 in both refs (shifted uniformly +69 by the three preceding hunks — arithmetic consistent with the hunk sizes +19/+37/+10/+3); the sentinel region (docstring contract, `unparsed = []` init, `translations[("_unparsed", 0)]` block) is **BYTE-IDENTICAL** to main (sha256 908223ba47d852b8…). The hunk-based patch claim is verified: only one line removed in cell 8 (the old `valid_engines` literal). [TEST RESULT]
+- **Sentinel FUNCTIONALLY verified** (verbatim `parse_ai_text` executed in isolation): valid `[page:id] eng → ben` lines parse to real keys; malformed line collected under `("_unparsed", 0)` with `unparsed_lines`; `#` comment lines skipped (not mis-flagged). [TEST RESULT]
+- **Fresh-run regression: `m002_sim_v2` on batch3 = abort-class SITE count 0** (27 code cells, call map 1776); instrument calibration holds — same simulator on base `aabc592` reports exactly 1 site (cells[14]:40 `run_inpaint_all`). [TEST RESULT]
+- **Guard-logic equivalence on batch3 (`m002_flash_repro_b3` variant, cells 11-14 verbatim): S1-S6 scenario matrix ALL PASS** (fresh→NameError baseline; fresh+guard→OK-with-skip zero mutations; warm paths fire with identical call sequences). [TEST RESULT]
+
+## D2 — PHASE B AMENDMENTS (V-5): PASS
+
+- **Amendment 1 (closure-bound engine)** — the dispatcher inside cell 8 `translate_text` contains verbatim: `translate_with_retry(lambda t, rt: translate_with_provider(t, rt, engine=engine), text, region_type=region_type)`. Runtime proof with the verbatim `translate_with_retry` (byte-identical to main, 46 lines, signature `(translate_func, text, region_type="bubble")`, calls `translate_func(text, region_type)`): (a) closure path with two transient failures succeeds on attempt 3; (b) **counterfactual confirmed — passing `engine=` as a kwarg to the wrapper raises `TypeError: unexpected keyword argument 'engine'`**, exactly the failure the closure avoids; (c) retry exhaustion (always-empty output) returns `""` after 1+max_retries attempts. [FACT + TEST RESULT]
+- **Amendment 2 (`key_env`, sanitizer survival)** — registry uses `key_env` (14 occurrences in cell 8; **zero `"api_key_env":` dict fields**). Runtime test with the REAL `save_config` sanitizer extracted verbatim from cell 1 (`forbidden_keys = [api_key, token, secret, password]`, recursive dict-key strip): nested provider dict → **`key_env` PRESERVED**, `api_key_env` stripped at provider/top-level/nested; `token`/`secret`/`password` stripped; string VALUES (`model: "deepseek-chat"`, `key_env: "deepseek_api_key"`) survive (sanitizer strips keys, not values). [TEST RESULT]
+- **Amendment 3 (LiteLLM rejected)** — `litellm` occurrences in the whole notebook: **0**; native adapter is 29 lines, OpenAI-SDK only. [TEST RESULT]
+
+## D3 — SECRETS (CELL 1): PASS
+
+- `SECRET_SOURCES` additions, **purely additive (+6 lines, zero removals)**: `qwen_api_key → [QWEN_API_KEY, DASHSCOPE_API_KEY]`, `deepseek_api_key → [DEEPSEEK_API_KEY]`, `openrouter_api_key → [OPENROUTER_API_KEY]`; ollama deliberately absent with explanatory comment (local server, no key). The existing bootstrap loop (env vars → Colab userdata → `MANGABD_SECRETS[k]=v` + primary env export) covers the new entries without modification. [FACT]
+- Adapter key handling runtime-verified (verbatim `translate_with_provider`, stubbed `openai` SDK): unknown provider → `""` + WARN; missing key → `""` + WARN naming the exact `key_env`; with key → correct `base_url`/`model`/`api_key` through to the client call; ollama (`key_env: None`) → placeholder key `"ollama"`, no secrets lookup, no spurious WARN. [TEST RESULT]
+
+## D4 — DEFAULT MODELS: PASS
+
+- Registry: `deepseek → "deepseek-chat"`, `openrouter → "openai/gpt-4o-mini"` (in-code comment "Owner default: Batch 3 directive 4"); openai → `gpt-4o-mini`, qwen → `qwen-plus`, ollama → `qwen2.5:7b`. [FACT]
+- Authorization trail: `agents/DECISION.md` L550 documents the open item "(a) per-provider default models (proposed: gpt-4o-mini / qwen-plus / deepseek-chat / qwen2.5:7b (local) / Owner's choice on OpenRouter)" — the four non-OpenRouter defaults match the DECISION.md proposal exactly; the OpenRouter default is the Owner's choice conveyed by the Batch 3 directive (PM attestation). Change from the original f58cd3c proposal bytes is therefore **authorized and documented**. [FACT]
+
+## D5 — INTEGRATION & WIRING: PASS
+
+- Engine chain end-to-end (all links statically verified): `on_provider` (cell 25) → `run_translation_all(engine=…, force=True)` (cell 15, signature `(engine=None, force=False)`) → `translate_all_pages(engine=…)` → `translate_page(page_id, engine=…)` → `translate_text(text, engine=…, region_type=…)` → provider `elif` → closure → retry → adapter. [FACT]
+- Provider `elif` is the **last engine branch before the final `else` (unknown-engine warning)** — no shadowing possible; provider names ∩ legacy engines = ∅; `switch_translator` validates against the dynamic `valid_engines` (legacy + registry keys). [FACT]
+- Cell 25 wiring: 7/7 checks PASS (button defined, handler defined, `fn(engine=mode_sel.value, force=True)`, wiring tuple, 4 provider options in mode_sel, secret-hint panel, `on_nllb` intact). `translator_model` sidecar field additive with row-level override precedence. AST parse OK for cells 1/8/25. [TEST RESULT]
+- Free-name audit of new defs against the fresh-kernel namespace: all resolve (one instrument false positive — `exc` from `except … as exc` binds via ExceptHandler.name, invisible to Store-scan; verified benign). [TEST RESULT]
+
+## OBSERVATIONS (NON-BLOCKING)
+
+1. Cell 25 relabels NLLB "(offline auto)" → "(experimental)" — consistent with DECISION.md L554 policy ("NLLB not used per policy"); inside the single logical change of cell 25. [FACT]
+2. `translate_with_retry`'s `except Exception` swallows any error inside the try (including dependency NameErrors) into the retry/fail-soft path — **pre-existing behavior, byte-identical to main**; noted because it surfaced during harness calibration (my incomplete stub), not a batch-3 defect. [FACT]
+3. The adapter's blanket `except Exception → ""` mirrors the existing chatgpt adapter's fail-soft contract; empty translations route through existing QC/retry plumbing. [FACT]
+4. Harness artifacts: `scripts/b3_scope.py`, `b3_preserve.py`, `b3_inspect.py`, `b3_runtime_harness.py`, `b3_h7_static.py`, `m002_flash_repro_b3.py`, `nb_batch3.json` — all outside the repo. Two instrument fixes during calibration (retry-stub missing `clean_translation`; wrong `parse_ai_text` sample format) were harness-side, not notebook-side. [FACT]
+
+## VERDICT
+
+**PHASE D APPROVED.**
+
+Scope exactly {1, 8, 25}; V-4a sentinel byte-intact and functional; all three Phase B amendments implemented and runtime-proven (closure prevents the demonstrated TypeError; `key_env` survives the real sanitizer; no LiteLLM); secrets bootstrap additive; defaults authorized per DECISION.md + Batch 3 directive; zero regressions against MANGABD-002/Batch-1/Batch-2 baselines; 0 abort sites maintained; guard equivalence S1-S6 pass. Per TASK_003.md protocol, the merge gate is the Owner's visual acceptance run (S004) — recommended exercise: one provider engine (e.g. deepseek) plus the manual-edit round-trip on a fresh Run All.
