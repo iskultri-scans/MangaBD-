@@ -8,9 +8,11 @@ Lead Developer / Software Architect
 
 ## CURRENT PHASE
 
-MANGABD-003 — **BATCH 1 MERGED (`f158091`, 2026-10-04) · BATCH 2 (V-3 Vertical-Note OCR, cells 7 & 16) MERGED TO MAIN — Flash Phase D APPROVED `74f5d8c` (108/108 PASS, 2026-10-08) + Owner S003 acceptance run archived `samples/S003_batch2/` (`6f07ed8` → `28da345`, 2026-10-11) + Flash S003 verdict BATCH2 ACCEPT `352c16b` (G1–G4 all PASS, 2026-10-11) + Owner merge authorization relayed via PM → squash-merged to `main` as ONE commit with the final message; branch `mangabd-003-batch2` deleted local+remote (merge record: DECISION.md §C.6; completion record T3.31) · BATCH 3 (V-5 Provider-Flexible Translation, cells 8 & 25) PENDING — PLANNING AUTHORIZED, IMPLEMENTATION GATED on explicit Owner authorization; Phase-E-approved V-5 bytes await transplantation from `mangabd-003-phase-c @ f58cd3c`** (2026-10-11)
+**MANGABD-004 (ARCHITECTURE & WORKFLOW REVAMP) — PHASE A INVESTIGATION DELIVERED (2026-10-13); MANGABD-003 Batch 3 Phase D APPROVED (`37dc72e`) with its S004 gate now INTERSECTED by the M4 pivot — disposition is decision item A7-D1 (recommendation: supersede)**
 
-Scope authority: PM assignment (Qwen3.8-Max, 2026-10-08) — "Implement V-3 changes in cells 7 and 16 only … Do NOT change any Batch 1 or Batch 3 code" — under `agents/TASK_003.md` Batch 2 ("V-3: Vertical-Note OCR (Cells 7 & 16)") + USER DECISION APPROVED; Flash's S002 acceptance (`48cdadd`) explicitly green-lit it ("Batch 2 (V-3) may proceed per the task book's batch order"). Construction: both cells **transplanted VERBATIM from the Phase-E-approved bytes** (`f58cd3c`, Flash 830a552 "batch2 V-3 L1 + L2 PASS"), re-reconciled against the 5 TASK_003.md Strict Amendments with line citations before implementation (all CONFIRMED, zero rebutted). Batches 1/3 untouched — cells 6/8/11/12/22 byte-identical to main; cells 1/2/25 byte-identical to main (V-5 absent). Full record: "# MANGABD-003 — PHASE C IMPLEMENTATION RECORD — BATCH 2" below. (Batch 1 record follows it; branch `mangabd-003-batch1` was squash-merged as `f158091` and deleted per Owner instruction.) Merge authorization: Owner directive relayed via PM (Qwen3.8-Max, 2026-10-11) on Flash's S003 BATCH2 ACCEPT verdict (`352c16b`) — amend the WIP with the final merge message, squash-merge to `main`, delete the branch, record in DECISION.md + this log; Batch 3 planning may begin, implementation NOT before explicit Owner authorization.
+MANGABD-004 Phase A: PM directive (Qwen3.8-Max relay, 2026-10-13) — Owner's 4 core directives audited and proposed, NO implementation code written: (1) OpenRouter-exclusive translation (registry reduction to 1 provider on the V-5 adapter, dead-code removal list, 3-layer API-key UX for Colab); (2) Manual copy-paste promoted to PRIMARY translation with a full professional System Prompt template + clipboard UI proposal, grounded in measured S003 NLLB quality defects; (3) LaMa Large audit — verdict: throttled (lama_size 1024 vs upstream default 2048, every Owner page silently downscaled ~0.85×; proposal: OOM-safe resolution ladder, native-res inference for 844×1200 pages); (4) Qwen2.5-VL-3B OCR audit — pixel budget is NOT the bottleneck (12.8MP default, crops run native-res); levers are the single generic prompt (region-type prompt map proposed), decode safety, saturated heuristic confidence. Full record: "# MANGABD-004 — PHASE A" below (evidence tags FACT/HYPOTHESIS/TEST RESULT; cell:line citations against `mangabd-003-batch3 @ 1753b1a` for cells 1/8/25, `main @ 37dc72e` for all others, zyddnys `d6de6ab` for upstream). Implementation plan M4-B1..B4 proposed, gated on Owner authorization + 7 decision items (A7-D1..D7).
+
+MANGABD-003 status: **BATCH 1 MERGED (`f158091`, 2026-10-04) · BATCH 2 (V-3, cells 7 & 16) MERGED (`6ce6cd2`, 2026-10-12; Flash Phase D `74f5d8c` 108/108 + S003 acceptance `352c16b`; merge record DECISION.md §C.6, completion record T3.31) · BATCH 3 (V-5, cells 8 & 25 + Cell-1 secrets) IMPLEMENTED on branch `mangabd-003-batch3 @ 1753b1a` (implementation record T3.32–T3.36 on that branch) — Flash Phase D APPROVED `37dc72e` on main (2026-10-11): scope {1,8,25} exact, V-4a sentinel intact, 3 amendments runtime-proven, defaults authorized, 0 abort sites; merge gate = Owner S004, NOT YET RUN — and the MANGABD-004 pivot (this phase) supersedes most of V-5's provider surface, so the S004 question transfers to A7-D1.** Branches `mangabd-003-batch3` + `mangabd-003-phase-c` (byte source) preserved untouched.
 
 (Historical: MANGABD-002 — fresh-Colab execution reliability — **COMPLETE, Phase D verified, merged to main**, closed 2026-09-27; Flash merge re-verification on main PASS `1a0309d`, 2026-10-08; closure record below and in DECISION.md §B.13.)
 
@@ -1177,3 +1179,330 @@ All 5 TASK_003.md Strict Amendments + both Phase B Layer-2 factual amendments **
 - **Squash commit contents (5 files):** notebook +84/−1 (changed cells exactly {7, 16}; the other 25 cells byte-identical to `0d3bc57` — Batch-1 {6, 8, 11, 12, 22}, Batch-3-absent {1, 2, 25}, MANGABD-002 artifacts {14, 26}); `agents/GLM_5_3.md` (T3.25–T3.30 from the branch + this T3.31 + CURRENT PHASE header); `agents/GLM_5_3_FLASH.md` +69 (the Phase D record, chronologically ordered); `agents/DECISION.md` (STATUS header, Batch-2 merge paragraph, "modified exactly three times" correction, new §C.6 Batch 2 Merge Record); `samples/README.md` (S003 pointer row updated to the merged state following the S002-row pattern — 1 line, disclosed). Branch `mangabd-003-batch2` deleted (local + remote) after the push; `mangabd-003-phase-c` (`f58cd3c` + `830a552`) preserved untouched as the Batch-3 byte source. [FACT]
 - **Pre-commit audit:** single `M` entry per file, all modes 100644, zero renames; secret-pattern scan (PAT/`sk-`/AKIA/AIza/hf_/PEM/bearer/xox/glab) of all added lines — 0 hits; working tree clean after the commit. The merge commit hash is reported in the PM relay (this record sits inside the merge commit and cannot self-cite). [TEST RESULT]
 - **Batch 3 (V-5: Provider-Flexible Translation, cells 8 & 25): PLANNING PHASE ONLY — implementation gated on explicit Owner authorization.** Transplant source: `mangabd-003-phase-c @ f58cd3c` (Phase-E-approved V-5 bytes; Flash E4/E5 runtime records). Phase A proposal: DECISION.md §C.2 V-5 row — provider registry in CONFIG (OpenAI/Qwen/DeepSeek/Ollama/OpenRouter, all OpenAI-compatible endpoints) + one ~35-line `translate_with_provider` adapter on the already-required OpenAI SDK + dispatcher `elif` + dynamic `switch_translator` + UI options + `translator_model` in sidecars + prompt upgrade (profanity/idiom/register rules) + "! !" punctuation normalizer; LiteLLM rejected (dependency weight vs Colab fresh-run reliability). Open Owner items (§C.3): per-provider default models for the registry; S004 translation provider choice. Intended protocol when authorized: same batch pattern — branch from this merge commit, verbatim transplant of cells 8/25, Flash Phase D, Owner S004 acceptance run, merge on authorization. [FACT]
+# MANGABD-004 — PHASE A: INVESTIGATION & ARCHITECTURAL PROPOSAL (GLM-5.3, 2026-10-13)
+
+PM directive received (Qwen3.8-Max relay, 2026-10-13): deep-dive investigation + Phase A architectural plan for the Owner's 4 core directives (OpenRouter-exclusive translation; manual copy-paste as PRIMARY translation method with a professional system prompt; LaMa Large full-potential audit; Qwen2.5-VL-3B OCR audit). **No implementation code written this phase** — source notebook and all other agent files untouched; this file is the sole deliverable location, per the directive.
+
+## A0 Evidence conventions & audit references
+
+- Evidence tags follow this log's standing convention: FACT / HYPOTHESIS / TEST RESULT / ASSUMPTION / UNKNOWN (defined at file head).
+- **Cell citations** `cell N:L` = 0-indexed notebook cell index, line number within that cell's source. Cells **1, 8, 25** are cited against **`mangabd-003-batch3 @ 1753b1a`** (the V-5 state, Flash Phase D approved `37dc72e`; the most advanced provider code in existence and the direct starting point for MANGABD-004). All other cells are **byte-identical** on `main @ 37dc72e` and the branch (verified: Flash Phase D D1 + re-verified this session by extraction — only cells 1/8/25 differ, +6/+80/−1/+19/−1 lines respectively), so their citations are valid on both refs.
+- **Upstream citations** `zy:<path>:L` = zyddnys/manga-image-translator, default branch HEAD **`d6de6ab` (2026-10-11)**, fresh shallow clone made this session. NOTE: cell 4 clones `--depth 1` and `git pull`s on every run (cell 4:226–248) — the Colab copy tracks upstream HEAD unpinned; see A4.6.
+- **Artifact citations** `S003` = `samples/S003_batch2/` on main (the Owner's most recent live acceptance run, 2026-10-11; 6 regions, page 844×1200).
+- Every quantitative VRAM/latency claim in A4/A5 that could not be executed in this (CPU-only) sandbox is tagged HYPOTHESIS with a concrete Phase B/D measurement plan; nothing below requires trust in unmeasured numbers for the architectural decisions.
+
+## A1 Baseline snapshot (2026-10-13)
+
+- `origin/main` = `37dc72e` (Flash: MANGABD-003 Batch 3 V-5 **PHASE D APPROVED**; scope exactly {1,8,25}; V-4a sentinel intact; 3 Phase B amendments runtime-proven; defaults authorized; 0 abort sites; **merge gate = Owner S004**). Local main fast-forwarded and verified this session. [FACT]
+- `mangabd-003-batch3` = `1753b1a` (WIP, remote-verified) — the V-5 implementation awaiting S004. `mangabd-003-phase-c` = `830a552` (byte source, preserved). [FACT]
+- MANGABD-003 merged so far: Batch 1 (`f158091`) + Batch 2 (`6ce6cd2`). MANGABD-002 closed. Notebook: 27 code cells, 0 markdown. [FACT]
+- **Interaction flagged immediately (decision item D1, A7):** the MANGABD-004 pivot supersedes most of V-5's multi-provider surface (4 of 5 registry providers + gemini/chatgpt/nllb natives get deleted), while V-5's *OpenRouter-specific* payload (adapter, `key_env` discipline, closure dispatcher, SECRET_SOURCES pattern, translator_model sidecar) is precisely the seed M4 builds on. Running the originally-planned S004 (multi-provider acceptance) would spend an Owner live session validating code that M4-B1 immediately deletes. Options and recommendation: A7-D1. [FACT + recommendation]
+
+---
+
+## A2 Directive 1 — OpenRouter-exclusive translation architecture
+
+### A2.1 Current provider inventory (complete, with citations)
+
+**Cell 8 (Translation Service, 1827 lines @ 1753b1a):**
+
+| Element | State | Citation |
+|---|---|---|
+| Default engine | `"manual"` | cell 8:70 |
+| `gemini_model` / `openai_model` config | set (gemini-2.5-flash / gpt-4o-mini) | cell 8:77–78 |
+| Provider registry (5 providers, all OpenAI-compatible) | openai / qwen / deepseek / ollama / **openrouter** | cell 8:86–97 |
+| NLLB config block (model_id, lang codes, beams, max_length) | set (facebook/nllb-200-distilled-600M) | cell 8:114–122 |
+| `translate_with_gemini` (google-genai SDK) | 38 lines | cell 8:446–483 |
+| `translate_with_chatgpt` (openai SDK, native) | 52 lines | cell 8:494–545 |
+| `translate_with_provider` (openai SDK, registry-driven) | 29 lines | cell 8:551–585 |
+| NLLB trio (`get_nllb_bengali_bos_id` / `ensure_nllb` / `translate_with_nllb`) | 167 lines | cell 8:589–756 |
+| Dispatcher branches | gemini :803, chatgpt :810, nllb :817, providers :824–832 (closure), unknown :834 | cell 8:763–841 |
+| `switch_translator` valid_engines (legacy 4 + dynamic registry) | 7+ engines | cell 8:844–870 (list at 850–852) |
+| `translator_model` sidecar resolution (registry lookup + row override) | additive V-5 | cell 8:1229–1238 |
+| Cell-8 self-tests incl. fake-SDK provider tests | V-5 test suite | cell 8:1584–1757 |
+
+**Cell 25 (Control Studio v4, 459 lines):** engine buttons `btn_gemini`/`btn_nllb`/`btn_provider` (cell 25:267–269); `mode_sel` 7 options (cell 25:276–283); `gemini_key` Password widget (cell 25:294–295); `on_gemini` (key capture + forced run, cell 25:345–353); `on_nllb` (cell 25:354–361); `on_provider` (engine from `mode_sel`, cell 25:362–370); button wiring (cell 25:409–414); `rebuild_mode_panel` gemini/provider/nllb panels (cell 25:416–433). [FACT]
+
+**Cell 1 (Config/Secrets):** `MANGABD_SECRETS` init {gemini, openai, hf} (cell 1:383–387); `SECRET_SOURCES` 6 key families + ollama-absent comment (cell 1:407–417); bootstrap loop env→userdata→secrets + primary-env export (cell 1:419–440); **`save_config` sanitizer strips any dict key containing api_key/token/secret/password** (cell 1:529–576, forbidden list at 540–545). [FACT]
+
+**Other cells:** cell 19 hotfix = manual-translation rescue (cell 19:22+) **plus a runtime override of `translate_with_nllb`** (cell 19:93–157, the "src_lang fix"); cell 15 `quick_start_auto(engine="gemini")` default (cell 15:898); cell 18 printed command examples incl. gemini/chatgpt/nllb (cell 18:599, 971–973); cell 17 secret-leak self-test is gemini-key-specific (cell 17:955–975); cell 3 `TRANSLATION_DF_COLUMNS` carries `translator_engine` as a *value* column — no schema change needed for any engine consolidation (cell 3:123–145). [FACT]
+
+### A2.2 Findings
+
+- The V-5 architecture is already **one OpenAI-compatible adapter + a registry** (cell 8:551–585): OpenRouter-exclusivity is a *registry reduction*, not a rewrite. The openrouter entry (cell 8:95–96) is exactly the M4 target shape: `base_url https://openrouter.ai/api/v1`, `model openai/gpt-4o-mini`, `key_env openrouter_api_key`. [FACT]
+- **The key cannot live in `MANGABD_CONFIG`**: `save_config` runs at cell 1:602 immediately and recursively strips any key containing "api_key" (cell 1:540–545) — an in-CONFIG key would be silently deleted on the first save. This is why V-5 used `key_env` + `MANGABD_SECRETS` (Flash Phase D D2 runtime-proven). Any M4 key UX must write to `MANGABD_SECRETS` / env / Colab userdata — never CONFIG. [FACT]
+- The Colab userdata bootstrap (cell 1:419–440) already resolves `OPENROUTER_API_KEY` from env or the userdata secret of the same name, exports it to the environment, and prints loaded/not-set status — but as ONE line among six in a log-style block (cell 1:438–440), which the Owner evidently does not find discoverable enough (the directive's "without digging" complaint). [FACT]
+- A working in-UI key-entry precedent exists and is proven on mobile: the `gemini_key` Password widget + capture in `on_gemini` (cell 25:294–295, 345–347). [FACT]
+- Native gemini/chatgpt adapters and the whole NLLB stack (cell 8:589–756 + cell 8:114–122 + cell 19:93–157 + cell 25 branches) become dead code under exclusivity; NLLB is additionally policy-deprecated (DECISION.md L554, "NLLB not used per policy"; relabeled "(experimental)" in cell 25:280 during V-5). [FACT]
+- zyddnys upstream itself has moved to OpenAI-compatible-ecosystem translators (zy:requirements.txt pins `transformers==5.19.0`; recent commit "restrict ChatGPT to GPT-6 Luna", `d6de6ab`) — irrelevant to M4 directly, but confirms the ecosystem direction: single OpenAI-compatible client, many endpoints. [FACT]
+
+### A2.3 Proposed target architecture (Phase B design, not yet implemented)
+
+**Registry (cell 8:86–97 →):** reduce to exactly one provider:
+
+```python
+MANGABD_CONFIG["translation"].setdefault("providers", {
+    "openrouter": {"base_url": "https://openrouter.ai/api/v1",
+                   "model": "openai/gpt-4o-mini",          # Owner-editable default
+                   "key_env": "openrouter_api_key"},
+})
+```
+
+- `translate_with_provider` (cell 8:555–585) is retained **verbatim in shape** — it already routes any registry entry through the OpenAI SDK with per-provider base_url/model. Two OpenRouter-specific additions proposed: (a) **attribution headers** via `OpenAI(..., default_headers={"HTTP-Referer": <repo-or-colab-url>, "X-Title": "MangaBD V12"})` — optional, OpenRouter-app identification; (b) log `response.usage` token counts into `log_event` for cost visibility. Both are additive and fail-soft. [HYPOTHESIS: exact header names/usage field per current OpenRouter docs to be re-verified at Phase B implementation time — the SDK `default_headers` kwarg itself is standard OpenAI-SDK API.]
+- **Optional (config-gated, default OFF): server-side model fallback** — OpenRouter supports a `models` array (ordered fallback list) on the chat-completions request, passable through the SDK as `extra_body={"models": [...]}`. Proposal: `MANGABD_CONFIG["translation"]["openrouter_fallback_models"] = []` — empty = off. This gives the Owner free resilience (e.g. primary + 1 cheaper fallback) with zero code branching. [HYPOTHESIS: API shape to verify against live OpenRouter docs in Phase B; the config knob itself is inert when empty.]
+- **Dispatcher (cell 8:763–841):** delete gemini/chatgpt/nllb branches; keep the provider-closure branch (cell 8:824–832, Flash Phase B amendment 1 — the closure binding MUST be preserved verbatim to keep the `translate_with_retry` signature untouched). Unknown-engine `else` stays. `switch_translator` (cell 8:844–870) keeps its dynamic valid_engines construction — it collapses automatically to `["manual", "openrouter"]` when the registry shrinks, zero logic change. [FACT: mechanics; the collapse follows from cell 8:850–852 reading the registry keys.]
+- **`translator_model` sidecar (cell 8:1229–1238):** unchanged — registry lookup for the openrouter engine keeps working; manual rows leave it empty as today. [FACT]
+- **Default model:** keep `openai/gpt-4o-mini` (the Owner-selected Batch-3 default, cell 8:96) unless the Owner names another; the model becomes a first-class visible field in the Studio (A2.4) so changing it is a UI action, not a code edit. [ASSUMPTION: Owner retains gpt-4o-mini as default until told otherwise.]
+
+### A2.4 API-key UX for Colab (the "highly visible, easily accessible" requirement)
+
+Constraint recap: the key may live in (a) Colab userdata secret `OPENROUTER_API_KEY` (persistent across sessions, set via the 🔑 sidebar or `userdata.set()`), (b) an env var, (c) `MANGABD_SECRETS` (kernel session only) — never CONFIG (sanitizer, cell 1:540–545). [FACT]
+
+**Proposal — three reinforcing layers, ordered by discoverability:**
+
+1. **Control Studio "STEP 0 · 🔑 OPENROUTER KEY" panel** (top of the Studio, above STEP 1–2; cell 25:443–451 assembly): a `Password` widget + two buttons — "💾 Save for this session" (writes `MANGABD_SECRETS["openrouter_api_key"]` + `os.environ["OPENROUTER_API_KEY"]`, mirroring cell 25:345–347's proven gemini capture) and "🔐 Save to Colab Secrets (persistent)" (`userdata.set("OPENROUTER_API_KEY", value)` in try/except with a plain-language fallback message) — plus a status line showing ✅ loaded / ⚪ not set (read from `MANGABD_SECRETS` at panel build). This is the single most discoverable surface the notebook has (the Studio is the Owner's actual cockpit; S003 metadata's `pipeline_variant` = "fresh Run All + Control Studio UI"). [FACT: Studio is the cockpit; HYPOTHESIS: `userdata.set()` interactive confirmation behavior on current Colab needs one live check in Phase B/D — if the dialog is unavailable, button 2 degrades gracefully to instructions text.]
+2. **Cell 1 startup banner:** when `openrouter_api_key` is not loaded, the secrets section (cell 1:437–441) prints a 3-line boxed instruction naming the exact secret name and the 🔑-sidebar path, plus "or use STEP 0 in the Control Studio below" — turning today's one-line "⚪ not set" log into an actionable prompt. [FACT: current one-line behavior at cell 1:440.]
+3. **Model field in the provider panel:** the STEP 3 openrouter panel (today cell 25:426–429, a static hint) gains a small `Text` widget pre-filled from the registry model, applied on the translate click (`MANGABD_CONFIG["translation"]["providers"]["openrouter"]["model"] = value`) — so "route to any model" is a one-widget action, matching the Owner's stated intent of switching Gemini/Claude/GPT/DeepSeek freely. [FACT: intent is the directive's own words; mechanics are the existing widget pattern.]
+
+Rejected alternatives: (a) key-as-CONFIG-literal — impossible (sanitizer, above); (b) key pasted into the notebook's first cell as a Python string — persists in the .ipynb file itself = secret-at-rest in a file the Owner shares/versions; the userdata/widget paths keep the key out of the notebook bytes (cell 1:443 already promises "Secrets CONFIG বা manifest-এ save হবে না"). [FACT + judgment]
+
+### A2.5 Dead-code removal list (Phase B, cell-level)
+
+- cell 8: `gemini_model`/`openai_model` defaults (77–78); registry entries openai/qwen/deepseek/ollama (86–94); NLLB config (114–122) + NLLB print line (154); `translate_with_gemini` (446–483); `translate_with_chatgpt` (494–545); NLLB trio (589–756); dispatcher branches gemini/chatgpt/nllb (803–822); V-5 self-tests covering removed engines (subset of 1584–1757 — prune per-branch, keep provider/closure/sanitizer/sidecar tests).
+- cell 19: `translate_with_nllb` override (93–157) — the rescue-manual half (cell 19:22+) STAYS.
+- cell 25: `btn_gemini`/`btn_nllb` (267–268); `gemini_key` (294–295); `mode_sel` 5 removed options (276–281); `on_gemini`/`on_nllb` (345–361); wiring tuples (409–414); mode panels gemini/nllb (424–425, 430–431).
+- cell 15: `quick_start_auto` default engine → "manual" (898). cell 18: command-example text (599, 971–973) → manual/openrouter only.
+- cell 1: `SECRET_SOURCES` trimmed to `{openrouter_api_key, hf_token}` (407–417 — **hf_token must stay**: RT-DETR/Qwen/LaMa weights download via HF, cell 5:777–787); `MANGABD_SECRETS` init trimmed (383–387).
+- cell 17: generalize the secret-leak self-test's key name (965–967) from gemini to openrouter.
+- **Deliberately NOT removed:** `manual` engine plumbing, cell 22, cell 20/21, V-4a `_unparsed` sentinel (cell 8:881–951), `apply_manual_translation`, closure dispatcher, retry helper, glossary system (feeds the A3 system prompt), `export_ai_text`. [FACT: all cited]
+
+Estimated net diff (A2 + A3.4 UI together, single batch): notebook ≈ −260/+180 lines across cells 1/8/15/18/19/22/25 — the largest single batch in project history, hence the split recommendation in A6. [HYPOTHESIS: line estimates ±20%.]
+
+### A2.6 Risks & compatibility
+
+- **Squash-merge lineage:** M4-B1 must branch from a decided base (A7-D1: `main @ 37dc72e` if V-5 is superseded, or post-S004 main if Batch 3 merges first). The V-5 bytes on `mangabd-003-batch3` are NOT re-transplantable verbatim under exclusivity (they contain the 5-provider registry) — the openrouter subset is small enough to re-author cleanly inside M4 code. [FACT: registry size; judgment: re-author.]
+- **Sidecar/consumer compatibility:** `translator_engine` values "gemini"/"chatgpt"/"nllb"/provider names appear in existing artifact JSONs (S003 translation.json shows `engine=nllb`). Old artifacts remain readable (values are strings; nothing switches on them at load). `switch_translator("nllb")` post-M4 → rejected by the dynamic list (cell 8:854–859) with the existing WARN — correct degradation. [FACT: mechanics; no consumer parses engine names except logs.]
+- **Colab secret-name continuity:** the `OPENROUTER_API_KEY` userdata name is already what cell 1 bootstraps (cell 1:416) — no renaming, existing saved secrets keep working. [FACT]
+- **Fresh-run regression surface (M002 baseline):** all deletions are function-defs + dict entries inside cells 1/8/25/19; the abort-class simulator baseline (0 sites on `37dc72e`-lineage) must be re-run in Phase D. Flash's D-pattern (scope sha16 per changed cell + guard-equivalence S1–S6) applies unchanged. [FACT: protocol; HYPOTHESIS: no new abort sites introduced — verified in Phase D.]
+
+---
+## A3 Directive 2 — Manual copy-paste as PRIMARY translation, with professional System Prompt
+
+### A3.1 Current copy-flow audit (what the Owner actually copies today)
+
+Three parallel paths produce the "copy" payload, all bare (no system prompt anywhere):
+
+1. **Control Studio (primary path):** `build_ai_text_content()` (cell 25:153–165) builds `# MangaBD V12 — ai.Text` + `# Format: [page:id] English → বাংলা` + per-page `# ═══ Page: ... ═══` comment banners + `[page:id] English →` lines (OCR-failed → `[SKIP:OCR_FAILED]` sentinel, cell 25:162). `btn_load_src`/`on_load_src` (cell 25:263, 318–319) pours this into `ta_src`, a **disabled** Textarea the Owner must manually select with mouse/finger and Ctrl+C — there is no copy button and no clipboard integration. Paste-back: `ta_tgt` + `on_apply` (cell 25:336–344) → `apply_translations_from_text`. [FACT]
+2. **Standalone cell 22:** `show_text_for_translation()` (cell 22:107–182) prints the export between `──── COPY FROM BELOW ────` / `──── COPY UNTIL HERE ────` banners (cell 22:166–170) — same bare format, plus triple-quote paste instructions. [FACT]
+3. **File export:** `export_ai_text()` (cell 8:954–1057) writes `ai_text_export.txt` + JSON sidecar with the same header (cell 8:991–998). [FACT]
+
+**The paste-back side is already robust** — this is a strong foundation for the external-LLM round-trip: `parse_ai_text` (cell 8:881–951) tolerates `#` comment banners (skipped, 913–914), uses LAST-arrow split `rsplit("→", 1)` (929–931) so arrows inside the English text survive, and quarantines malformed lines under the V-4a `("_unparsed", 0)` sentinel (941–949) which `apply_translations_from_text` surfaces as a visible warning with the first 3 offending snippets (cell 22:235–243). The cell-22 local parser additionally accepts 5 arrow variants `→ ➔ ➡ -> =>` (cell 22:59, 84–90) — LLMs frequently emit ASCII `->` — and the rescue path accepts Bengali-on-the-left (cell 22:230–233). [FACT]
+
+### A3.2 Evidence — why manual-external-LLM becomes primary (the quality case, measured)
+
+S003's live NLLB output (the current best automated engine the Owner has run) demonstrates exactly the "robotic literal translation" failure the directive targets (samples/S003_batch2/translation.json, all 6 regions, engine=nllb): [FACT]
+
+| Original (OCR) | NLLB Bengali | Defect class |
+|---|---|---|
+| "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?" (R5) | "কে ঐ **যৌনসঙ্গম** OTEARAH! ! এই বেশ্যা তাকে বা কিছু জানেন! ?" | Profanity translated as a clinical anatomy term ("sexual intercourse"); broken punctuation "! !" and "! ?"; ungrammatical "তাকে বা কিছু জানেন" |
+| "MY NAME'S KOGANEI YOU DUMBASS!" (R3) | "আমার নাম কোগানাই, তুমি **বোকা**!" | Insult softened to "you are silly" (childish register) |
+| "WHO THE HELL IS THAT PERSON!?" (R4) | "সেই ব্যক্তি কে?" | Intensity ("the hell", "!?") dropped entirely; stiff word order |
+| T/L note R1 | Bengali translation of a *meta* translator note, kana preserved mid-sentence with OCR's stray ")" | Note treated as dialogue; glossary/romanization conventions absent |
+
+A strong external chat LLM with a proper persona prompt handles register, profanity and idiom far better than a 600M seq2seq model — this is the quality rationale behind the Owner's decision. The S003 dialogue (angry teen register, profanity, mockery) is the precise use-case the system prompt below is engineered for. [HYPOTHESIS: external-LLM superiority on register/profanity — high confidence, universally observed; final proof = S005 acceptance sample. The architecture does not depend on it: manual stays the primary and openrouter remains the auto fallback.]
+
+### A3.3 Proposed System Prompt template (exact text, machine-merged with CONFIG)
+
+Storage: `MANGABD_CONFIG["translation"]["manual_copy_prompt"]` (setdefault at cell 8 config block) — visible, Owner-editable, sanitizer-safe (no forbidden substrings in the key). Builder `build_external_ai_copy(page=None, region_id=None)` merges: prompt template + glossary lines (cell 8:323–346 `build_glossary_prompt_lines` reused verbatim — sfx glossary included for sfx-heavy pages) + the `[page:id] →` line block (reusing `build_ai_text_content`'s row walk, cell 25:157–164 / cell 8:1014–1027 logic). [FACT: reuse sites; proposal]
+
+```
+You are an expert Bengali manga/manhwa localizer with years of scanlation
+experience. You translate English (and mixed Japanese-English) comic text
+into natural, living Bengali — the way real Bengali speakers actually talk in
+this situation — NEVER stiff, word-by-word, textbook translation.
+
+YOUR TASK
+Below is a numbered list of text regions from a manga/manhwa page. Each line
+looks like:
+    [PAGE:ID] English text →
+Write your Bengali translation on the SAME line, AFTER the "→" arrow.
+
+STRICT FORMAT RULES — THE OUTPUT IS MACHINE-PARSED:
+1. Keep every [PAGE:ID] tag EXACTLY as given. Do not rename, renumber,
+   reorder, merge or split lines. One input line → exactly one output line.
+2. Output ONLY the completed lines. No preamble, no explanations, no
+   headers, no markdown, no code fences, no quotation marks around lines.
+3. Copy lines containing [SKIP:OCR_FAILED] unchanged (write nothing after
+   the arrow).
+4. Keep the arrow "→" as the separator on every line.
+
+VOICE — THE MOST IMPORTANT PART:
+- Dialogue must sound like real speech. Match the Bengali register to WHO
+  is speaking: close friends/rivals/teens → তুই; polite strangers/adults →
+  আপনি; standard তুমি otherwise. Keep it consistent per character.
+- PRESERVE emotional intensity EXACTLY:
+  * Slang stays slang. Localize to natural Bengali equivalents.
+  * Profanity stays profanity — DO NOT sanitize or soften. Translate
+    "fuck/shit/bitch/dumbass" with real Bengali curses of matching heat
+    (শালা, বেটা চোদ, মাদারচোদ, মাগি, গাধা as register and heat dictate).
+    Turning an angry line polite is a translation ERROR.
+  * Shouting, mockery, teasing, sarcasm, shy/quiet lines each keep their
+    distinct flavor and punctuation energy (!!, !?).
+- Cultural nuance: localize idioms into Bengali equivalents rather than
+  translating literally. If a pun cannot survive, choose the funniest
+  natural Bengali that fits the scene.
+- Names: transliterate consistently into Bengali script
+  (Koganei → কোগানেই, Otearai → ওতেআরাই). Keep honorifics if present.
+- T/L or translator notes in the text: translate the note's meaning
+  concisely; if the line explains Japanese spelling, keep the kana exactly
+  as written.
+- SFX lines: short, punchy, onomatopoeic Bengali (BOOM → বুম!, THUD →
+  ধপাস!, GASP → হাঁপ!). Never expand SFX into full sentences.
+- Narration/overlay text: clear, slightly literary Bengali. Bubble
+  dialogue: spoken Bengali.
+
+GLOSSARY (must-follow renderings):
+<auto-merged from CONFIG glossary + sfx_glossary, if non-empty; else this
+section is omitted entirely>
+```
+
+Then the payload block, visually separated:
+
+```
+══════════ TEXT TO TRANSLATE ══════════
+[02.jpg:1] T/L note: ... →
+[02.jpg:2] THE ONLY LETTER CORRECT IN THAT NAME WAS "!! →
+...
+```
+
+Rationale for each prompt section traced to observed failures: register/profanity rules target R3/R5 (S003); kana/note rules target R1; SFX rules target the sfx_glossary system (cell 8:349–379); format rules exist because the paste-back parser keys on `[page:id]` + last-arrow (cell 8:916, 929–931); the glossary merge reuses the proven prompt-injection path (cell 8:307–312). [FACT: defect mapping; proposal: prompt]
+
+### A3.4 UI / cell modifications (Phase B design)
+
+1. **New Studio button `btn_copy_ai` "📋 COPY FOR EXTERNAL AI"** in the manual-paste panel (replacing/augmenting `btn_load_src`, cell 25:422 flow "Load → বাংলা লেখো/পেস্ট → Apply"): builds the two-part payload via `build_external_ai_copy()`, renders it in a raw HTML `<textarea>` (NOT the disabled widget — raw HTML gives JS a selection handle), and injects a one-shot JS copy: `el.select(); el.focus(); document.execCommand('copy')` with a `navigator.clipboard.writeText(...)` first attempt and automatic fallback between the two (Colab output iframes have inconsistent clipboard-permission grants; `execCommand` on a selected in-DOM textarea is the most reliable path; the textarea stays visible so manual Ctrl+C always works as the ultimate fallback). Status feedback printed to the Studio console ("📋 Copied N regions — paste into ChatGPT/Claude/Gemini, then paste the reply below"). [HYPOTHESIS: clipboard behavior in current Colab needs one live verification in Phase B/D — the design degrades to "textarea visible + select() + manual Ctrl+C" which cannot fail.]
+2. **Per-page scoping:** `page_dd` (cell 25:296, already exists for downloads) gains a "current page only" toggle next to the copy button — full-session copies get long; the S003 page had 6 regions, but a 50-page session would exceed chat context. Default: current page (the Owner works page-by-page per the Studio flow). [judgment, config-gated]
+3. **`show_text_for_translation()` (cell 22:107–182) upgraded** to emit the same two-part payload between the COPY markers (single source of truth: it calls `build_external_ai_copy()` when present, falls back to today's bare format). `step_3_manual_translate_paste()` (cell 22:379–445) unchanged otherwise. [proposal]
+4. **Paste-back hardening (cell 22 `apply_translations_from_text`, ~8 lines):** pre-parse `_strip_llm_wrappers(content)` removing lines that are pure markdown fences (``` / ```text / ```markdown) and common LLM preambles ("Here are the translations:" as the first non-empty non-header line) BEFORE `parse_ai_text` — today those lines land in the V-4a sentinel and produce a scary-looking warning even when every data line parsed fine. The sentinel itself stays untouched (it is a merged, protected V-4a artifact). [FACT: current behavior; proposal: guard]
+5. **`ta_tgt` placeholder text** (cell 25:292) updated to show the full expected format including the `[page:id]` echo, teaching the format at the point of use. [cosmetic]
+
+### A3.5 What deliberately does NOT change
+
+- The ai.Text line format `[page:id] English → বাংলা` — it is load-bearing across: `parse_ai_text` regex (cell 8:916), 5-arrow local parser (cell 22:59), rescue path (cell 22:230–233), fallback applier's page-normalization map (cell 22:310–329), `export_ai_text` (cell 8:986–1040), V-4a sentinel quarantine, and Flash's D-harnesses. The system prompt *wraps* the format; it does not alter it. [FACT]
+- An optional `(bubble)`/`(sfx)` region-type tag after `[page:id]` was considered and is **rejected for Phase B**: it lands inside `original_text` after the arrow split (harmless for apply, but changes sidecar bytes and every Flash harness that fingerprints cell-22 behavior) for marginal prompt value — the SFX rules are already unconditional in the prompt. Revisit only if S005 shows the external LLM mishandling SFX vs dialogue. [judgment]
+
+---
+## A4 Directive 3 — LaMa Large inpainting audit (cell 9 + cell 5 + upstream)
+
+### A4.1 Current implementation facts
+
+- Engine: `lama` with OpenCV-Telea fallback (cell 9:68–69, 322–356, 541–562). Model = **LaMa Large** (`lama_large_512px.ckpt`, `large_arch=True`, `use_mpe=False`) via zyddnys `LamaLargeInpainter` subclassed in cell 5:699–745 with a Drive-backed model dir override (cell 5:718). [FACT]
+- Working resolution: **`lama_size = 1024`** (cell 9:69) passed explicitly as the 4th positional arg to `lama.inpaint(...)` (cell 9:385–396). The `InpainterConfig()` constructed fresh at cell 9:383 uses upstream defaults — its own `inpainting_size` field (zy:config.py:297, default **2048**) is *never read by our call path*; our explicit 1024 arg governs. [FACT]
+- Upstream resize semantics (zy:inpainting_lama_mpe.py:56–118, `_infer`): if `max(H,W) > inpainting_size` → `resize_keep_aspect` BOTH image and mask to the cap (zy:utils/generic.py:251–255, INTER_LINEAR_EXACT); then pad-to-/8 by a tiny cv2.resize stretch (lines 67–79); inference under `torch.autocast(bf16)` with fp32 weights (lines 97–107 — upstream comment: fp16/bf16 *weights* darken LaMa output; autocast is the sanctioned mode); resize back to original dims (115–116); composite `inpainted*mask + original*(1-mask)` so **only masked pixels come from the upscaled inference** (117). [FACT]
+- Precision: `InpainterConfig()` default `inpainting_precision = bf16` (zy:config.py:299–300, "use bf16 while you can") → cell 9 already runs the recommended precision. [FACT]
+- VRAM hygiene: `unload_others=True` → `model_manager.unload_all(exclude=["lama"])` BEFORE `ensure_lama()` (cell 9:370–377 → cell 5:563–571, each unload followed by `clear_gpu_cache()` = gc + `torch.cuda.empty_cache()`, cell 5:143–148). This is correct sequencing: RT-DETR/Qwen/CTD are released before LaMa loads. [FACT]
+- Failure path: LaMa exception → OpenCV Telea inpaint (radius 5, cell 9:322–356) with `fallback_used=True` in stage meta — a large silent quality downgrade (Telea smear vs LaMa texture synthesis). [FACT]
+- Architecture: LaMa Large = `FFCResNetGenerator` with n_blocks=18 (vs 9 base), ngf=64, 3 downsamples, max_features=1024, FFC ratio 0.75, LFU disabled (zy:inpainting_lama_mpe.py:545–614, 636–651) — **fully convolutional, no fixed-size constraint, no MPE** → native-resolution inference is architecturally legal; VRAM is the only constraint. [FACT]
+
+### A4.2 Verdict: is LaMa throttled?
+
+**YES — by a factor of 2 versus upstream's own default, and it silently down-scales every page the Owner actually runs.** [FACT]
+
+- Upstream default working size = **2048** (zy:config.py:297, doc-comment "too large will result in OOM"); MangaBD runs **1024** (cell 9:69). [FACT]
+- Concrete effect on the Owner's real pages (S003: 844×1200): 1200 > 1024 → the page is down-scaled to 720×1024 (0.853×) for inference, then the inpainted result is bilinearly up-scaled back 1.17× and composited inside the text masks. Fine texture (screentone, hair strands, speed lines) inside inpainted bubbles is softened accordingly. [FACT: arithmetic; TEST RESULT: page dims from samples/S003_batch2/original.jpg = 844×1200]
+- The 512px in the checkpoint filename (`lama_large_512px.ckpt`) refers to the model's *training* resolution, not an inference limit (fully convolutional — see A4.1); upstream nevertheless defaults to 2048 working size, and the MangaBD choice of 1024 is a conservative VRAM posture, not a model constraint. [FACT + inference]
+
+### A4.3 Proposal — maximize quality with T4-safe VRAM management
+
+**P1 (core): replace the fixed cap with an OOM-safe resolution ladder in `lama_inpaint_full` (cell 9:362–408, ~+25 lines).**
+
+```
+effective_ladder = [owner_lama_size] + [s for s in (2048, 1536, 1024) if s < owner_lama_size]
+for size in ladder:
+    try:    result = run lama.inpaint(..., size, ...)
+    except (torch.cuda.OutOfMemoryError, RuntimeError-with-"out of memory"):
+            clear_gpu_cache(); log "LaMa OOM at {size} → retrying {next}"; continue
+else: OpenCV fallback (existing path, cell 9:541–552)
+```
+
+- Default `lama_size` raised **1024 → 2048** (= upstream default). For the Owner's 844×1200 pages this means **full native-resolution inference (no resize at all — 1200 < 2048; only the ≤8px pad-to-/8 stretch applies)**. Larger pages (e.g. 1600×2400 scans) still get 0.85× — matching today's behavior for those, strictly better for standard pages. [FACT: cap semantics; proposal]
+- VRAM budget (bf16-autocast activations + fp32 weights, all other models unloaded): S003 page at native 848×1200 ≈ **3–5 GB peak** → comfortable on T4 (≈15 GB usable); 2048×2048 worst-case ≈ 9–14 GB → borderline, which is exactly what the ladder absorbs; 1024 floor ≈ 2–3 GB → the currently-proven-safe mode stays as guaranteed fallback. [HYPOTHESIS: numbers are architecture-derived estimates, not measurements — Phase D plan: Flash runs the ladder on a live T4 with `torch.cuda.max_memory_allocated()` instrumentation per rung and reports the measured ladder; acceptance gate = 844×1200 page completes at native with measured peak < 12 GB.]
+- The ladder changes failure semantics from "immediate Telea downgrade" to "graceful degradation with a logged, observable reason" — the stage meta (cell 9:569–579) gains `inpaint_size_effective` so every run records which rung actually ran. [proposal]
+
+**P2 (UX): make `lama_size` Owner-visible** — add it to the STEP 4 panel hint line in the Studio (cell 25:447) and to the cell 9 startup print (already printed at cell 9:85). One-line visibility, no widget needed (the Owner changes it rarely). [proposal]
+
+**P3 (rejected alternatives, with rationale):** (a) *Tiling/patch inference* — rejected: LaMa's global receptive field is FFT-based over the whole canvas (zy:FourierUnit:187–260); tiles would sever global context and produce seams/inconsistency exactly where manga backgrounds are continuous; the OOM ladder achieves the memory goal without the quality tax. (b) *Native unconditional (size=0/huge)* — rejected as default: zyddnys treats >2048 as OOM-prone (zy:config.py:298) and webtoon tall-strips (cell 24 slicer) could exceed 6000px; the ladder's top rung respects the owner value if they explicitly set higher. (c) *Mask resize to INTER_NEAREST* — upstream-internal (zy:inpainting_lama_mpe.py:65–66); patching zyddnys code at cell-4 runtime is invasive; effect is ≤1px mask-boundary wobble and the composite uses the original full-res mask anyway (line 117). Not worth the supply-chain surface. [FACT + judgment]
+
+### A4.4 Additional quality observations (non-blocking, Phase C candidates)
+
+- `redilate_artifact_mask=False` + `mask_clip_to_regions=True` + `mask_clip_padding=10` (cell 9:70–76) — the V-1/V-2-era mask discipline from Batch 1/2 is untouched by this audit and must remain byte-stable in any M4-B2 diff (protected baseline). [FACT]
+- The `opencv_radius=5` Telea fallback could be raised to `cv2.INPAINT_NS` as a slightly better last-resort, but with the ladder in place the fallback should almost never fire; not worth the diff. [judgment]
+- `inpaint_time_sec` is already recorded per page (cell 9:577) — Phase D regression tracking for the 2048 default comes free. [FACT]
+
+### A4.6 Supply-chain note (new finding, from this audit)
+
+Cell 4 clones zyddnys `--depth 1` and `git pull`s on EVERY run (cell 4:226–248) — the LaMa implementation, its precision handling, and the resize semantics tracked above are **upstream-HEAD-unpinned** and can drift under us mid-project (upstream moved 2026-10-11, `d6de6ab`, "update dependencies"). All A4 facts cite `d6de6ab`. Proposal (Phase B, cell 4, ~4 lines): record the resolved HEAD hash into `MANGABD_CONFIG["runtime"]["zyddnys_commit"]` (via `git -C ... rev-parse HEAD`) at clone/pull time so every session's artifacts are traceable to the exact upstream code that produced them; pinning a fixed commit is the stronger option but changes the "always latest" behavior the Owner has implicitly run so far — flagged as decision item A7-D5. [FACT: unpinned pull; proposal: hash recording]
+
+---
+
+## A5 Directive 4 — OCR audit (Qwen2.5-VL-3B, cell 7 + cell 5)
+
+### A5.1 Current pipeline facts
+
+- Model: `Qwen/Qwen2.5-VL-3B-Instruct` (cell 1:248), loaded fp16 on cuda (cell 5:77–80 — fp32 on CPU), `device_map="auto"`, local HF cache (cell 5:786–798). ~7.5 GB weights on T4. [FACT]
+- Decode: greedy — `do_sample=False`, `num_beams=1`, `max_new_tokens=512` (cell 1:249–254 → cell 5:404–408). No repetition penalty configured. [FACT]
+- **Pixel budget: no practical cap.** `AutoProcessor.from_pretrained` (cell 5:800–805) ships with `min_pixels=3136, max_pixels=12,845,056` (≈3584×3584, verified against the model repo's `preprocessor_config.json` fetched this session) — bubble crops (tens-of-thousands of px) are processed at **native resolution** with patch-14/merge-2 dynamic tiling. The OCR stage is NOT resolution-starved; quality levers lie elsewhere. [TEST RESULT: config fetched from HF hub; FACT: cell 5:800–805 passes no overrides]
+- Prompt: ONE generic prompt for every region type (cell 7:75–85 = cell 5:350–358 fallback): "Extract all English text visible in this image exactly as written. Do not translate. Do not explain. Preserve readable punctuation. Return only the raw text content. If there is no readable text, return empty string." — no region-type awareness, no stylized-font guidance, no mixed-Japanese guidance, no multi-line/reading-order guidance. [FACT]
+- Preprocessing (cell 7:208–313): BGR→RGB; upscale only if h<40px (×≥2, cubic); bilateral d=5 σ50/50; CLAHE clip 2.0 (8×8) on L; pad max(4, min(h,w)//10) — white constant for bubbles, BORDER_REPLICATE for sfx/overlay (cell 7:279–297). [FACT]
+- Confidence: **heuristic, not model-derived** — `_estimate_ocr_confidence` (cell 5:281–315): 0.45 base + length bumps + language-ratio + punctuation bonus, capped 0.95. Every S003 region reads exactly 0.95 regardless of difficulty — the V-3 orientation selector's score (`confidence + language_score.en`, cell 7:412–414) and the QC thresholds (cell 7:68–69: 0.50/0.65) therefore run on a nearly-saturated signal. [FACT: mechanism + S003 evidence — all 6 regions conf=0.95]
+- Post-processing: `clean_ocr_output` (cell 7:106–136) strips model prefixes then **collapses ALL whitespace to one line** (cell 5:230–241 `_clean_ocr_text` same); multi-line bubble structure is destroyed at the df boundary (by design — the ai.Text format is single-line; noted as A3.5 constraint). [FACT]
+- Vertical text: V-3 Layer-1 rotated-candidates selector (cell 7:394–432) — S003-proven, Flash Phase D + S003 accepted; out of M4 scope except as the *pattern donor* for A5.3-P3. [FACT]
+
+### A5.2 Observed accuracy defects (S002/S003 evidence)
+
+- S002 R1 misread "Otearai" → "Otarumi" — fixed by V-3 rotation (S003 accepted). [FACT, historical]
+- S003 residuals (post-V-3): R1 "hiragani" (→ hiragana), stray ")" surviving from "こがねい)", "pronounce" (→ pronounced); R2 `THE ONLY LETTER CORRECT IN THAT NAME WAS "!!` — a letter was dropped before the quote mark (likely the quoted glyph); R5 "OTEARAH" (real spelling per R1 note is "Otearai" — same-name inconsistency across regions); R6 truncation at crop edge ("SUDENLY" sic, sentence cut). [FACT: from S003 ocr.json + Flash Phase D/S003 records]
+- No SFX regions in S003's 6-region page (all bubble/overlay) — the SFX/stylized-font failure mode named in the directive is not yet *measured* in any archived sample; treat as the first S005/S006 acceptance target. [FACT: sample inventory; UNKNOWN: actual SFX accuracy]
+
+### A5.3 Proposals (ordered by leverage-per-risk)
+
+**P1 — Region-type-aware prompt map (cell 7, ~+30 lines; highest leverage, lowest risk).** Mirror the proven `REGION_TYPE_INSTRUCTIONS` precedent from the translation side (cell 8:254–260): a `OCR_PROMPTS` dict keyed by `region.get("region_type")` with a shared base instruction plus per-type riders, e.g.:
+- base (all): current generic prompt, plus "Transcribe each text block in natural reading order (top-to-bottom; if the lettering is Japanese-style vertical, follow its columns)" and "If the text mixes English with Japanese kana/kanji, transcribe BOTH exactly as written, including any romanized readings."
+- `sfx`: "This is a stylized sound effect — letters may be warped, distorted, outlined, or hand-drawn. Transcribe the letters as written, in order. Do not 'correct' or normalize the styling."
+- `overlay`: "This is a sign/label/annotation; keep exact capitalization."
+- `bubble`/`thought`/`narrator`: "Hand-lettered comic dialogue; keep line groupings; if a word is partially cut off at the crop edge, still transcribe the visible part." (targets R2/R6 class defects)
+
+This reuses the V-5 config-driven pattern (`MANGABD_CONFIG["ocr"]["prompts"]`, setdefault-registered, prompt still overridable per run). Flash D-verification: static prompt-map presence + harness that proves the correct rider is selected per region_type. [proposal; defect→rider mapping is FACT-traced above]
+
+**P2 — Decode safety + real confidence (cell 5, ~+15 lines).** (a) Add `repetition_penalty` (default 1.05, config-gated) to `generate_kwargs` (cell 5:404–408) — VLMs are known to loop on glyph repetition in stylized text; greedy+no-penalty is the worst-case decode for that failure. (b) OPTIONAL and flagged for recalibration: derive confidence from actual token probabilities via `model.generate(..., output_scores=True, return_dict_in_generate=True)` → geometric-mean token prob. This turns the saturated 0.95s into a real signal and would materially improve the V-3 orientation selector — but it **changes the sidecar `confidence` semantics**, so the QC thresholds (0.50/0.65, cell 7:68–69) and the V-3 tie-break scale would need re-calibration against archived S001–S003 outputs. Recommend implementing behind `MANGABD_CONFIG["ocr"]["real_confidence"] = False` (default off) and calibrating in a dedicated micro-batch before flipping on. [HYPOTHESIS: decode-loop risk; FACT: threshold coupling; proposal]
+
+**P3 — Dual-candidate preprocessing for sfx (cell 7, ~+20 lines, config-gated default ON for sfx only).** Extend the V-3 two-candidate pattern: for `region_type == "sfx"`, run OCR twice — current preprocessing vs. an aggressive binarization variant (Otsu on the L channel + contrast stretch) — and keep the higher `confidence + language_score.en`, recording `sfx_ocr_variant` in warnings/sidecar exactly like `vertical_ocr` (cell 7:422–430). Cost: +1 VLM call per sfx region (S003 had zero sfx; typical pages have a handful); benefit: robustness to the two dominant SFX renderings (outlined-on-art vs. high-contrast lettering). [proposal, pattern-precedent FACT]
+
+**P4 — Optional cloud OCR via OpenRouter vision models (Phase C+ candidate, NOT in the first M4 batch).** Once OpenRouter is the sole provider (A2), a `ocr_engine: "openrouter_vision"` variant becomes ~40 lines (base64 the crop, send to a vision-capable model with P1's prompt) — unifying key management and unlocking GPT-4o/Gemini-class OCR for hard pages while keeping local Qwen as free default. Rejected for the first batch: per-region API cost, latency, and it couples OCR availability to the key — the Owner's primary flow (manual copy-paste) must work keyless. [judgment]
+
+**P5 — Preprocessing micro-tuning (cell 7, low priority).** CLAHE clipLimit 2.0→2.4 for low-contrast dark scans (config knob); nothing else — the A5.1 pixel-budget finding removes the motivation for super-resolution upscaling for typical crops. [judgment]
+
+---
+## A6 Proposed implementation plan (for PM/Owner authorization — nothing below is started)
+
+Batches follow the MANGABD-003 protocol: branch from the decided base → per-cell single-logical-change → static + harness self-verification (scripts persisted, re-runnable) → WIP push → Flash Phase D (scope sha16 per changed cell + fresh-run regression + guard-equivalence S1–S6 + runtime proofs) → Owner S-sample live acceptance → squash-merge on authorization → DECISION.md record → branch cleanup. [FACT: protocol]
+
+- **M4-B1 "MANUAL PRIMARY"** — A3 in code: `manual_copy_prompt` config + `build_external_ai_copy()` + Studio copy button (JS clipboard w/ fallback) + per-page scoping + cell-22 prompt payload + `_strip_llm_wrappers` guard + placeholder updates. Cells: 8, 22, 25 (+25-only widget work). ~+120/−15 lines. No engine changes, no key dependencies — the Owner's primary workflow works with zero API keys. S005 acceptance: copy → external LLM → paste → apply round-trip on a fresh page; parse-rate and unparsed-sentinel behavior compared against S003-class runs. [proposal]
+- **M4-B2 "OPENROUTER EXCLUSIVE"** — A2 in code: registry reduction + adapter headers/usage + dead-code removal (A2.5 list) + STEP 0 key panel + model widget + cell-1 banner + SECRET_SOURCES trim + cell 15/18/19 text + cell 17 test generalization. Cells: 1, 8, 15, 17, 18, 19, 25. ~−260/+160 lines net. Depends on B1's cell-8/25 state → sequenced after B1 on the same lineage (B2 branch from B1's merged head). S006 acceptance: one live openrouter translation run + key-entry UX flow (STEP 0 session-save path at minimum; userdata persist path if Colab allows). [proposal]
+- **M4-B3 "LAMA FULL POTENTIAL"** — A4.3-P1/P2: OOM ladder + default 2048 + `inpaint_size_effective` meta + Studio hint. Cells: 9 (+25 one hint line). ~+30/−2 lines. S007 acceptance: the Owner's 844×1200 reference page at native rung, visual side-by-side vs S003 inpainted.png, measured VRAM peak from Phase D instrumentation. [proposal]
+- **M4-B4 "OCR PROMPT UPGRADE"** — A5.3-P1 (+P2's repetition_penalty, +P3 if Phase D agrees): prompt map + decode knob + optional sfx dual-pass. Cells: 7 (+5 for generate_kwargs). ~+60/−4 lines. S008 acceptance: fresh OCR run on the S003 page (regression: no new errors on regions 2–6) + an SFX-bearing page for the new prompt's target behavior. [proposal]
+- P2-real-confidence flip and P4-openrouter-vision-OCR are deliberately deferred to standalone micro-batches (threshold recalibration / cost surface). [proposal]
+
+Rationale for the B1→B2 order: B1 is the Owner's stated PRIMARY method, is keyless (works even while the OpenRouter key UX is being validated), and touches cells 8/22/25 in additive mode — so B2's deletions land on already-updated cells with one acceptance cycle in between instead of one mega-review. If the PM prefers the directive's 1→2 grouping as a single batch, B1+B2 merge into one M4-B1 of ~−260/+280 lines across 7 cells — workable, but Flash's per-cell single-logical-change review and the Owner's acceptance burden both get materially heavier. [judgment, decision item A7-D6]
+
+## A7 Decision items & open questions for PM/Owner relay
+
+- **D1 — MANGABD-003 Batch 3 (V-5) disposition vs. the M4 pivot.** Options: (a) run S004 + merge Batch 3 first (closes M003 cleanly at the cost of an Owner session validating code M4-B2 then deletes); (b) **supersede (my recommendation)**: close M003 with Batch 3 recorded as "implemented `1753b1a`, Flash Phase D APPROVED `37dc72e`, superseded by the MANGABD-004 Owner pivot before S004 acceptance; branch + `mangabd-003-phase-c` preserved as historical byte source"; M4-B2 branches from `main @ 37dc72e` and re-authors the ~60-line openrouter subset (adapter/registry/key_env/closure/SECRET_SOURCES/translator_model — all V-5-proven patterns) rather than transplanting the 5-provider payload. Saves one full acceptance/merge cycle; costs the "clean close" of (a). Owner call. [recommendation + FACT: both branch states verified]
+- **D2 — OpenRouter default model & fallback list** (A2.3): confirm `openai/gpt-4o-mini` stays as shipped default + whether to enable the fallback-models knob at all initially. [decision]
+- **D3 — Bengali register rules in the system prompt** (A3.3): the তুই/তুমি/আপনি mapping and the explicit profanity examples are MY drafting choices from the S003 defect evidence; the Owner (a Bengali speaker) should confirm/adjust the register table and curse-word register before S005 — this is taste, not engineering. [decision]
+- **D4 — LaMa default 2048** (A4.3): confirm the ladder default; alternatively keep 1024 default with the ladder still protecting against OOM at higher owner-chosen sizes. [decision]
+- **D5 — zyddnys pinning** (A4.6): record-commit-hash (proposed, low risk) vs. hard-pin a commit (behavior freeze, diverges from "always latest"). [decision]
+- **D6 — batch split B1/B2** (A6): split (recommended) vs. single combined batch. [decision]
+- **D7 — UNKNOWN, needs live Colab:** `userdata.set()` dialog behavior for the STEP 0 persist button (A2.4); clipboard-write permission in current Colab output iframes (A3.4). Both have designed fallbacks that cannot hard-fail; both get checked in the first Phase B/D live session. [UNKNOWN]
+
+**No source code, no other agent files, no branches were modified in this phase.** All work this phase: read-only audits (both refs + upstream clone `d6de6ab`), offline arithmetic on archived samples, and this document. Scripts used for extraction/inspection live outside the repo (`/home/z/my-project/m004/` scratch, incl. cell extractions of both refs and the upstream shallow clone — reusable as the Phase B starting audit kit).
+
