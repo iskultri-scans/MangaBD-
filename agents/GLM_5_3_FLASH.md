@@ -1421,3 +1421,173 @@ Net: the ~−260-line list is **substantively sound** — exactly one functional
 **PHASE B: CONFIRMED WITH AMENDMENTS.**
 
 All four Phase A tracks stand on independently re-verified evidence: the LaMa throttle arithmetic, upstream semantics, OCR pixel-budget conclusion, dead-code inventory, and quality case are CONFIRMED against notebook bytes, S003 artifacts, upstream `d6de6ab` source, and fresh HF/visual checks. Two functional spec defects (Amendments 1–2), two hardening requirements (3–4), one correction-plus-addition (6), and one scope exclusion (5) must be incorporated into the batch specs before implementation; none alters the architecture. With those folded in, M4-B1..B4 are cleared to proceed to Phase C/implementation planning under the standing per-batch protocol (branch → single-hunk → self-verify → Flash Phase D → Owner S-sample → squash-merge).
+
+---
+
+# MANGABD-004 — PHASE D VERIFICATION (GLM-5.3-Flash, independent reviewer, 2026-10-13)
+
+Object under review: commit `ab2aa36` (branch `mangabd-004-b1-b2`, "WIP: MANGABD-004 Phase C B1+B2"), base `main @ 97a683a` (my Phase B review). Method: Phase D discipline per precedent — every check re-executed independently against the pushed bytes BEFORE reading `GLM_5_3.md` §Phase C; no source changes; no amend/merge. Instruments persisted outside the repo (`/home/z/my-project/scripts/m004d_*.py` + `m004d_stubs.py`, `m004d_nsbuild.py`; extraction `/home/z/my-project/m004d_work/`).
+
+**Execution summary: 154 runtime checks + full static audit. Per-gate: E1 PASS · E2 FAIL (1 required fix) · E3 PASS · E4 PASS · E5 PASS · E6 listed. Overall: APPROVED_WITH_FIXES.**
+
+## D1 — E1 DIFF & SCOPE AUDIT: PASS
+
+- Topology: single linear commit `ab2aa36`, parent `97a683a`. numstat: notebook +629/−416, `GLM_5_3.md` +89/−2; 2 files, no renames (with `--find-renames`), `diff --summary` empty (no mode flips), all blobs 100644. [TEST RESULT: git plumbing]
+- Secret scan on all 718 added lines: **0 hits** (ghp/gh_/sk-/sk-or-/AIza/hf_/credential-literal patterns). [TEST RESULT]
+- Notebook JSON valid both refs (nbformat 4.0, 27 code cells); **27/27 cells AST-parse both refs**; cell-level and notebook-level metadata byte-identical for all 27 cells. [TEST RESULT: m004d_extract.py]
+- Changed cells (0-based source comparison): **exactly {1, 8, 15, 17, 18, 19, 22, 25}**; other 19 byte-identical, including MANGABD-003 protected cells 6/7/11/12/16 and M002 guards 14/26. Per-cell deltas match the self-report exactly (c1 +23/−7 · c8 +398/−300 · c15 +1/−1 · c17 +5/−3 · c18 +2/−4 · c19 +2/−73 · c22 +39/−7 · c25 +168/−30 = +638/−425). [TEST RESULT]
+- **ADJUDICATION of the disclosed 17/18 additions — both within scope, no behavior change beyond engine-name resolution:**
+  - Cell 17 (+5/−3, c17:963–971): the config-export leak test is a NEGATIVE assertion (`secret_leak` must be False); the hunk generalizes the probed key family `gemini_api_key` → `openrouter_api_key` with identical semantics. Legacy-engine reference cleanup only. PASS.
+  - Cell 18 (+2/−4, c18:597, 969–972): dashboard Commands HTML and the command cheat-sheet — `run_translation_all(engine="gemini")` → `"openrouter"`, and the 3-line gemini/chatgpt/nllb block → 1 openrouter line (`engine="manual"` line retained below, comment-documented). All three deleted engines are dead post-purge; keeping them would reference non-existent engines. PASS.
+- Cell 19 shrink (−73): removes ONLY the "Fix NLLB src_lang" hotfix section (the `translate_with_nllb` override + banner line); the rescue half (`apply_translations_from_ai_file`, c19:19) stays intact — Flash PB5 "rescue half stays" honored. [FACT]
+
+## D2 — E2 PURGE COMPLETENESS (B1): FAIL — one required fix (RF-1)
+
+- **RF-1 (REQUIRED FIX): cell 1:288–293 — a dead `"nllb"` config block survives inside the live `MANGABD_CONFIG` literal:**
+  ```python
+  "nllb": {
+      "model_id": "facebook/nllb-200-distilled-600M",
+      "source_lang_code": "eng_Latn",
+      "target_lang_code": "ben_Beng",
+      "num_beams": 4,
+      "max_length": 512,
+  },
+  ```
+  This is a LIVE (non-comment) reference to NLLB model ids in the pushed bytes — the E2 gate ("zero LIVE references … NLLB model ids … outside comments") FAILS as written. It is inert data: a branch-wide consumer scan finds **zero** readers of `translation["nllb"]` (cell 8's block and consumers are gone; cell 19's hotfix is gone), and the residue also lands in the saved `config_v12.json` on disk. Behavior impact: none. Fix radius: 6 lines, single hunk, config literal — no sentinel, no coupling. This is the same category as my Phase B `allowed_engines` cosmetic finding (c1:271), which Phase C fixed; the sibling block 17 lines below was missed because the self-report's "16 legacy symbols" battery did not include the model-id string / dict literal. **Required before merge; everything else below is green.**
+- Legacy-symbol sweep (branch, all 27 cells, case-insensitive, 23 terms incl. translate_with_gemini/chatgpt/nllb, ensure_nllb, get_nllb_bengali_bos_id, btn_nllb, gemini_key, GEMINI/OPENAI key env names, gemini_model/openai_model, genai, forced_bos, Seq2Seq): **0 live code references remain.** Remaining hits, all adjudicated: 2 comment-only mentions (c25:323 `gemini_key`, c25:538 `btn_nllb` — documentation of the removal, comment-only per my PB5 precedent); self-test rejection call-sites `switch_translator("nllb"/"gemini"/"chatgpt")` (c8:1628–1630 — these ARE the purge proof); UI copy naming ChatGPT/Claude/Gemini as paste destinations for the B2 workflow (c22/c25 — legitimate); `openai` SDK + `openai/gpt-4o-mini` for the OpenRouter adapter (legitimate). [TEST RESULT: m004d_e1e2_static.py, m004d_e2_broad.py]
+- **valid_engines runtime:** verbatim cell 1+8 exec → `providers == {openrouter}` exactly; `switch_translator("openrouter")=True`, `("nllb")/("gemini")/("chatgpt")=False` with engine unchanged, `("manual")=True`; `valid_engines` is now dynamic `["manual"] + list(providers keys)` (c8:663–665) — Amendment 1 implemented, the hardcoded literal is gone. [TEST RESULT: m004d_h1_e2.py]
+- **Sanitizer:** real `save_config` re-run post-registry writes `key_env` pointer to the disk file, no forbidden key names, no secret value; control test injects `api_key_env` → stripped from the REAL written file; nested `sanitize()` unit-probe preserves `key_env` / strips `api_key_env` at all levels (V-5 semantics intact). [TEST RESULT]
+- **Dispatcher closure-bound:** monkeypatched fake adapter through the verbatim `translate_text` path returns `("ঢাকা", "openrouter", [])` with the closure passing `engine=`/`region_type=` through; flaky-adapter retry succeeds at attempt 3 through the closure; counterfactual `translate_with_retry(..., engine=...)` raises TypeError. `translate_with_retry` source **md5-identical to main** (`f954a15c`); `parse_ai_text`, `apply_manual_translation`, `export_ai_text`, `clean_translation`, `validate_bengali`, `get_translation_status` all byte-identical to main. [TEST RESULT]
+- **SECRET_SOURCES:** `{openrouter_api_key: [OPENROUTER_API_KEY], hf_token: [HF_TOKEN, HUGGINGFACE_TOKEN]}` — hf_token kept; with-key re-exec of cell 1 loads the key from env into `MANGABD_SECRETS` + re-sets `os.environ`; no-key exec prints the banner (see D5). No secret anywhere in the diff. [TEST RESULT]
+
+## D3 — E3 B2 SAFETY (manual copy-paste): PASS
+
+- **Payload structure** (verbatim `build_external_ai_copy`): system prompt TOP + `══════════ TEXT TO TRANSLATE ══════════` banner (exactly once) + OCR text block BELOW; region_count == df rows; `build_external_ai_copy(page="02.jpg")` returns only that page (3/4); **delegation proven** — it calls `build_ai_text_content(page=page)` (Amendment 4; no third row-walk; `page=None` → all pages). [TEST RESULT]
+- **Prompt coverage** (12 checks): register তুই/তুমি/আপনি; profanity-preserving (শালা/মাদারচোদ/মাগি + "DO NOT sanitize"); anger/emotional-intensity; cultural nuance (idioms/puns); SFX onomatopoeia (বুম); name transliteration incl. the S003-grounded কোগানেই/ওতেআরাই; [PAGE:ID] preservation; arrow separator; no-fences/no-preamble; [SKIP:OCR_FAILED] copy-through; one-line-in/one-line-out; glossary merged via the shared `build_glossary_prompt_lines("sfx")` path. [TEST RESULT]
+- **`_strip_llm_wrappers` prefix-zone spec** (Amendment 3): code inspection confirms (a) pure-fence strip anywhere, (b) non-header preamble strip ONLY before the first data header, (c) hardening beyond the letter — any line CONTAINING a header pattern is never stripped (contains-header guard). **Silent-region-loss impossibility proven by an invariant battery on 7 adversarial replies** (fenced+postamble, glued fence-header, wrapped continuation, header-like preamble, glued-open+mid-fences, junk-only, empty): (a) no header-bearing line is ever removed; (b) every `[pg:id]` header is either parsed OR its full line appears in the V-4a `_unparsed` sentinel (visible); (c) sentinel fires with the offending text in every junk case. Fence-glued data lines reach the sentinel visibly, never silently dropped. Trailing postamble on a clean reply → visible 1-line unparsed warning while all regions still apply — per spec (visible > silent). [TEST RESULT: m004d_h2_b2.py]
+- **V-4a sentinel path untouched:** `parse_ai_text` (c8), `_parse_ai_text_local`, `_validate_bengali_local`, `_apply_translations_fallback` (c22) all **byte-identical to main** (md5 a794681c / 5fa7f6da / 4dc9e50e / 583d662d); functional sentinel test passes (junk → `("_unparsed", 0)` with the line text). [TEST RESULT]
+- **Round-trip:** payload → simulated external-LLM reply (preamble + ``` fence + 3 lines + closing fence + postamble) → paste-back → `apply_translations_from_text` → **3/3 applied**, df `translated_text` exact, `translator_engine="manual"`, `bengali_valid=True`, status updated; genuine-junk reply → 2/3 applied + sentinel warning names the broken line (visible). [TEST RESULT]
+
+## D4 — E4 REGRESSION GUARDS: PASS
+
+- **m002_sim_v2** on the branch notebook: **0 abort-class sites** (call map full); base `97a683a` calibration also 0 — instrument meaningful, M002 invariant preserved. [TEST RESULT]
+- **Protected bytes:** cells 6/7/11/12/16 byte-identical to main (sha256 verified; c7 `4522a89c…`, c16 `e31bfdc3…` match the Phase-E-approved f58cd3c lineage); cell-14 guard + cell-26 `render_all_pages(force=False)` byte-identical and verbatim-present. [TEST RESULT]
+- **ai.Text wire format:** old-format export file parses via BOTH branch parsers; strict + lenient outputs **identical to the base parsers** extracted from main (keys + full payload equality); coverage = 4 regions. Backward compat intact. [TEST RESULT]
+- **Control Studio callbacks:** verbatim cell 25 exec under widget stubs; **all 15 buttons clicked** (14-button sweep + double-click-armed reset) — **zero NameError at click time**; missing upstreams degrade via `_safe()` to visible guidance. `on_or` wiring proven with a recording stub: called with `engine="openrouter", force=True`, model box applied to the registry on click (A2.4 layer-3). `on_apply` applies a fenced reply from the UI: 3/3 rows. [TEST RESULT: m004d_h3_studio.py]
+- **Amendment-2 landmine GONE:** `rebuild_mode_panel` with `mode="nllb"` (unknown) runs without error and renders the `⚠️ অজানা mode` bubble; AST of the function contains no `btn_nllb`/`gemini_key` Name references; openrouter/manual/file subpanels all render. [TEST RESULT]
+
+## D5 — E5 KEY UX (3 layers) + persistence invariant: PASS
+
+- **Layer 1 — cell-1 banner:** no-key exec prints the boxed banner with the exact secret name `OPENROUTER_API_KEY`, the 🔑-sidebar path, and the STEP 0 pointer, plus "manual copy-paste needs no key"; with-key exec prints no banner. [TEST RESULT]
+- **Layer 2 — STEP 0 panel:** first section of `studio_root` = "STEP 0 • 🔑 OPENROUTER KEY (auto translation)" containing `key_status` mirror, `or_key` Password, session-save and Colab-persist buttons, and the Amendment-7 security bubble (allowed surface = Colab userdata ONLY; forbidden = notebook/CONFIG/manifest/artifact). Status mirrors refresh from one updater. [TEST RESULT]
+- **Layer 3 — model widget:** `or_model` pre-filled `openai/gpt-4o-mini` from the registry; click applies it to the registry (D4). [TEST RESULT]
+- **No key ever reaches config/artifacts:** with `sk-or-v1-HARNESS-SECRET-…` set through the real UI callbacks: key ABSENT from `MANGABD_CONFIG` (JSON dump), every file on the (virtualized) disk incl. `config_v12.json`/manifest, `build_ai_text_content`, the copy payload, `build_translation_records_from_df` output, and `MANGABD_EVENTS`; key PRESENT only in `MANGABD_SECRETS`, `os.environ`, and Colab `userdata` — the three allowed surfaces. `userdata.set` failure degrades to plain instructions without crashing (A7-D7 fallback path exercised). [TEST RESULT]
+- **translator_model sidecar (additive):** manual/empty rows → `""`; engine rows → registry model; row-level value wins. [TEST RESULT]
+
+## D6 — E6 D7 DEFERRALS (Owner-side S005 checks; not attempted here)
+
+1. `userdata.set("OPENROUTER_API_KEY", …)` dialog behavior in live Colab (the 🔐 persist button; designed fallback message verified offline).
+2. Clipboard-write permission inside Colab output iframes (`navigator.clipboard` + `execCommand` fallback; visible textarea keeps manual Ctrl+C working regardless).
+3. S005 acceptance proposal (per self-report C5, endorsed): fresh page → Upload → Detect+OCR → COPY FOR EXTERNAL AI → real external LLM → paste reply → Apply → render; metrics = parse rate on clean replies, sentinel behavior on preamble/wrapped/glued variants, register/profanity quality read vs the S003 NLLB baseline (A3.2), plus one live OpenRouter run with the Owner key.
+
+## OBSERVATIONS (NON-BLOCKING)
+
+1. **N-1:** `google-genai>=0.3.0` remains in cell 0's pip list; after the purge nothing imports it. Cell 0 is out of this batch's scope (byte-identical) — cleanup candidate for B4 or Owner housekeeping. [FACT]
+2. **N-2:** cell 17's leak test is vacuous when no key is loaded (condition requires a non-empty secret) — pre-existing semantics carried over from the gemini era, unchanged by this batch. [FACT]
+3. **N-3:** cell 22's file-based rescue path (`apply_translations_from_ai_file`) deliberately does NOT strip wrappers (self-report C5 disclosure) — machine-generated content, sentinel stays visible; coherent, endorsed. [judgment]
+4. **N-4:** every trailing-postamble clean reply will show a 1-line unparsed warning by design (Amendment 3, visible > silent). If S005 finds it noisy, the fix is a Owner-taste tuning of the strip spec, NOT a silent-drop. [judgment]
+5. **N-5:** self-report C0–C5 line claims spot-checked against bytes — per-cell deltas, amendment table, disclosure of the 17/18 additions and comment-only refs all accurate; the ONLY omission is the RF-1 residue (their legacy-symbol battery missed the model-id dict literal). [FACT]
+6. **N-6:** "MANGABD-003 Batch 3 SUPERSEDED per A7-D1 (Owner approved skipping S004)" is a PM-relayed process decision — not verifiable from repo bytes; recorded as relayed. [ASSUMPTION]
+
+## VERDICT
+
+**MANGABD-004 PHASE C (B1+B2): APPROVED_WITH_FIXES.**
+
+All five verification gates pass with one exception: **RF-1 — delete the dead `"nllb"` config block (cell 1:288–293, 6 lines, zero consumers, zero behavior change)** to satisfy the E2 purge gate as written. Everything else — purge completeness, closure dispatch, sanitizer survival, B2 payload/strip/round-trip safety, V-4a and wire-format preservation, M002 regression guards, Studio callback resolution, the 3-layer key UX with the persistence invariant — is verified green against the pushed bytes (154 runtime checks; instruments re-runnable from `/home/z/my-project/scripts/m004d_*.py`).
+
+RF-1 may be landed by GLM-5.3 as a single follow-up commit on this branch (no amend of `ab2aa36`; same no-merge discipline) and re-verified with a scope audit of that one hunk; alternatively the Owner may waive it at S005 — my recommendation is to fix, since it is mechanical and the E2 gate is explicit.
+
+**Gating preserved: merge remains gated on the Owner's S005 acceptance run (D6 items included). No amend, no merge from either agent until Owner acceptance via PM relay.**
+
+## D-ADDENDUM — RF-1 DELTA VERIFICATION (fix commit `3c57583`)
+
+**Object:** delta `f460143..3c57583` — single linear fix commit, parent = my Phase D report commit (no amend of `ab2aa36`, no merge; prescribed discipline followed). Re-verified from pushed bytes with 49 fresh checks (32 static `m004rf1_delta.py` + 17 runtime `m004rf1_runtime.py`; artifacts `m004d_work/rf1/`).
+
+**Item 1 — diff scope: PASS.** numstat: notebook **0 insertions / 7 deletions** (single hunk `@@ -909,13 +909,6 @@`), self-report `GLM_5_3.md` +18/−1 docs-only, my FLASH file untouched, no renames/mode changes, secret scan on all 18 added delta lines = 0. Changed cells == **{1} exactly**; all top-level notebook fields identical; POST cell 1 == PRE cell 1 minus exactly 7 contiguous lines at 0-indexed 288..294 whose content byte-matches the dead nllb dict, with correct anchors (prompt-subdict closer above, `"translation"` closer below). **Citation reconciliation [FACT]:** my RF-1 cited "cell 1:288–293 (6 lines)" — the actual block is 7 lines including its own `},` closer (my citation under-counted by off-by-one); the landed deletion covers the complete block and nothing else. `PRE notebook == ab2aa36 notebook` (my report commit changed no notebook bytes).
+
+**Item 2 — purge scan: PASS.** Tokenizer/regex dual-classifier over all 27 POST cells, 8 terms case-insensitive: **zero live (code-token) legacy hits notebook-wide.** nllb-family string-literal hit: only `c8:1628 switch_translator("nllb")` — the rejection self-test (D2 adjudication, purge proof). Comment-only: `c8:660`, `c19:2`, `c25:538` (removal documentation; PB5 precedent). Model-id/lang-code strings `facebook/nllb`, `nllb-200`, `eng_Latn`, `ben_Beng` = **0 occurrences anywhere, including comments**. `num_beams` hits (c1:252, c5:407, c5:973) adjudicated out-of-scope: generic OCR/Qwen generation config, byte-identical to main; main's second cell-1 occurrence `"num_beams": 4,` was the nllb block's own and is gone with it.
+
+**Item 3 — save_config round-trip: PASS.** Real verbatim post cell-1+cell-8 exec in the sandbox: cell-1-time config on disk has **zero nllb residue** (inverts my E2-7 finding at `ab2aa36`); live `save_config()` → saved config deep-scan **no nllb key/value anywhere**; registry intact (`providers == {openrouter}`, `key_env == "openrouter_api_key"`, base_url/model intact, engine `manual`); `api_key_env` control still stripped live; no forbidden key names or secret values on disk; switch matrix rejects nllb/gemini/chatgpt. **PRE-vs-POST saved-config delta == exactly the `translation.nllb` subtree removed** (volatile session-id values normalized) — RF-1's on-disk persistence defect is gone with zero collateral config change. [TEST RESULT]
+
+**Item 4 — regression guards: PASS.** `m002_sim_v2` fresh-kernel sim: **0 abort-class sites on both PRE (control) and POST**, identical 27-cell / 1838-call-map parity. 27/27 cells AST-parse. Protected cells 6/7/11/12/14/16/26 byte-identical PRE→POST **and** vs main `97a683a`; Phase C scope cells 8/15/17/18/19/22/25 untouched by the delta (== `f460143` bytes). [TEST RESULT]
+
+**Instrument notes (harness-side, not repo defects):** two instrument bugs were caught and fixed mid-round and are recorded for ledger clarity — (1) parent-hash comparison used the abbreviated form against the full SHA (topology was in fact correct); (2) the pre/post saved-config diff initially mislabeled `value` deltas as additions and did not normalize session-stamped path *values* under stable keys (`paths.events_file`/`paths.manifest_file` embed the per-run session dir; cell-1 code is byte-identical between refs, so the asymmetry was harness-environment noise by construction). After fixes: static 32/32, runtime 17/17.
+
+## ADDENDUM VERDICT
+
+**RF-1: CLOSED.**
+
+The fix is exactly what RF-1 prescribed — byte-surgical removal of the dead nllb config block, zero collateral change, all regression guards holding. With E2 now green and E1/E3/E4/E5 unchanged (their cells byte-identical through the delta), the Phase D verdict for Phase C (B1+B2) at `3c57583` is: **APPROVED** (E2's sole required fix landed and verified; non-blocking observations N-1..N-6 carry over unchanged).
+
+**Gating: RF-1 is no longer a gate item. Merge remains gated solely on the Owner's S005 acceptance run (D6 deferral items included). No amend, no merge from either agent until Owner acceptance via PM relay.**
+
+---
+
+# MANGABD-004 — S005 ACCEPTANCE MEASUREMENT
+
+**Object:** `samples/S005_manual` + `samples/S005_openrouter` (pushed to main @ `48fa3ca`; artifacts extracted via `git show`, untouched in place). Both samples: `original.jpg`/`inpainted.png`/`ocr.json`/`text_mask.png` md5-identical across the two paths (same upstream pipeline run, two translation paths). Page `02_1.jpg`, notebook commit `7f0e653` per metadata. Instruments: `scripts/s005_audit.py` (32 JSON/codepoint checks), `scripts/s005_pixels.py` (6 pixel checks + 12 crops), visual glyph reads from crops. 38 instrument checks + visual reads; evidence tags per discipline.
+
+## S1 — TRANSLATION QUALITY (S005_openrouter vs S001/S002 NLLB): PASS
+
+Baseline defects reproduced verbatim in S002 first [FACT]: R5 `কে ঐ যৌনসঙ্গম OTEARAH! ! এই বেশ্যা তাকে বা কিছু জানেন! ?` (যৌনসঙ্গম = "sexual intercourse" for FUCK; বেশ্যা = "prostitute"; honorific জানেন; scrambled order; untranslated OTEARAH; spaced `! !`); R6 `যে সে আমার ভিতরে ছিল` (literal "was inside me") + garbled purpose-clauses; R1 `Otarumi/おたるみ` misread; R4 register dropped (`সেই ব্যক্তি কে?`).
+
+S005_openrouter [TEST RESULT]:
+- **R5:** `ওটিয়ারা কে মাদারচোদ!? ওই কুত্তার মেয়ে কি তাকে চিনে বা কি!!?` — যৌনসঙ্গম GONE; **মাদারচোদ** (strong expletive) carries FUCK register; **কুত্তার মেয়ে** natural Bengali bitch idiom; **no** honorific (জানেন/আপনি absent); **no** scrambled order; no spaced `! !`. Render matches sidecar (crop-verified).
+- **R6:** `আমার ভুল ছিল সে আমাকে পছন্দ করে বলে মনে করলাম। …গার্লফ্রেন্ড হবেনা।` — ভিতরে ছিল GONE; "was into me" → **পছন্দ করে** (likes me); confession-refusal semantics complete; danda `।` renders correctly.
+- **R4:** `সালা সে কে!?` — THE HELL register preserved (NLLB dropped it). **R2:** one-letter-correct meaning kept. **R3:** `কোগানেই` correct transliteration (NLLB had কোগানাই); note "তুমি বোকা" is milder than DUMBASS — acceptable, intensity carried by R4/R5 neighbors.
+- **R1:** corrected `Otearai/おてあらい` (not Otarumi); model even repaired the OCR typo "hiragani"→হিরাগানা. Register naturalness overall: colloquial, consistent punctuation (`!?`/`!!?` attached), idiomatic; minor clunk in R6 (`প্রস্তাব সরাসরি নাকি দিলো—বলে দিলো`) — non-blocking.
+- **Minor defect found [FACT]:** R1 kana tail is mixed-script — sidecar codepoints contain `おてあら` + **Bengali ই** (`\u0987`) instead of い (`\u3044`); render shows the Bengali glyph mid-kana-run. Cosmetic, meaning intact.
+
+## S2 — MANUAL COPY-PASTE WORKFLOW (S005_manual): PASS (evidence via pixels; sidecar lost to disclosed overwrite)
+
+- **Sidecar `translator_engine: "manual"`: NOT PRESENT — [FACT] `S005_manual/translation.json` is byte-identical (md5-verified) to S005_openrouter's (6/6 rows `openrouter` + nemotron).** The later OpenRouter auto-translation in the same Colab session overwrote the sidecar before ZIP download (disclosed in metadata `sidecar_note`; render `final.jpg` 19:26:20 < sidecar mtime 19:29:10). This is an Owner-side capture-process artifact, NOT a notebook defect: B2's apply→sidecar write behaved as designed; the archive simply post-dates a subsequent run.
+- **Compensating pixel evidence [TEST RESULT]:** manual render `final.jpg` differs from S005_openrouter's by **33,663 px** (metadata claimed 33,273; within JPEG tolerance) — **100% confined to the 6 detected regions (0 outside)**; per-region diffs R1..R6 = 7097/3685/8457/2122/3044/9258 → **all 6 regions re-rendered with the manual text; zero silent line-loss**. Manual phrasing differs from the openrouter sidecar (`হিরাগানায় বানান` vs `হিরাগানায় লেখা হয়` etc.) — independent manual translation confirmed.
+- **Profanity preserved (crop-read verbatim):** R3 `আমার নাম কোগানেই, গাধার বাচ্চা!` — **গাধার বাচ্চা present** ✓; R5 `ওটেআরাহ আবার কেন শালা!!? ওই মাগি কি তারে চেনে নাকি!!?` — **শালা + মাগি present** ✓ (মাগি cruder than openrouter's কুত্তার মেয়ে — register faithfully carried); colloquial object-marking `তারে চেনে` natural; no honorific. R4 manual is milder (`ওই লোকটা আবার কে!?` — no expletive; not in the PM's expected-profanity list; noted).
+- **`_unparsed` sentinel:** no sidecar evidence survives (overwritten) — [UNKNOWN at sidecar level]; pixel level: 6/6 regions show real translations, no sentinel text, no missing-region junk → sentinel did not fire, and if it had, output would have been visibly rendered [TEST RESULT].
+
+## S3 — SIDECAR AUDIT (both samples): PASS with 1 adjudicated mismatch
+
+- **`vertical_ocr` audit field: PRESENT** in R1 only (`chosen_orientation: rotate_90_clockwise`, `candidate_scores` cw/ccw 1.95/1.95; R2–R6 null) — Batch 2 V-3 audit intact [FACT].
+- **`translator_model`: artifact records `nvidia/nemotron-3-ultra-550b-a55b:free` uniformly (6/6 rows) — NOT the PM-relayed `apodex/apodex-1.1-mini:free`.** Metadata `model_note` discloses the same and flags it to PM. [FACT] The sidecar mechanism itself works (per-row model recorded = model actually used; registry→box→adapter sync per cell 25:431-438). All quality findings in S1 judge the nemotron outputs. **Provenance mismatch = PM/Owner adjudication item, not a pipeline defect.**
+- **`detections.json` geometry identical across S001/S002/S005_manual/S005_openrouter [TEST RESULT]:** field-level recursive diff = **0 geometry diffs** (x/y/w/h/quad/angle/region_type/parent). Byte-level diffs are benign: `page_id` naming (`02_1.jpg` vs `02.jpg`) across all 6 regions, plus 7th-decimal detector-score float noise vs S001 only (e.g., 0.8977065682 vs 0.8977066278). Detector stable.
+- R2–R6 OCR text byte-identical between S005 and S002 (OCR pipeline stable); R1 differs exactly by the V-3 correction.
+
+## S4 — VISUAL RENDERING QUALITY (both samples): PASS
+
+- **"Regions 2–6 pixel-identical to S002" is unsatisfiable as literally written** — the translations differ between samples, so text pixels must differ. Measured per intent (Batch 1 fixes intact) [TEST RESULT]: (a) **outside-region pixels: 0 diffs vs S002 final for BOTH S005 samples** (threshold |dL|>8 over 1,012,800 px) — the base render is untouched, **zero new mask/render defects outside translated regions**; (b) in-region ink metrics consistent with Batch 1 style: R1 dark CJK luminance 33.1 (manual) / 26.9 (openrouter) ≤ 60 (S002: 31.0) — dark-ink fix intact; R2–R6 dark/mid component counts and luminance in family with S002.
+- **R1 vertical note: corrected OCR rendered in BOTH paths** — kana run おてあら… clearly present (not おたるみ), T/L note text legible, dark ink ≤ 60 [TEST RESULT].
+- **Minor render defect found [FACT]:** R1's trailing danda renders as a **tofu box** in both S005 finals, while R6's danda renders perfectly → R1-specific font-fallback artifact on the mixed CJK/Bengali line (danda after a kana run resolves to a CJK-font run without U+0964). Cosmetic, single glyph, meaning unaffected. Candidate small RF for a future batch (force script itemization / ZWSP after CJK runs); non-blocking.
+
+## S5 — NO REGRESSIONS: PASS
+
+- Batch 1/2 fixes preserved: dark ink ≤ 60 (S4), mask band + no banding outside regions (S4, 0 outside diffs), vertical OCR audit + corrected R1 reading (S3).
+- MANGABD-002 reliability: `m002_sim_v2` fresh-kernel sim on branch HEAD `7f0e653` notebook = **0 abort-class sites** (27 cells, call-map 1838 — identical to Phase D/RF-1 baselines) [TEST RESULT].
+
+## OBSERVATIONS (NON-BLOCKING)
+
+1. **N-A (adjudication to PM):** translator_model provenance — relay said `apodex/apodex-1.1-mini:free`, artifact says `nvidia/nemotron-3-ultra-550b-a55b:free` (disclosed in metadata). Either the relay mis-stated the model or the Studio model box held a different registry value at translate time; the sidecar records what actually ran. Quality verdicts here are valid for the nemotron outputs.
+2. **N-B (process recommendation):** manual-path sidecars are lost if another translation path runs later in the same session. Recommendation: download the ZIP immediately after each path, or have the Studio apply step snapshot `translation.json` per path (e.g., `translation.manual.json`) — future enhancement, not a defect. Optional: Owner may re-capture a clean manual-only run for sidecar-level proof; pixels already carry the evidence.
+3. **N-C:** R1 mixed-script kana tail `おてあらই` in both paths (LLM text quirk; cosmetic).
+4. **N-D:** R1 trailing-danda tofu after kana runs (renderer font fallback; candidate future RF).
+5. **N-E:** manual R6 may carry a light translator addition at the tail (`ওই সব!`-like); unresolvable at crop resolution, non-blocking.
+
+## VERDICT
+
+**S005 ACCEPTANCE: BOTH ACCEPT.**
+
+- **S005_openrouter: ACCEPT** — every PM-cited NLLB defect is fixed in the OpenRouter output (R5 expletive register, R5 syntax/honorific, R6 idiom), register naturalness is strongly improved, 6/6 regions translated, sidecars complete and self-consistent.
+- **S005_manual: ACCEPT** — profanity preserved verbatim as specified (গাধার বাচ্চা / শালা / মাগি), zero silent line-loss (6/6 regions re-rendered, 0 outside-region pixels touched), sentinel clean at pixel level. The `engine: "manual"` sidecar sub-item fails only because of the disclosed post-render overwrite — compensating pixel evidence is conclusive; workflow itself verified functional.
+- Two gate sub-items fail as literally written and are adjudicated non-blocking with compensating evidence: the manual sidecar engine marker (S2) and the translator_model relay mismatch (S3, N-A).
+- Minor cosmetic items for the backlog: R1 kana tail (N-C), R1 danda tofu (N-D).
+
+**Process note: with S005 accepted, MANGABD-004 Phase C (B1+B2) has now passed both gate conditions I set in Phase D (RF-1 closed at `3c57583`; Owner S005 acceptance measured here). Merge to main is now unblocked from the verification side — remaining sequence per PM/Owner relay.**
