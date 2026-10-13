@@ -1,0 +1,14 @@
+{
+  "sample_id": "S005_openrouter",
+  "branch": "mangabd-004-b1-b2",
+  "notebook_commit": "7f0e653",
+  "pipeline_variant": "fresh Run All + Control Studio UI + OpenRouter Auto-Translation",
+  "translation_engine": "openrouter",
+  "translation_provider": "openrouter",
+  "translation_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "source_page": "02_1.jpg",
+  "owner_notes": "S005 acceptance: OpenRouter auto-translation; verify translation quality vs NLLB baseline (S001/S002)",
+  "captured_at": "2026-10-13T19:32:18",
+  "captured_at_source": "latest ZIP-internal entry timestamps (translation.json and final.jpg both 19:32:18)",
+  "model_note": "translator_model is recorded per the machine-written sidecar: all 6 rows carry nvidia/nemotron-3-ultra-550b-a55b:free, resolved from the registry value that the Control Studio STEP 3 model box writes at translate time (cell 25:431-438 on_or handler syncs box -> registry -> adapter request and sidecar). The PM relay for this extraction specified apodex/apodex-1.1-mini:free; the artifact evidence records nvidia/nemotron-3-ultra-550b-a55b:free as the model actually used in the acceptance run. Flagged to PM for adjudication; metadata records the artifact value."
+}

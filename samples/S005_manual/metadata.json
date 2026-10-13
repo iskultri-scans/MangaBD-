@@ -1,0 +1,14 @@
+{
+  "sample_id": "S005_manual",
+  "branch": "mangabd-004-b1-b2",
+  "notebook_commit": "7f0e653",
+  "pipeline_variant": "fresh Run All + Control Studio UI + Manual Copy-Paste Workflow",
+  "translation_engine": "manual",
+  "translation_provider": null,
+  "translation_model": null,
+  "source_page": "02_1.jpg",
+  "owner_notes": "S005 acceptance: advanced manual copy-paste workflow with professional system prompt; Bengali translation preserves profanity/slang/emotional register (গাধার বাচ্চা, শালা, মাগি etc.)",
+  "captured_at": "2026-10-13T19:29:10",
+  "captured_at_source": "latest ZIP-internal entry timestamp (translation.json 19:29:10); the manual render itself, final.jpg, is stamped 19:26:20 and inpainted.png 19:26:16",
+  "sidecar_note": "translation.json in this archive is byte-identical to S005_openrouter/translation.json (all 6 rows translator_engine=openrouter, translator_model=nvidia/nemotron-3-ultra-550b-a55b:free, 3072 bytes). A later OpenRouter auto-translation in the same Colab session overwrote translation_df and the sidecar before this ZIP was downloaded (sidecar mtime 19:29:10 is AFTER final.jpg 19:26:20). The manual-path translations therefore survive only in final.jpg pixels: pixel-diff vs S005_openrouter/final.jpg = 33,273 differing pixels, 100% confined to the 6 detected text regions (zero outside). A clean manual-path sidecar would carry translator_engine 'manual' or 'manual_paste' (cell 22:356 writes 'manual_paste' for the B2 paste-back apply); those markers are absent here because of the overwrite."
+}

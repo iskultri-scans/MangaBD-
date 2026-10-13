@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "region_type": "overlay",
+    "original_text": "T/L note: Koganei in hiragani is spelt こがねい) while Otearai is spelt as おてあらい and both \"い\" is pronounce as \"I\" which is a vowel",
+    "translated_text": "টিআর নোট: \"কোগানেই\" হিরাগানায় লেখা হয় こがねい, আর \"ওটেআরাই\" লেখা হয় おてあらই—দুটোই শেষে \"ই\" (আই) স্বরবর্ণে উচ্চারিত হয়।",
+    "translator_engine": "openrouter",
+    "translator_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 2,
+    "region_type": "bubble",
+    "original_text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!",
+    "translated_text": "সে নামটায় শুধু একটা অক্ষরই ঠিক ছিল!!",
+    "translator_engine": "openrouter",
+    "translator_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 3,
+    "region_type": "bubble",
+    "original_text": "MY NAME'S KOGANEI YOU DUMBASS!",
+    "translated_text": "আমার নাম কোগানেই, তুমি বোকা!",
+    "translator_engine": "openrouter",
+    "translator_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 4,
+    "region_type": "bubble",
+    "original_text": "WHO THE HELL IS THAT PERSON!?",
+    "translated_text": "সালা সে কে!?",
+    "translator_engine": "openrouter",
+    "translator_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 5,
+    "region_type": "bubble",
+    "original_text": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?",
+    "translated_text": "ওটিয়ারা কে মাদারচোদ!? ওই কুত্তার মেয়ে কি তাকে চিনে বা কি!!?",
+    "translator_engine": "openrouter",
+    "translator_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "bengali_valid": true,
+    "status": "translated"
+  },
+  {
+    "id": 6,
+    "region_type": "bubble",
+    "original_text": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+    "translated_text": "আমার ভুল ছিল সে আমাকে পছন্দ করে বলে মনে করলাম। ক্লাসের পর হঠাৎ ডাকলো আর আমার প্রস্তাব সরাসরি নাকি দিলো—বলে দিলো সে আমার গার্লফ্রেন্ড হবেনা।",
+    "translator_engine": "openrouter",
+    "translator_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "bengali_valid": true,
+    "status": "translated"
+  }
+]
