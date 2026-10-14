@@ -1591,3 +1591,124 @@ S005_openrouter [TEST RESULT]:
 - Minor cosmetic items for the backlog: R1 kana tail (N-C), R1 danda tofu (N-D).
 
 **Process note: with S005 accepted, MANGABD-004 Phase C (B1+B2) has now passed both gate conditions I set in Phase D (RF-1 closed at `3c57583`; Owner S005 acceptance measured here). Merge to main is now unblocked from the verification side — remaining sequence per PM/Owner relay.**
+
+---
+
+# MANGABD-005 — PHASE D VERIFICATION (BATCH 1) (GLM-5.3-Flash, 2026-10-14)
+
+**Object under review:** commit `05bee82` on branch `mangabd-005-b1`, base main `5e70507` (parent verified — single linear commit, merge-base == base). Scope of review: B3 "LaMa full resolution + OOM ladder", declared Cell-9-only. Method: full re-execution of every check against pushed git bytes (no reliance on author-run scripts); instruments persisted at `scripts/m005d_e1_audit.py` + `scripts/m005d_e2_runtime.py`, artifacts in `m005d_work/`. No source changes; no amend; no merge. Instrument total: **46 checks + 3 fresh-kernel sim runs, all green.**
+
+## E1 — DIFF & SCOPE: PASS (15/15 static checks) [TEST RESULT]
+
+- Topology: `05bee82` parent == `5e70507`; numstat notebook **+270/−19**, `agents/GLM_5_3.md` **+45/−1** docs-only; `GLM_5_3_FLASH.md` untouched by author; delta = exactly 2 files; `diff --name-status` all plain `M`; `diff --summary` empty (zero mode/rename/new-file events); secret scan over all 315 added delta lines (ghp/gho/PAT/sk-/AKIA/AIza/xox/PEM) → **0 hits**.
+- Cell scope: both refs valid ipynb JSON, 27 cells; **changed cells == {9} exactly** under both JSON-object compare and source-byte compare; all top-level notebook fields (nbformat/metadata/…) identical.
+- Protected cells byte-identical vs base: union set {1, 6, 7, 8, 11, 12, 14, 15, 16, 17, 18, 19, 22, 25, 26} = MANGABD-002 {14, 26} + MANGABD-003 {6, 7, 11, 12, 16} + MANGABD-004 Phase C {1, 8, 15, 17, 18, 19, 22, 25}.
+- **AST: 27/27 parse clean on both refs** (27 code cells); cell 9 is a code cell.
+- The delta decomposes into exactly the 5 declared hunks: migration block (replaces `setdefault("lama_size", 1024)`), `_is_cuda_oom` helper, ladder body inside `lama_inpaint_full`, `inpaint_size_effective` in stage meta, self-tests 8–10. No stray edits inside cell 9.
+
+## E2 — LADDER SEMANTICS: PASS (Amendment 5 verified by injection on verbatim cell-9 bytes) [TEST RESULT]
+
+Harness fidelity: cell-9 source read from the `05bee82` git blob (sha-verified against the diffed extraction); cell-5 `_run_async` + `clear_gpu_cache` exec'd **verbatim**; fake `torch.cuda.OutOfMemoryError` implemented as a **RuntimeError subclass** (mirrors real torch), storage/log stubs. Two instrument-side bugs found and fixed during harness shakedown (asyncio/gc kernel-state seeding; exec-time self-test traffic contaminating measurement channels — fixed by snapshot-then-reset). Zero repo impact; documented per RF-1 precedent.
+
+- **OOM-only retries, both classifier paths:** message-match `RuntimeError("CUDA out of memory…")` at 2048 → steps down, success at 1536 (sizes [2048, 1536], 1 cache-clear); `torch.cuda.OutOfMemoryError` subclass with a message NOT containing "out of memory" → also classified OOM → steps down (isinstance branch is message-independent).
+- **Every non-OOM exception goes straight to fallback:** non-OOM `RuntimeError` → propagates after **exactly 1 rung attempt, 0 cache-clears**; page-level integration confirms landing: `engine=opencv`, `fallback_used=True` (E5.4 probe). Empty result (`None`) → deterministic `RuntimeError("LaMa returned empty result")` after 1 rung, **no ladder retry** (raise sits outside the rung try — structural Amendment 5 guarantee).
+- **Mid-ladder non-OOM:** OOM at 2048 then non-OOM at 1536 → immediate raise; 1024 never attempted.
+- **All-rungs OOM (mixed classification):** full ladder [2048, 1536, 1024] attempted, 3 cache-clears, exactly **one** `RuntimeError("LaMa OOM at every ladder size [2048, 1536, 1024] — …")`; `last_size_effective` stays None.
+- **clear_gpu_cache between rungs:** count == number of OOM rungs in every scenario (1/1/3/1 as applicable); guarded call, WARN logged per rung.
+- **Ladder arithmetic [owner, 2048, 1536, 1024], owner rung = config value when set:** owner 1024 → [1024]; 1536 → [1536, 1024]; 2048 → [2048, 1536, 1024]; 3072 → [3072, 2048, 1536, 1024] — healthy first-rung success + all-OOM full traversal, each ending in the single ladder RuntimeError.
+
+## E3 — CONFIG FLOW & DISCLOSURE PC-C1.1: PASS (revert adjudicated; cleanup scheduled, not blocking)
+
+- **FACT:** cell **1:295 still hardcodes `"lama_size": 1024`** (cell 1 protected, byte-identical base==branch; fresh `MANGABD_CONFIG = {` dict literal at cell 1:180).
+- **Effective 2048 at inpaint call time — PROVEN:** fresh verbatim cell-9 exec seeded with the exact cell-1 inpainting literal (AST-extracted) fires the migration → startup print `LaMa size : 2048`, config `lama_size == 2048`, and the first ladder rung called at 2048. Explicit owner values respected (1536/2048 no stomp); missing `inpainting` key → setdefault+upgrade → 2048. The override is conditional **assignment** (None|1024 → 2048), as disclosed.
+- **Order-robustness ADJUDICATION — revert is REAL, runtime-proven:** simulating a warm-kernel cell-1 re-run after cell 9 (config replaced by the fresh cell-1 literal) → `lama_size` reverts to 1024 and the next inpaint runs a **single rung [1024]** (`cfg.get("lama_size", 2048)` cannot save it — key present). Self-healing proven: re-running cell 9 re-fires the migration (1024 → 2048).
+- **Ruling — the 1-line cell-1 cleanup does NOT need to be pulled into an earlier batch; B3 stands without it.** Reasons: (i) the revert is unreachable in the canonical fresh Run All (cell 1 precedes cell 9; m002-sim flow); (ii) it self-heals on any cell-9 re-run; (iii) consequence is quality-only — 1024 is exactly pre-B3 behavior and the most VRAM-safe rung, ladder still armed; (iv) it is no longer silent — stage meta `inpaint_size_effective` records the effective rung per page; (v) fixing it requires touching cell 1, outside this batch's authorized "Cell 9 ONLY" scope — pulling it in would break E1's exactly-{9} and the single-logical-change convention. **Requirement:** schedule the cell-1:295 literal cleanup (1024→2048) in the next batch authorized to touch cell 1, or a standalone 1-line micro-batch, before MANGABD-005 closes. PC-C1.1 disclosure verified accurate.
+
+## E4 — MEMORY ORDERING: PASS
+
+- **Static:** exactly two `model_manager.` touches in all of cell 9 — `unload_all(exclude=["lama"])` (L398) then `ensure_lama()` (L405), both inside `lama_inpaint_full` (source span 386–482); no other load/unload path exists in the cell. The unload block is byte-identical to the M004-audited state (unchanged diff context).
+- **Runtime:** event order `[("unload_all", ("lama",)), ("ensure_lama",)]` observed before every injected inpaint call across all scenarios. Between rungs only `clear_gpu_cache()` runs — no model loads. Per code path, nothing else loads concurrently at the native rung.
+- Live T4 magnitudes remain **HYPOTHESIS** (E6 deferral — sandbox has no torch/CUDA; ordering is what Phase D could prove, and it is proven).
+
+## E5 — REGRESSIONS: PASS
+
+- **m002_sim_v2 fresh-kernel sim:** calibration on pre-002 base `aabc592` → **exactly 1 abort site** (cells[14]:40 — reproduces the Phase A calibration); base main `5e70507` → **0 sites**; branch `05bee82` → **0 sites**. Call map 1838 → 1874 (+36 = the new self-test calls in cell 9); no new abort-class findings.
+- Protected cells byte-identical (see E1); 27/27 AST.
+- **Self-tests 10/10 on pushed bytes:** verbatim cell-9 exec in the harness reports `Cell 9 completed, tests_passed=10, tests_total=10`, zero ❌, `Cell 9 result: SUCCESS`; new B1 tests named in output (steps-down / Amd5 no-retry / all-rungs single-error).
+- **Stage meta records `inpaint_size_effective`** — integration-proven on `inpaint_page`: OOM step-down page → `engine=lama, fallback_used=False, inpaint_size_effective=1536`, artifact saved; all-rungs-OOM page → `engine=opencv, fallback_used=True, inpaint_size_effective=None`, 3 ladder WARNs + 1 fallback WARN logged; non-OOM page → opencv, None.
+- In-cell protected baselines intact: mask discipline constants, `unload_others` block, OpenCV-Telea path, `min_mask_pixels` gate, §8 live-test gate (`RUN_LIVE_INPAINT_TEST = False`) — all outside the 5 hunks (byte-verified).
+
+## E6 — DEFERRALS (recorded, NOT attempted, per directive)
+
+1. **Live T4 VRAM measurement per rung** with the <12 GB gate at the native rung — Owner-side; requires real CUDA. Contract-level proof delivered here (size argument handed to `lama.inpaint` per rung; ladder traversal).
+2. **S007 acceptance sample** (native-rung `inpainted.png` vs S003 baseline diff + visual quality) — Owner-side acceptance run; remains the merge gate.
+
+## OBSERVATIONS (NON-BLOCKING)
+
+1. **N-1 (nano):** `int(_lama_size_legacy)` would raise ValueError on a non-numeric config value — unreachable via any notebook-produced config (sole source is the cell-1 literal), fails loud at cell-9 load. Note only.
+2. **N-2:** a deliberate owner value of 1024 gets **no step-down rungs** (fixed rungs are strictly below owner; 1024 is the floor) — spec-conformant, but the Owner should know that selecting 1024 removes OOM-ladder protection.
+3. **N-3 (cosmetic, disclosed by author):** §8 keeps its number after tests 8–10 were inserted in §7 — non-renumber accepted.
+4. **N-4:** author's 44-check self-verification suite NOT relied upon; all evidence above re-executed by independent instruments (46 checks + 3 sims).
+
+## VERDICT
+
+**MANGABD-005 BATCH 1 (B3): APPROVED.**
+
+- E1 PASS — scope exactly {9}, protected bytes intact, secrets clean, AST 27/27.
+- E2 PASS — OOM-only ladder semantics proven by fault injection on verbatim bytes, both OOM classifiers, Amendment 5 structurally guaranteed.
+- E3 PASS — effective 2048 proven; warm cell-1 re-run revert confirmed and adjudicated bounded/self-healing/observable; cell-1 cleanup scheduled as tracked follow-up (non-blocking).
+- E4 PASS — unload→ensure ordering proven statically and at runtime; no concurrent loads.
+- E5 PASS — 0 abort sites with calibration reproduced; 10/10 self-tests; stage meta records the effective rung.
+- E6 — Owner-side deferrals stand (T4 VRAM gate; S007 acceptance). **Merge gate remains the Owner's S007 acceptance run.**
+
+---
+
+# MANGABD-005 — S007 ACCEPTANCE MEASUREMENT (B3 merge gate)
+
+Reviewer: GLM-5.3-Flash · 2026-10-14 · Measure-only run: **zero source/sample changes, no amend/merge.**
+
+**Inputs (FACT):** Owner archive `S007_mangabd005_02.zip` @ main `8445328` (7 files: original.jpg, text_mask.png, detections.json, ocr.json, inpainted.png, final.jpg, translation.json; all rasters 844×1200). Baseline `samples/S003_batch2/` @ main (extracted via `git show`; repo samples untouched). Branch under gate: `mangabd-005-b1` @ `05bee82` (notebook blob `8c4a5b87`). Instruments: `s007_measure.py` / `s007_localize.py` / `s007_visual.py`; artifacts + zoom crops in `s007_work/` (outside repo).
+
+## G1 — PROVENANCE + RUNG: STAGE META ABSENT → PIXEL-EVIDENCE FALLBACK (as directed)
+
+- **FACT — the archive carries no metadata:** no `metadata.json`, no stage-meta sidecar; `detections.json`/`ocr.json`/`translation.json` contain **no** `notebook_commit`, `engine`, or `inpaint_size_effective` fields (union of per-region keys checked). Therefore both metadata sub-gates — `notebook_commit == 05bee82 blob (8c4a5b87…)` and `engine=lama ∧ inpaint_size_effective=1200` — are **UNVERIFIABLE from the archive as delivered**. Said explicitly, per the gate directive; the rung claim is carried by pixel evidence only, and 1200 specifically cannot be distinguished from 1536/2048 by pixels alone (residual uncertainty recorded, not adjudicated away).
+- **FACT — upstream provenance holds:** `original.jpg` md5 `446b3575…` and `text_mask.png` md5 `2d74dcb7…` are **byte-identical to S003's** → same page, same mask, clean A/B basis. `detections.json` geometry field-identical across all 6 regions except `page_id` naming (`02.jpg` vs S003's rendered `02_2.jpg`), **zero detector-score noise**; per-region OCR payloads identical (file byte-diff = embedded region naming only). `page_id=02.jpg` matches the task claim.
+- **Pixel evidence on engine/rung (HYPOTHESIS-grade consistency, not proof):**
+  - Reconstruction everywhere is texture-synthesis class — **no OpenCV-Telea signature** (no directional smear/wash plates in any mask interior inspected at 4×–10×). OpenCV fallback is pixel-excludable as the primary engine.
+  - In-mask *artwork* strokes preserved through the mask are **fuller-weight in S007 than S003** (r2 stroke window x285–305/y100–140: original 227 dark px → S003 104 → S007 115; the delta sits on the stroke's AA fringe). This is the expected signature of **native-resolution processing (no 1200→1024→1200 resample round-trip)** vs the S003-era rung. (HYPOTHESIS: S003 ran at 1024 — consistent with that era's hardcoded cell-1:295 literal; S003's metadata discloses no inpaint fields, so this is inference, not fact.)
+
+## G2 — INPAINT QUALITY A/B vs S003 `inpainted.png` (mask ∩ bbox, lum<160) [TEST RESULT]
+
+| region | zone px | S007 ink | S003 ink | Δ | strict ≤ |
+|---|---|---|---|---|---|
+| r1 (vertical TL note) | 18,178 | 0 | 0 | 0 | ✓ |
+| r2 | 13,370 | 52 | 46 | **+6** | ✗ by 6 px |
+| r3 (spiky bubble) | 36,309 | 558 | 619 | −61 | ✓ |
+| r4 | 10,241 | 0 | 0 | 0 | ✓ |
+| r5 | 17,228 | 37 | 40 | −3 | ✓ |
+| r6 (box) | 26,226 | 0 | 0 | 0 | ✓ |
+| **total** | | **3,636** | **3,714** | **−78** | ✓ |
+
+- **r2 +6 px adjudicated — not residual text (pixel-map evidence):** 45 of S007's 52 px are the **same physical remnant** as S003's (overlap map: both=45, only-S007=7, only-S003=1). The 7 unique px have lum 115–153 — AA fringe of the artwork stroke both runs preserve inside the mask; S007's reconstruction carries marginally fuller stroke weight (closer to the original's 227 dark px). The bold fragment nearby is **unmasked original text kept identically by both runs** (mask-coverage map, x285–295/y121–136) — inherited coverage limitation, not an S007 artifact. Strict letter of the gate fails by 6 px (0.045% of zone); gate intent — "no more residual TEXT than S003" — is satisfied. Documented per the S005 letter-vs-intent precedent; Owner may overrule.
+- **r3's 558/619 px identified:** reconstructed **hatch/screentone texture** at the bubble's bottom tip (dense thin strokes crossing the mask), not text. Pixel map at the densest cell: the bold diagonal stroke is dark in original AND both inpaints (preserved artwork); original text strokes removed by both; window totals S007 307 vs S003 332.
+- **Tight zones at 4×–10× — S007 smoother in all four inspected:** r1 column border line (S003 grey streak + ragged edge → S007 clean); r6 box border (S003 grey wash bleeding into the column → S007 removed, edges crisper); r5 bubble-border tip (S007 termination cleaner, screentone identical); r4 stroke edge (S007 tighter AA). Consistent with native-rung reconstruction.
+
+## G3 — NO NEW DAMAGE: PASS [TEST RESULT]
+
+- Outside-mask, inpainted A/B (S007 vs S003): p50=0, p99=0, max |Δ|=33, **1 px >16, 0 px >64** — essentially byte-identical artwork.
+- Inpaint bleed vs own original (outside mask): S007 2 px >16, max 44 — same class as S003's own bleed (2 px >16, max 25).
+- final.jpg A/B outside mask: 588 px >64, **100% within region bboxes (dist=0)** — the translated-text replacement class (by design), not artwork. Same class in S003 (which has more: 176 vs 81 px >64 for final-vs-original outside regions+6px) — **S007 cleaner than baseline**, zero new holes or smears; speed-lines/clouds/borders/building sentinels visually identical (crops at 3×).
+
+## G4 — RENDER PARITY: PASS [TEST RESULT]
+
+- All 6 translated regions have text blocks present: new-ink 894–3,807 px per region, mean lum 27–87 (dark). Overflow band (+10 px outside bbox): 0–4 px per region, all at lum 155–159 — sub-threshold AA fringe, **no glyph overflow**.
+- r1 vertical note: dark (ink p50 lum 74), seated (per-band x-center σ p50 8.6 px over 23 bands), correct vertical layout. Kana render as dark in-column blocks — **the same Batch-1 signature as the S002 and S003 baselines** (inherited CJK-fallback tofu class, N-D backlog; unchanged, not a regression).
+- r2–r6: proper Bengali shaping at 3× (conjuncts ক্ষরটা/শালা/স্ত্রী correct, danda intact, r6's 10-line block fits its box exactly). `translator_engine=manual`, `bengali_valid=true` ×6.
+
+## VERDICT
+
+**S007: ACCEPT** — G2/G3/G4 PASS on measurement (G2 with the documented r2 letter-deviation: +6 AA-fringe px on a shared inherited remnant, pixel-map-evidenced, zero new text residual, total −78); G1 stage meta **absent from archive** — reported as such, pixel fallback consistent with native-rung LaMa and excludes OpenCV fallback, with the 1200-specific value left UNVERIFIABLE (metadata, not pixels, can prove it).
+
+- **The merge gate for `mangabd-005-b1` is discharged from the verification side.**
+- Recommendations (non-blocking): (1) future acceptance archives should include `metadata.json` with `notebook_commit` + per-page stage meta — Phase D E5 already proves the notebook emits `inpaint_size_effective`, so the field exists and was simply not exported into the zip; (2) N-D kana-fallback tofu in r1 remains a known cosmetic backlog item, unchanged since Batch-1.
+- Artifacts: measurement JSON `s007_work/measure_summary.json`; 20 evidence crops `s007_work/crops/`; instruments `scripts/s007_{measure,localize,visual}.py`. Repo: report-only commit, samples/ and notebook untouched.
