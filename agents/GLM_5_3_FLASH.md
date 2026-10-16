@@ -1664,3 +1664,60 @@ All three were bugs in MY instrument, not in the branch. After each fix the affe
 - Zero repo-side fixes required; the three mid-verification failures were reviewer-instrument bugs (disclosed above), fixed and re-run to completion on the pushed bytes.
 - **Merge gate: Owner live retest with a REAL ChatGPT escaped-bracket reply** (fixtures were shape-constructed; the live reply is the literal-text proof). The retest should exercise: fully-escaped reply inside a ``` fence, arrowless Bengali-only lines, and at least one placeholder line — the exact shapes proven here end-to-end.
 - At merge time: reconcile the two docs headers (`GLM_5_3.md`, `GLM_5_3_FLASH.md`) — trivial, both disclosed.
+
+---
+
+# MANGABD-005 — PHASE D ADDENDUM: B2 RF-2 DELTA VERIFICATION (GLM-5.3-Flash, 2026-10-16)
+
+Object: `2c4635d` @ `mangabd-005-b2`, parent `11bbd1f` (= my Phase D report commit; rebase claim verified — chain `2c4635d`→`11bbd1f`→`122e353`→`8445328`). Claimed delta: cell-8 self-test block ONLY (5 anchored patches, +65 source lines 2210→2275) + `agents/GLM_5_3.md` record (+13). All checks re-run on the pushed bytes. Instruments: `scripts/m005rf2_{extract,r1c_r2,runtime,r5_adjudication}.py`; artifacts `m005rf2_work/` (scope_summary.json, r1c_r2_static.json, rf2_runtime_summary.json 31/31, rf2_r5_summary.json 20/20). No source or sample changes; report-only commit.
+
+## R1 SCOPE — PASS
+
+- `git show --stat 2c4635d`: exactly 2 files (notebook +73/−4 JSON lines; `agents/GLM_5_3.md` +13). No `samples/`, no other `agents/` files, no mode/rename.
+- Cell-level byte compare: rf2 vs `11bbd1f` → changed cells = **{8} exactly**; rf2 vs `122e353` → changed cells = **{8} exactly**; 26 non-target cells byte-identical to BOTH refs. Cell-8 non-source fields and all top-level notebook fields identical.
+- Functional spans vs `122e353`: ALL 40 top-level defs/assigns BYTE-IDENTICAL except exactly the 5 self-test loci (`_b2_saved_df` save site 1957→1962 via comment+sentinel block; 3 one-line finally checks 2078→2083, 2125→2130, 2089→2094; Test 23 insertion +60 lines). `parse_ai_text` / `export_ai_text` / `apply_manual_translation` / `translate_manual_upload` / `_strip_llm_wrappers` / `_mbd_*` / `run_test` / builders: BYTE-IDENTICAL → **the Phase D E2/E3/E4 approval carries over unchanged**.
+- Secret scan on the added source lines: 0 hits.
+
+## R2 SENTINEL DISCIPLINE — PASS (exhaustive scan, not spot-check)
+
+- `"__unset__"` string: **0 occurrences** in RF-2 cell 8 (pre-fix: 4 — saves 1957/2089, `==` checks 2078/2125).
+- `_B2_UNSET = object()`: 1 definition (line 1961); 4 save sites, all `globals().get("translation_df", _B2_UNSET)` (1962, 2094, 2151, 2172); 4 checks, all `is _B2_UNSET` (2083, 2130, 2177, 2198).
+- Exhaustive AST inventory of EVERY `Compare` and EVERY boolean context (`If`/`While`/`IfExp`/`BoolOp`/`not`) whose operands name a df-carrying identifier (`translation_df`, `_b2_saved_df`, `_saved_df22`, `_rf2_saved`, `_rf2_outer`, `_rf2_df`): **zero bare-DataFrame truthiness, zero df-vs-string equality**; every entry is identity (`is`/`is not`), `len()`, `is None`, `hasattr`, or `.columns` membership. (Elementwise `translation_df["page_id"] == page_id` masks exist only inside filter subscripts in pre-existing functional code — byte-identical to `122e353`, never in boolean context.)
+
+## R3 LIVE-STATE EXEC — PASS (verbatim bytes, sha-chained)
+
+- **Sandbox**: 23/23 self-tests (event kwargs `tests_passed/tests_total` = 23/23; "live-state save/restore (RF-2)" green), `translation_df` ABSENT post-exec (pop path), engine restored to manual, session tmpdir file-census empty (traceless).
+- **Live-state (the directive scenario)**: pre-seeded real 2-row `translation_df` (exact 21-column cell-3 schema) before exec → 23/23, zero ❌ lines, post-exec `translation_df` **IS the pre-seeded object** (id equality), `pickle.dumps` **byte-identity**, len unchanged, file census empty.
+- **Negative control**: PRE-FIX bytes (`122e353`) in the SAME live-state harness → `ValueError: The truth value of a DataFrame is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()` — the Owner's exact error — traceback frame = **pre-fix line 2078** (`if _b2_saved_df == "__unset__":`, the battery finally), fired AFTER Tests 1–21 ran green (21 run_test greens, last = "placeholder skip+report (B2)"); Test 22 never reached. The fix provably targets the real defect.
+- **Kernel state at the pre-fix crash**: `translation_df` = the bare empty swap df (len 0, no columns); the restore never executed; the pre-seeded object detached but unmutated. This is the deterministic **kernel rows=0** mechanism (adjudicated in R5).
+
+## R4 REGRESSIONS — PASS
+
+- `m002_sim_v2`: calibration `aabc592` = 1 abort site (`cells[14]:40`); base `8445328` = 0; **RF-2 `2c4635d` = 0**. Wire format unchanged (R1 functional-span byte-identity).
+
+## R5 OWNER DATA ADJUDICATION (new) — ANSWERED
+
+1. **Can the pre-fix battery explain the emptied CSV? NO — the battery is disk-inert.** AST scan with write-capable call set (`save_translation_df`, `save_translation_artifact`, `save_json_artifact`, `atomic_write_json`, `to_csv`/`to_json`, `open`, `write_text`/`write_bytes`, `mark_stage_done`, `unlink`/`remove`): the ENTIRE module-level self-test region of the pre-fix bytes (Tests 1–21 + battery save/finally + Test 22) contains ZERO direct disk-write calls; the whole cell-8 module level (non-def statements) likewise zero; and the **transitive closure** confirms it — the battery's callees are `parse_ai_text`, `_strip_llm_wrappers`, `apply_sfx_glossary` (pure str→str, config-read only), `switch_translator` (in-memory config only), validators/prompt builders (pure); the save-transitive functions (`apply_manual_translation`, `translate_page`, `translate_manual_upload`, …) are **never called** in the battery. No `unlink`/`remove` anywhere in the 27 cells.
+2. **What the pre-fix battery DOES explain — kernel rows=0, deterministically**: the battery save captures the live df, swaps `translation_df = pd.DataFrame()` (bare, column-less), and the ValueError aborts the finally BEFORE the restore → kernel df = bare empty (proven in R3 negative control). This is the only df-state mutation the battery performs.
+3. **Disk rows=0 mechanism (runtime-proven on verbatim bytes)**: `save_translation_df()` (extracted verbatim from pushed cell-3 bytes) on a bare empty df adds the 21 columns as `""` and writes a **header-only 21-column CSV** — 0 rows on disk. The notebook's unconditional `save_translation_df()` call sites persist whatever the kernel df currently is: cell 3:968 (upsert end), 3:1164 (cell-3 Test-8 cleanup; conditional on `page_id` being in columns), 8:1455 (translate_page success path; unreachable with a bare df — early return), 10:947, 11:42/79, 12:66 (repair utilities; a bare column-less df raises KeyError before their saves). Guarded sites (`applied>0`/`deleted>0`: 8:1188, 16:1176/1258/1319, 22:582) cannot fire on an empty df. Note: a plain cell-3 re-run is disk-safe (module-level `load_translation_df()` at cell-3:993 reloads disk BEFORE the self-tests run). **Which specific action persisted the empty CSV in the Owner's live session is not recoverable from repo bytes [UNKNOWN — Owner session history]**; what IS excluded from bytes: the battery itself, and any direct file deletion. Consistent possibilities: any post-crash save firing while the kernel df was empty, or the CSV already being row-less in that session (data living in sidecars/in-flight).
+4. **Recovery path (rebuild translation_df from per-page translation.json sidecars): SCHEMA-SOUND.** Sidecar record fields: `id`(int), `region_type`, `original_text`, `translated_text`, `translator_engine`, `translator_model` (sidecar-only M004-B1 additive field — not a df column, not consumed on rebuild), `bengali_valid`(bool), `status`. The notebook's own chain rebuilds the full schema: cell-7 OCR reload path rebuilds rows from `ocr.json` via `build_ocr_row` — which emits EXACTLY the 21 `TRANSLATION_DF_COLUMNS` (set-equal, statically verified) — → `upsert_translation_rows`; then `translate_page`'s cache path (stage done) loads the per-page `translation.json` records and applies them via `apply_manual_translation` keyed `(page|page_id, int(id))` — recomputing `bengali_valid = validate_bengali` (≥1 codepoint U+0980–U+09FF), the status ladder (`untranslated`/`marker`/`translated`/`non_bengali`), `translator_engine="manual"`, then saving. **Runtime-proven with verbatim RF-2 functions**: 2/2 applied, text restored, `bengali_valid` recomputed (True for Bengali; False + `status=non_bengali` for non-Bengali), engine=manual on both rows. Caveats: (i) `translation.json` alone restores only the translation-bearing fields — the full 21-column schema needs the `ocr.json` side of the chain (both are per-page sidecars, both survive a CSV wipe); (ii) recovery should reload the df (cell 3) BEFORE re-running translate flows so `translate_page` takes the cache path — its empty-df early-return (cell 8:~1345) writes `save_json_artifact(page_id, "translation", [])` + marks stage done, which would overwrite an un-rebuilt page's sidecar.
+
+## REVIEWER INSTRUMENT DISCLOSURES (zero repo impact)
+
+(a) config stub pre-seeded `providers={}`, defeating cell-8's `setdefault` registry → `KeyError: 'openrouter'` at line 189; fixed by an empty `translation` stub. (b) traceback captured as a string then `extract_tb`'d; fixed by keeping the live tb object (enabled the line-2078 frame mapping). (c) section-scoped green counter initially counted `switch_translator`'s informational `Translator engine:` prints (same 2-space ✅ shape as `run_test`); fixed by exclusion. (d) first module-level write-scan walked into def bodies; fixed with a non-def filter. All shakedown defects were in my instruments, not the repo.
+
+## RF-2 VERDICT
+
+**RF-2: CLOSED.**
+
+| Check | Result |
+|-------|--------|
+| R1 scope (cell 8 + GLM_5_3.md record only; functional spans byte-identical to 122e353) | **PASS** |
+| R2 sentinel discipline (zero string-sentinel, zero df-in-boolean; exhaustive scan) | **PASS** |
+| R3 live-state exec (23/23 sandbox + live-state; exact-object restore + pickle byte-identity; traceless) | **PASS** |
+| R3 negative control (pre-fix bytes reproduce the Owner's exact ValueError @ battery finally, post-Tests-1–21) | **PASS** |
+| R4 m002_sim_v2 0 abort sites (calibration intact); wire format unchanged | **PASS** |
+| R5 owner-data adjudication (battery disk-inert; kernel rows=0 deterministic; 0-row CSV write mechanism proven; recovery path schema-sound) | **ANSWERED** |
+
+- The Phase D **APPROVED** verdict carries: functional spans are byte-identical to `122e353`; the RF-2 delta is confined to the authorized cell-8 self-test block; the fix is regression-proven in both directions (fixed bytes green in sandbox AND live-state; pre-fix bytes crash with the Owner's exact error).
+- Merge-gate note: the Owner live retest remains outstanding for the **parser** (real escaped-bracket reply = literal-text proof, Phase D scope). The RF-2 crash was in the self-test battery, not the parser — the retest now also exercises the fixed battery in a genuinely live session (cell 3 pre-loaded df), which Test 23 simulates.
