@@ -1721,3 +1721,59 @@ Object: `2c4635d` @ `mangabd-005-b2`, parent `11bbd1f` (= my Phase D report comm
 
 - The Phase D **APPROVED** verdict carries: functional spans are byte-identical to `122e353`; the RF-2 delta is confined to the authorized cell-8 self-test block; the fix is regression-proven in both directions (fixed bytes green in sandbox AND live-state; pre-fix bytes crash with the Owner's exact error).
 - Merge-gate note: the Owner live retest remains outstanding for the **parser** (real escaped-bracket reply = literal-text proof, Phase D scope). The RF-2 crash was in the self-test battery, not the parser — the retest now also exercises the fixed battery in a genuinely live session (cell 3 pre-loaded df), which Test 23 simulates.
+
+---
+
+# MANGABD-005 — PHASE D ADDENDUM: B2 RF-3 (+RF-4) DELTA VERIFICATION (GLM-5.3-Flash, 2026-10-17)
+
+Delta verified on pushed bytes only: `29c17ba` (my RF-2 CLOSED) → `c5f51c4` (RF-3: trailing-arrow fallback + Owner 10-section prompt + Test 24, 7 anchored patches, cell 8 only) → `fe879fe` (RF-4: bare [SKIP] marker-skip, 6 anchored patches, cell 8 only). Linear chain confirmed (`fe879fe` → `c5f51c4` → `29c17ba`); both commits touch exactly the notebook + `agents/GLM_5_3.md` (numstat + `git diff --summary`: no mode/rename/new-file changes). Custody sha256 (pushed notebook bytes): base `b9784e6f…`, RF-3 `63ebd490…`, RF-4 `59aef8e2…`; cell-8 sha16: base `80315623688c6fed` → RF-3 `1f814c307d4f5001` → RF-4 `fbce8f78274296c7`. [FACT]
+
+## R1 SCOPE — PASS
+
+Changed cells = {8} exactly on BOTH hops (26 other cells byte-identical to `29c17ba`); cell-8 non-source fields + notebook top-level fields identical; all 27 cells code-type. Cell 8: 2275→2657 (+382) → 2832 (+175) source lines = the disclosed +382/+175. Def-level delta: RF-3 changes `parse_ai_text` ONLY; RF-4 additionally changes `apply_manual_translation`; hunk census = 7 (RF-3) + 6 (RF-4) — each hunk maps to a disclosed patch locus (module-level: prompt block, Test 24, Test 25; in-def: fallback/counter/print, marker check, apply guard). `export_ai_text` / `translate_manual_upload` / `translate_page` / the prompt span / cells 22+25 all byte-identical → Phase D APPROVED + RF-2 CLOSED verdicts carry. GLM_5_3.md deltas = the two RF records only. [FACT]
+
+## R2 TRAILING-ARROW — PASS
+
+Fallback verified on the fe879fe namespace: post-FIRST-arrow empty/whitespace + pre-arrow Bengali → pre-arrow becomes the translation with `original_text=""`, `trailing_arrow` counted (probes incl. `->`/`=>` arrow variants and trailing-whitespace post-arrow). English-only pre-arrow + empty post-arrow stays a REPORTED placeholder skip (no entry, `placeholder_skipped=1`, sentinel `skipped_lines` carries the line) — Tests 4/21 contract preserved, 23/23 regression gate green. The `📋 Lenient variant used: trailing-arrow=N` print is inside `parse_ai_text` itself (cell line 1234; AST) and every parse path funnels through `parse_ai_text` (upload c8:1399, cell-22 paste c22:390) → structurally visible on ALL paths. V-4a never silent: sentinel `("_unparsed", 0)` rides the stats on a trailing-arrow-only parse; a multi-category paste shows `trailing_arrow=1` AND `placeholder_skipped=1` simultaneously. [TEST RESULT]
+
+## R3 PROMPT FIDELITY — PASS
+
+`manual_copy_prompt` = the Owner-authored 10-section localization-engine prompt as a raw triple-quoted literal: all 10 numbered section headers + ROLE AND OBJECTIVE preamble + FINAL DIRECTIVE present; section 1 contains the literal backslash-bracket sequence `"\[PAGE:ID]"` (the raw-string justification); kana strings `こがねい`/`おてあらい` verbatim in the Test 24 Owner-paste fixture; old M004 template fully purged from cell 8 (zero matches outside the disclosure comment). Payload chain: `_build_external_ai_system_prompt()` (cell 8) reads the config key dynamically → payload == template verbatim + the glossary rider (merge path preserved); cell 25 is byte-identical and calls the builder dynamically (c25:186–187); `MANGABD_CONFIG` is defined only at cell 1:180 with no disk-load overwrite before cell 8 → `setdefault` lands the new prompt in every fresh kernel while preserving Owner-editable semantics. [TEST RESULT]
+
+## R4 TEST 24 + LIVE-STATE — PASS
+
+Verbatim-bytes exec (sha-chained): sandbox 25/25 and live-state 25/25 (pre-seeded real 21-col df + harness canary save hook). Independent replication (fixture extracted from pushed bytes via AST literal_eval, expected values derived mechanically by MY OWN FIRST-arrow split, not copied from the repo's fixture): Owner's real 6-line trailing-arrow paste → 6/6 entries byte-exact, `original_text==""` all, `trailing_arrow=6`, visible `trailing-arrow=6` line; real `apply_manual_translation` → applied=6, `translator_engine=manual` all, `bengali_valid` all True, `status=translated` all, save shielded (single guarded call). Live-state: post-exec df IS the pre-seeded object with pickle byte-identity; battery traceless (file census empty); harness canary identity preserved through the Test 24/25 monkeypatch-restore cycles (8 save sites, all `_B2_UNSET`-disciplined). Negative control: PRE-FIX bytes (29c17ba) parse the same paste → 0 entries, `placeholder_skipped=6`, no `trailing_arrow` key, no rescue print — the defect reproduced and RF-3 proven as the fix. [TEST RESULT]
+
+## R5 REGRESSIONS — PASS
+
+25/25 self-tests in both sandbox and live-state (23 prior + Test 24 + Test 25). RF-2 sentinel invariants carried (exhaustive AST scan of the full 2832-line cell 8): `__unset__` string 0 hits; `_B2_UNSET = object()` 1 def (line 2277); save sites 8 = 6 df-saves + 2 save-fn saves (2278/2410/2467/2488/2530/2656 df; 2531/2657 save-fn); `is _B2_UNSET` checks 8; zero bare-DataFrame truthiness; zero dangerous df==scalar equality (all flagged compares are len()/is None/elementwise masks — safe). m002_sim_v2: calibration `aabc592` = exactly 1 site (cells[14]:40) reproduced, base `8445328` = 0, RF-4 `fe879fe` = **0 abort sites**. Wire format: parse entry shape + sentinel key unchanged; stats keys purely additive (`trailing_arrow`, `marker_skipped`); apply return int + df schema unchanged; export path untouched; cells 22/25 byte-identical. [TEST RESULT]
+
+## R6 ADJUDICATIONS
+
+**(a) whole-pre-arrow semantics — ACCEPT (as disclosed).** On normal arrowed lines the translation comes from the post-arrow side ONLY (verified: `English source → বাংলা` → `original_text="English source"`, translation untouched by source) — the fallback fires exclusively on an EMPTY post-arrow, so no source leakage is possible on normal lines. The disclosed caveat stands: a hypothetical English-prefix+Bengali-suffix line with a dangling arrow applies the full mixed pre-arrow (arrowless-rule semantics; matches the Owner's real T/L-note line, where the prefix is intended content; 5 of the Owner's 6 real lines are pure Bengali). [TEST RESULT]
+**(b) parse-level counter print — ACCEPT.** The cell-8-only scope is the PM's own RF discipline; the print lives inside `parse_ai_text` so it fires on every parse path including the cell-22 flow, carrying count + reason. Merging `trailing-arrow`/`marker-skip` into cell-22's combined `📋 Lenient variants used:` line requires a cell-22 edit — correctly deferred as a 1-line future authorized RF. Also accepted: the English-only negative reports via the placeholder-skip channel (not `unparsed_lines`) — forced by the directive's own Tests 4/21 gate, verified at runtime. [ADJUDICATION]
+**(c) BARE [SKIP] — RF-4 LANDED, end-to-end verified.** Parse level: `[02.jpg:3] SOME TEXT → [SKIP]` → no entry, `marker_skipped=1`, `"(marker)"` reason in the sentinel skip report, visible `⏭️ marker-skip: 1` print; `[SKIP:OCR_FAILED]` (set-member), `[skip]` (case-insensitive) likewise. Apply level (belt-and-braces, after `clean_translation`): quoted `'"[SKIP]"'`, plain-string dict shape (the cell-22 paste loop's exact shape), and dict-entry shape (cache-rebuild shape) all refused with the visible `⏭️ Marker translation not applied` print; zero save calls when all rows refused; real Bengali NOT over-blocked (control applied 1/1, status=translated). Negative control on pre-fix bytes (c5f51c4): both `[SKIP]` and `[SKIP:OCR_FAILED]` stored as LITERAL translations (`applied=1` each, `status=non_bengali`/`marker`), save hook FIRED — the verify-first gate's defect reproduced; the micro-fix was required and is proven. [TEST RESULT]
+
+## REVIEWER INSTRUMENT DISCLOSURES (zero repo impact)
+
+(i) fixture extraction: module-level AST walk missed the try-nested `_rf3_sample` (fixed: full-tree walk + `literal_eval`); (ii) my sentinel save-site matcher treated `globals().get`'s receiver as a Name instead of a Call (returned 0; ground truth via grep = 8 sites, matcher fixed, counts now match the record); (iii) my multi-category print expectation was wrong — placeholder skips ride the sentinel `skipped_lines` (cell-22 prints them; parse-level prints are the RF-3/RF-4 categories only, per GLM-5.3's disclosure 3) — check corrected, not code; (iv) payload check initially demanded equality (the glossary rider makes `startswith` + rider-present the correct assertion — that rider IS the preserved merge path); (v) first m002 check asserted only returncode — tightened to parse "abort-class SITE count". All defects were in my instruments, none in the repo.
+
+## RF-3 (+RF-4) VERDICT
+
+**RF-3: CLOSED** (and RF-4, landed mid-round as a PM pre-ruled micro-fix, verified in the same round: **CLOSED**).
+
+| Check | Result |
+|-------|--------|
+| R1 scope (cell 8 + GLM_5_3.md records only; 26 cells byte-identical to 29c17ba; spans = disclosed 7+6 patches) | **PASS** |
+| R2 trailing-arrow (fallback semantics, English-only skip, counter+print all paths, V-4a never silent) | **PASS** |
+| R3 prompt fidelity (10 sections verbatim, `\[PAGE:ID]` literal, kana fixture, config-key payload, zero cell-25 change) | **PASS** |
+| R4 Test 24 (independent 6/6 byte-exact + trailing_arrow=6 + visible line; save shielded; live-state identity/pickle/traceless) | **PASS** |
+| R5 regressions (25/25 both modes; sentinels carried; m002 calibration 1 / base 0 / RF-4 0; wire format additive-only) | **PASS** |
+| R6a no source leakage on normal arrowed lines (whole-pre-arrow semantics disclosed + accepted) | **PASS** |
+| R6b parse-level counter print | **ACCEPT** |
+| R6c bare [SKIP] end-to-end (RF-4 marker-skip + visible report; negative control reproduced literal storage) | **PASS** |
+
+- Phase D APPROVED + RF-2 CLOSED carry: the only functional-span changes are the disclosed parser fallback / marker check / apply guard inside `parse_ai_text` + `apply_manual_translation`; everything else byte-identical.
+- Non-blocking observation (pre-existing, NOT an RF-3 regression): a double-arrow line `English → বাংলা →` stores `বাংলা →` (trailing arrow retained in the translation; applied=1) — FIRST-arrow split with empty-post-arrow fallback not applicable; cosmetic; future RF only if the Owner ever produces double-arrow lines. GLM-5.3's RF-4 disclosure 3 (quoted markers undercount at parse level while the apply guard still blocks storage) also noted as accepted division of labor.
+- Merge gate unchanged: Phase D + RF-2 CLOSED + RF-3/RF-4 delta CLOSED + **Owner live retest** (now exercises the trailing-arrow fallback, the new prompt, and the marker-skip path with real ChatGPT output) + Owner merge authorization.
+- Report-only NEW commit on `mangabd-005-b2`; no source/sample changes; no amend/merge.
