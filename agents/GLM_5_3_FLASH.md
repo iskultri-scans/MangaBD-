@@ -1712,3 +1712,189 @@ Reviewer: GLM-5.3-Flash · 2026-10-14 · Measure-only run: **zero source/sample 
 - **The merge gate for `mangabd-005-b1` is discharged from the verification side.**
 - Recommendations (non-blocking): (1) future acceptance archives should include `metadata.json` with `notebook_commit` + per-page stage meta — Phase D E5 already proves the notebook emits `inpaint_size_effective`, so the field exists and was simply not exported into the zip; (2) N-D kana-fallback tofu in r1 remains a known cosmetic backlog item, unchanged since Batch-1.
 - Artifacts: measurement JSON `s007_work/measure_summary.json`; 20 evidence crops `s007_work/crops/`; instruments `scripts/s007_{measure,localize,visual}.py`. Repo: report-only commit, samples/ and notebook untouched.
+
+---
+
+# MANGABD-005 — PHASE D VERIFICATION (BATCH 2): LENIENT PASTE-BACK PARSER (GLM-5.3-Flash, 2026-10-15)
+
+**Object:** commit `122e353` on `mangabd-005-b2` (base = `main @ 8445328`, single linear parent, no amend/merge). All checks re-executed on the pushed bytes (`git show` extraction, sha256-chained cell custody: cell 8 `e6ab34c1b7280249`→`49c65fe11e19ac41`, cell 22 `c3f27c598b84b59f`→`952d5abff984b2f4`, cell 25 `0de59d248995c5e0`→`f92f6395d1478330`; notebook blob `7f94b553e60e43eb`→`a88d62adfa0b7ec4`). No source or sample changes. Instruments (all re-runnable, artifacts in `m005b2_work/`): `m005b2_e1_audit.py` 13 checks; `m005b2_e2_runtime_v2.py` 53 checks (verbatim-byte exec); `m005b2_e6_static.py` 18 checks (AST + 3-way merge + merge-tree); `m002_sim_v2.py` on base/branch/merged notebooks.
+
+## INSTRUMENT DISCLOSURE — three reviewer-harness bugs found and fixed mid-verification
+
+All three were bugs in MY instrument, not in the branch. After each fix the affected suite was re-run from scratch on the same pushed bytes; the tallies below are the post-fix runs. [FACT]
+
+1. **BUG-1 selftest event-read:** cell 8 emits `log_event("Cell 8 completed", level="INFO", tests_passed=…, tests_total=…)` — the counts arrive as **kwargs**. My stub dropped `**kw` and the reader indexed slot 2 of a 2-tuple → `tests_passed=None` false-FAIL. Fix: stub stores `(level, msg, kwargs)`; reader now reports event kwargs `tests_passed=22 tests_total=22`, cross-checked against a statically-extracted `run_test` name inventory (23 static call sites = 22 runtime tests + the network-gated "Live translation test", which is skipped-not-failed in the harness; all 22 runtime names ✅ in stdout, zero ❌, `Cell 8 result: SUCCESS`).
+2. **BUG-2 AST def-delta:** my first def-delta sliced each `def` from header line to the next `def ` line, so module-level code appended after a def was attributed to it — false-flagging `switch_translator` (the new B2 regex/comment block sits between it and the new helpers) and `run_test` (the new module-level Tests 16–22 follow it), and in cell 22 `_validate_bengali_local` (the `_LOCAL_*` block was inserted before `_parse_ai_text_local`). Fix: per-def `ast.dump()` equality (comment/blank-line immune) + `ast.get_source_segment` byte equality for the byte-identity claims.
+3. **BUG-3 apply parity:** the parity harness passed a **dict** to `apply_translations_from_text`, which takes the **raw paste text** and parses internally → both refs applied 0 → "0 vs 0" false-FAIL. Fix: identical paste text through both refs' verbatim cell-22 bytes; count/df/save/fields compared.
+
+## E1 — SCOPE: PASS (13/13 + 3 field checks)
+
+- `git show --numstat`: notebook +623/−70, `agents/GLM_5_3.md` +51/−0, exactly 2 files touched; `agents/GLM_5_3_FLASH.md` untouched by this commit; no mode changes, no renames, no binary, all blobs 100644. Secret scan (api-key/token/private-key patterns) 0 hits. [TEST RESULT]
+- Cells: 27 vs 27; changed cells exactly **{8, 22, 25}**; the other 24 cells byte-identical to base. On the three changed cells the non-source fields (`execution_count`/`outputs`/`metadata`/`cell_type`) are byte-identical to base — only `source` changed. AST parse **27/27 both refs**. [TEST RESULT]
+
+## E2 — SEMANTICS (verbatim bytes): PASS (24 checks: 19 battery + 5 end-to-end)
+
+- **Unescape before any regex AND before `_strip_llm_wrappers` header detection** — verified both statically (apply-flow pre-unescape block precedes the wrapper-strip call in `apply_translations_from_text`) and end-to-end: paste `Here is your translation:` + ``` fence + **escaped** `[02.jpg:1]/[02.jpg:2]` data lines + postamble through the REAL combined cell8→cell22 flow → **base applies 0** ("No valid lines found" — the escaped header never sets `seen_header`, the whole reply is eaten by the M004-Amendment-3 preamble zone: the silent-drop gap, proven present) → **branch applies 2/2** with `⚠️ 1 unparsed line(s)` (postamble) and `📋 Lenient variants used: unescaped=2, …` visible; df updated with engine `manual`, `bengali_valid=True`. Gap closed, visibly. [TEST RESULT]
+- **Single-line blob split:** one-line two-tag blob → both entries + `split_blobs=1` + leading junk reported via sentinel. **FIRST-arrow split:** `→ -> => ⇒ ➔ ➡` all 6 accepted; multi-arrow `Go → now → যাও` → original `Go`, translation `now → যাও` (first arrow). [TEST RESULT]
+- **Arrowless:** Bengali-only accepted (`original_text=""`, `arrowless` counted); mixed English+Bengali accepted; English-only → unparsed with the `source-only line? (no Bengali after tag)` hint. [TEST RESULT]
+- **Placeholders:** `X→ / () / (-) / - / N/A / n/a` → 6 skips, zero entries, `skipped_lines` len 6; good line on the same paste still applies. **Stem-match:** `[02.jpg:1]` vs session `{02_1.jpg}` → unique accept + 🟡 `stem_notes`; `[02:1]` vs `{02.jpg, 02_1.jpg}` → ambiguous → unparsed report; zero candidates (`09.jpg`) → raw page kept (surfaces as the parsed-N vs applied-M gap at apply time, never silent); exact-key hit → no sentinel. **Duplicates:** last-wins + counted. **V-4a sentinel:** present-with-full-payload when anything is reportable, absent on clean strict pastes (M004 output parity). [TEST RESULT]
+- **Variant summary on both apply paths:** the one-line `📋 Lenient variants used: …` prints in `apply_translations_from_text` upstream of the apply fork, proven printing on BOTH sub-paths — the `apply_manual_translation` path (combined cell8+cell22 E2E, engine `manual`) and the `_apply_translations_fallback` path (cell-22-standalone parity run, engine `manual_paste`). See NOTE N-1 for the file-upload flow reading. [TEST RESULT]
+
+## E3 — OWNER FIXTURES: PASS
+
+- Fixture (a) escaped+arrowless: 2/2 entries, `original_text=""`, `unescaped=2, arrowless=2`; (b) escaped+arrow: 2/2 with originals + `unescaped=2`; (c) raw+arrow: 2/2 strict, NO sentinel. 100% parse on all three. Tag-less junk through the real cell-22 apply path: 0 applied, unparsed report visible, df untouched. Local mirror parity: `_parse_ai_text_local` output == `parse_ai_text` output on fixtures (a)/(b)/(c). `ai.Text` export byte-preserved: `export_ai_text` source-segment byte-equal base↔branch; payload body keeps the `[02.jpg:1] Hello →` wire format. [TEST RESULT]
+- **Provenance (disclosed, PC2-C3):** the three fixtures are shape-constructed with S005-attested Bengali text — no literal Owner sample text existed in the repo/relay. This is why the merge gate below stays a live retest. [FACT]
+
+## E4 — SYSTEM PROMPT / COPY PAYLOAD: PASS
+
+- Rule 5 — `5. NEVER escape brackets with backslashes; keep tags exactly [page:id]; one line per region.` — added to `manual_copy_prompt` (cell 8 config). There is exactly ONE COPY payload construction site (`btn_copy_ai` → `on_copy_ai` → `build_external_ai_copy`, whose TOP delegates to `_build_external_ai_system_prompt`, which embeds `manual_copy_prompt` + glossary). Verified **dynamically**: `build_external_ai_copy()` (all pages) and `build_external_ai_copy(page=…)` payloads both contain rule 5 + `TEXT TO TRANSLATE` + the 2-region wire body. `build_ai_text_content` + `build_external_ai_copy` are source-segment byte-identical base↔branch — the amendment rides the template, builders untouched (V3.17). [TEST RESULT]
+- UI hints: cell-22 `show_text_for_translation` instruction block + `step_3_manual_translate_paste` placeholder, cell-25 `ta_tgt` placeholder (exactly 1 non-def top-level statement changed) + `on_copy_ai` say() hint — all carry the lenient acceptance copy (escaped `\[ \]`, `->`/`=>`/`⇒`, শুধু-বাংলা lines). [TEST RESULT]
+
+## E5 — REGRESSIONS: PASS
+
+- **Cell-8 self-tests 22/22**: event kwargs `tests_passed=22 tests_total=22`; all 22 runtime test names green in stdout; zero ❌; `Cell 8 result: SUCCESS`; no RuntimeError (any failed test raises). [TEST RESULT]
+- **m002_sim_v2 fresh-kernel sim**: base `8445328` = 0 abort sites, branch `122e353` = 0 abort sites, **merged (B1 cell 9 + B2 cells 8/22/25) = 0 abort sites**; instrument calibration reproduced (pre-002 `aabc592` = exactly 1 abort site, cells[14]:40). [TEST RESULT]
+- **Apply semantics unchanged**: `apply_manual_translation` source-segment byte-identical; `_apply_translations_fallback` AST-identical; parity run (same paste, both refs) → count 3/3 equal, DataFrames **byte-equal** (translated_text/status/translator_engine/bengali_valid identical: `manual_paste`/`translated`/True on the fallback path, `manual`/valid on the combined path), save fired once on both sides. **Protected cells**: 24 non-target cells byte-identical; **B1 cell 9 untouched** here (== base main state, pre-B3). [TEST RESULT]
+
+## E6 — ADJUDICATIONS
+
+- **Tests 4/5 baseline updates = directive conformance, not drift.** Base Test 4 expected `parsed[("page2.jpg",1)]["translated_text"] == ""` — a silent empty entry for a `No translation →` line; branch Test 4 expects the placeholder-skip contract (`("page2.jpg",1) not in parsed` + sentinel `placeholder_skipped==1` + len 3 = 2 entries + sentinel) — this IS directive step 6 ("placeholder … skip+visible report"). Base Test 5 expected the M004 last-arrow rsplit (`"Go → now → যাও এখন"` → `"যাও এখন"`); branch Test 5 expects FIRST-arrow (`"now → যাও এখন"`, original `"Go"`, renamed `parse_ai_text arrow-first (B2)`) — this IS directive step 4 ("translation = text after the FIRST arrow"). Both updates are disclosed in the code comments and in PC2-C1/C3 ("directive supersedes"), and no `rsplit` split remains in either B2 parser. **CONFORMANT.** [FACT]
+- **Disjoint-cell coexistence for the future merge: VERIFIED.** Per-cell 3-way merge (base `8445328` / ours B2 `122e353` / theirs B1 tip `93de3f8`): zero cell conflicts; merged notebook = B2 bytes on all cells except cell 9 = B1's; AST 27/27 on the merged bytes; m002 sim on the merged notebook = 0 abort sites. `git merge-tree --write-tree` (B1 tip × B2): the **notebook auto-merges cleanly** (disjoint cell regions); the sole conflict is `agents/GLM_5_3.md` — exactly the Owner's disclosed docs-reconciliation note (both branches append a CURRENT-PHASE header entry). Trivial docs conflict, flagged for PM, no notebook risk. [TEST RESULT]
+
+## NOTES (NON-BLOCKING)
+
+1. **N-1 ("both apply paths" reading + upload flow):** I read "both apply paths" as the two apply sub-paths of the paste flow (`apply_manual_translation` / `_apply_translations_fallback`) — the variant summary prints on both (proven above). The **file-upload flow** (`translate_manual_upload` → pop → `apply_manual_translation`) does not print the parse report — but neither did the M004 base (the sentinel was silently carried, never printed; B2's pop is strictly an improvement for count truthfulness). If the PM intended the upload flow to print the variant summary too, that is a 2-line follow-up for a future cell-8-authorized batch; no B2 gate depends on it.
+2. **N-2 arrow superset (disclosed):** `➔/➡` kept — M004's cell-22 parser already accepted them (`arrow_candidates` in base), so B2 is strictly more lenient, aligned with the batch goal.
+3. **N-3 placeholder scope (disclosed):** the check also applies to the post-arrow translation side (`English → N/A` → skip+report) — safer than applying an "N/A" as literal text.
+4. **N-4 docs at merge:** besides `GLM_5_3.md` (disclosed), `agents/GLM_5_3_FLASH.md` now carries review records on BOTH branches (B1: Phase D + S007; B2: this report) — a second trivial docs conflict of the same reconciliation class at merge time.
+5. **N-5 double-unescape safety:** the apply-flow pre-unescape count merges with the parser's own count (`unescaped=2` shown exactly once in the E2E, 2+0) — idempotent replace, verified live.
+
+## VERDICT
+
+**MANGABD-005 BATCH 2 (LENIENT PASTE-BACK PARSER): APPROVED.**
+
+| Gate | Result |
+|------|--------|
+| E1 SCOPE (cells {8,22,25}, 24 byte-identical, secrets/mode, AST 27/27) | **PASS** |
+| E2 SEMANTICS (unescape-first gap closure, blob split, FIRST-arrow, arrowless rule, placeholders, stem-match, duplicates, V-4a, variant summary) | **PASS** |
+| E3 OWNER FIXTURES (a/b/c 100%, junk reported-not-applied, export byte-preserved) | **PASS** |
+| E4 SYSTEM PROMPT (rule 5 in every COPY payload, dynamic; UI hints) | **PASS** |
+| E5 REGRESSIONS (self-tests 22/22, sim 0/0/0 calibrated, apply parity, B1 cell 9 untouched) | **PASS** |
+| E6 ADJUDICATIONS (Tests 4/5 = directive conformance; coexistence verified) | **CONFORMANT / VERIFIED** |
+
+- Zero repo-side fixes required; the three mid-verification failures were reviewer-instrument bugs (disclosed above), fixed and re-run to completion on the pushed bytes.
+- **Merge gate: Owner live retest with a REAL ChatGPT escaped-bracket reply** (fixtures were shape-constructed; the live reply is the literal-text proof). The retest should exercise: fully-escaped reply inside a ``` fence, arrowless Bengali-only lines, and at least one placeholder line — the exact shapes proven here end-to-end.
+- At merge time: reconcile the two docs headers (`GLM_5_3.md`, `GLM_5_3_FLASH.md`) — trivial, both disclosed.
+
+---
+
+# MANGABD-005 — PHASE D ADDENDUM: B2 RF-2 DELTA VERIFICATION (GLM-5.3-Flash, 2026-10-16)
+
+Object: `2c4635d` @ `mangabd-005-b2`, parent `11bbd1f` (= my Phase D report commit; rebase claim verified — chain `2c4635d`→`11bbd1f`→`122e353`→`8445328`). Claimed delta: cell-8 self-test block ONLY (5 anchored patches, +65 source lines 2210→2275) + `agents/GLM_5_3.md` record (+13). All checks re-run on the pushed bytes. Instruments: `scripts/m005rf2_{extract,r1c_r2,runtime,r5_adjudication}.py`; artifacts `m005rf2_work/` (scope_summary.json, r1c_r2_static.json, rf2_runtime_summary.json 31/31, rf2_r5_summary.json 20/20). No source or sample changes; report-only commit.
+
+## R1 SCOPE — PASS
+
+- `git show --stat 2c4635d`: exactly 2 files (notebook +73/−4 JSON lines; `agents/GLM_5_3.md` +13). No `samples/`, no other `agents/` files, no mode/rename.
+- Cell-level byte compare: rf2 vs `11bbd1f` → changed cells = **{8} exactly**; rf2 vs `122e353` → changed cells = **{8} exactly**; 26 non-target cells byte-identical to BOTH refs. Cell-8 non-source fields and all top-level notebook fields identical.
+- Functional spans vs `122e353`: ALL 40 top-level defs/assigns BYTE-IDENTICAL except exactly the 5 self-test loci (`_b2_saved_df` save site 1957→1962 via comment+sentinel block; 3 one-line finally checks 2078→2083, 2125→2130, 2089→2094; Test 23 insertion +60 lines). `parse_ai_text` / `export_ai_text` / `apply_manual_translation` / `translate_manual_upload` / `_strip_llm_wrappers` / `_mbd_*` / `run_test` / builders: BYTE-IDENTICAL → **the Phase D E2/E3/E4 approval carries over unchanged**.
+- Secret scan on the added source lines: 0 hits.
+
+## R2 SENTINEL DISCIPLINE — PASS (exhaustive scan, not spot-check)
+
+- `"__unset__"` string: **0 occurrences** in RF-2 cell 8 (pre-fix: 4 — saves 1957/2089, `==` checks 2078/2125).
+- `_B2_UNSET = object()`: 1 definition (line 1961); 4 save sites, all `globals().get("translation_df", _B2_UNSET)` (1962, 2094, 2151, 2172); 4 checks, all `is _B2_UNSET` (2083, 2130, 2177, 2198).
+- Exhaustive AST inventory of EVERY `Compare` and EVERY boolean context (`If`/`While`/`IfExp`/`BoolOp`/`not`) whose operands name a df-carrying identifier (`translation_df`, `_b2_saved_df`, `_saved_df22`, `_rf2_saved`, `_rf2_outer`, `_rf2_df`): **zero bare-DataFrame truthiness, zero df-vs-string equality**; every entry is identity (`is`/`is not`), `len()`, `is None`, `hasattr`, or `.columns` membership. (Elementwise `translation_df["page_id"] == page_id` masks exist only inside filter subscripts in pre-existing functional code — byte-identical to `122e353`, never in boolean context.)
+
+## R3 LIVE-STATE EXEC — PASS (verbatim bytes, sha-chained)
+
+- **Sandbox**: 23/23 self-tests (event kwargs `tests_passed/tests_total` = 23/23; "live-state save/restore (RF-2)" green), `translation_df` ABSENT post-exec (pop path), engine restored to manual, session tmpdir file-census empty (traceless).
+- **Live-state (the directive scenario)**: pre-seeded real 2-row `translation_df` (exact 21-column cell-3 schema) before exec → 23/23, zero ❌ lines, post-exec `translation_df` **IS the pre-seeded object** (id equality), `pickle.dumps` **byte-identity**, len unchanged, file census empty.
+- **Negative control**: PRE-FIX bytes (`122e353`) in the SAME live-state harness → `ValueError: The truth value of a DataFrame is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()` — the Owner's exact error — traceback frame = **pre-fix line 2078** (`if _b2_saved_df == "__unset__":`, the battery finally), fired AFTER Tests 1–21 ran green (21 run_test greens, last = "placeholder skip+report (B2)"); Test 22 never reached. The fix provably targets the real defect.
+- **Kernel state at the pre-fix crash**: `translation_df` = the bare empty swap df (len 0, no columns); the restore never executed; the pre-seeded object detached but unmutated. This is the deterministic **kernel rows=0** mechanism (adjudicated in R5).
+
+## R4 REGRESSIONS — PASS
+
+- `m002_sim_v2`: calibration `aabc592` = 1 abort site (`cells[14]:40`); base `8445328` = 0; **RF-2 `2c4635d` = 0**. Wire format unchanged (R1 functional-span byte-identity).
+
+## R5 OWNER DATA ADJUDICATION (new) — ANSWERED
+
+1. **Can the pre-fix battery explain the emptied CSV? NO — the battery is disk-inert.** AST scan with write-capable call set (`save_translation_df`, `save_translation_artifact`, `save_json_artifact`, `atomic_write_json`, `to_csv`/`to_json`, `open`, `write_text`/`write_bytes`, `mark_stage_done`, `unlink`/`remove`): the ENTIRE module-level self-test region of the pre-fix bytes (Tests 1–21 + battery save/finally + Test 22) contains ZERO direct disk-write calls; the whole cell-8 module level (non-def statements) likewise zero; and the **transitive closure** confirms it — the battery's callees are `parse_ai_text`, `_strip_llm_wrappers`, `apply_sfx_glossary` (pure str→str, config-read only), `switch_translator` (in-memory config only), validators/prompt builders (pure); the save-transitive functions (`apply_manual_translation`, `translate_page`, `translate_manual_upload`, …) are **never called** in the battery. No `unlink`/`remove` anywhere in the 27 cells.
+2. **What the pre-fix battery DOES explain — kernel rows=0, deterministically**: the battery save captures the live df, swaps `translation_df = pd.DataFrame()` (bare, column-less), and the ValueError aborts the finally BEFORE the restore → kernel df = bare empty (proven in R3 negative control). This is the only df-state mutation the battery performs.
+3. **Disk rows=0 mechanism (runtime-proven on verbatim bytes)**: `save_translation_df()` (extracted verbatim from pushed cell-3 bytes) on a bare empty df adds the 21 columns as `""` and writes a **header-only 21-column CSV** — 0 rows on disk. The notebook's unconditional `save_translation_df()` call sites persist whatever the kernel df currently is: cell 3:968 (upsert end), 3:1164 (cell-3 Test-8 cleanup; conditional on `page_id` being in columns), 8:1455 (translate_page success path; unreachable with a bare df — early return), 10:947, 11:42/79, 12:66 (repair utilities; a bare column-less df raises KeyError before their saves). Guarded sites (`applied>0`/`deleted>0`: 8:1188, 16:1176/1258/1319, 22:582) cannot fire on an empty df. Note: a plain cell-3 re-run is disk-safe (module-level `load_translation_df()` at cell-3:993 reloads disk BEFORE the self-tests run). **Which specific action persisted the empty CSV in the Owner's live session is not recoverable from repo bytes [UNKNOWN — Owner session history]**; what IS excluded from bytes: the battery itself, and any direct file deletion. Consistent possibilities: any post-crash save firing while the kernel df was empty, or the CSV already being row-less in that session (data living in sidecars/in-flight).
+4. **Recovery path (rebuild translation_df from per-page translation.json sidecars): SCHEMA-SOUND.** Sidecar record fields: `id`(int), `region_type`, `original_text`, `translated_text`, `translator_engine`, `translator_model` (sidecar-only M004-B1 additive field — not a df column, not consumed on rebuild), `bengali_valid`(bool), `status`. The notebook's own chain rebuilds the full schema: cell-7 OCR reload path rebuilds rows from `ocr.json` via `build_ocr_row` — which emits EXACTLY the 21 `TRANSLATION_DF_COLUMNS` (set-equal, statically verified) — → `upsert_translation_rows`; then `translate_page`'s cache path (stage done) loads the per-page `translation.json` records and applies them via `apply_manual_translation` keyed `(page|page_id, int(id))` — recomputing `bengali_valid = validate_bengali` (≥1 codepoint U+0980–U+09FF), the status ladder (`untranslated`/`marker`/`translated`/`non_bengali`), `translator_engine="manual"`, then saving. **Runtime-proven with verbatim RF-2 functions**: 2/2 applied, text restored, `bengali_valid` recomputed (True for Bengali; False + `status=non_bengali` for non-Bengali), engine=manual on both rows. Caveats: (i) `translation.json` alone restores only the translation-bearing fields — the full 21-column schema needs the `ocr.json` side of the chain (both are per-page sidecars, both survive a CSV wipe); (ii) recovery should reload the df (cell 3) BEFORE re-running translate flows so `translate_page` takes the cache path — its empty-df early-return (cell 8:~1345) writes `save_json_artifact(page_id, "translation", [])` + marks stage done, which would overwrite an un-rebuilt page's sidecar.
+
+## REVIEWER INSTRUMENT DISCLOSURES (zero repo impact)
+
+(a) config stub pre-seeded `providers={}`, defeating cell-8's `setdefault` registry → `KeyError: 'openrouter'` at line 189; fixed by an empty `translation` stub. (b) traceback captured as a string then `extract_tb`'d; fixed by keeping the live tb object (enabled the line-2078 frame mapping). (c) section-scoped green counter initially counted `switch_translator`'s informational `Translator engine:` prints (same 2-space ✅ shape as `run_test`); fixed by exclusion. (d) first module-level write-scan walked into def bodies; fixed with a non-def filter. All shakedown defects were in my instruments, not the repo.
+
+## RF-2 VERDICT
+
+**RF-2: CLOSED.**
+
+| Check | Result |
+|-------|--------|
+| R1 scope (cell 8 + GLM_5_3.md record only; functional spans byte-identical to 122e353) | **PASS** |
+| R2 sentinel discipline (zero string-sentinel, zero df-in-boolean; exhaustive scan) | **PASS** |
+| R3 live-state exec (23/23 sandbox + live-state; exact-object restore + pickle byte-identity; traceless) | **PASS** |
+| R3 negative control (pre-fix bytes reproduce the Owner's exact ValueError @ battery finally, post-Tests-1–21) | **PASS** |
+| R4 m002_sim_v2 0 abort sites (calibration intact); wire format unchanged | **PASS** |
+| R5 owner-data adjudication (battery disk-inert; kernel rows=0 deterministic; 0-row CSV write mechanism proven; recovery path schema-sound) | **ANSWERED** |
+
+- The Phase D **APPROVED** verdict carries: functional spans are byte-identical to `122e353`; the RF-2 delta is confined to the authorized cell-8 self-test block; the fix is regression-proven in both directions (fixed bytes green in sandbox AND live-state; pre-fix bytes crash with the Owner's exact error).
+- Merge-gate note: the Owner live retest remains outstanding for the **parser** (real escaped-bracket reply = literal-text proof, Phase D scope). The RF-2 crash was in the self-test battery, not the parser — the retest now also exercises the fixed battery in a genuinely live session (cell 3 pre-loaded df), which Test 23 simulates.
+
+---
+
+# MANGABD-005 — PHASE D ADDENDUM: B2 RF-3 (+RF-4) DELTA VERIFICATION (GLM-5.3-Flash, 2026-10-17)
+
+Delta verified on pushed bytes only: `29c17ba` (my RF-2 CLOSED) → `c5f51c4` (RF-3: trailing-arrow fallback + Owner 10-section prompt + Test 24, 7 anchored patches, cell 8 only) → `fe879fe` (RF-4: bare [SKIP] marker-skip, 6 anchored patches, cell 8 only). Linear chain confirmed (`fe879fe` → `c5f51c4` → `29c17ba`); both commits touch exactly the notebook + `agents/GLM_5_3.md` (numstat + `git diff --summary`: no mode/rename/new-file changes). Custody sha256 (pushed notebook bytes): base `b9784e6f…`, RF-3 `63ebd490…`, RF-4 `59aef8e2…`; cell-8 sha16: base `80315623688c6fed` → RF-3 `1f814c307d4f5001` → RF-4 `fbce8f78274296c7`. [FACT]
+
+## R1 SCOPE — PASS
+
+Changed cells = {8} exactly on BOTH hops (26 other cells byte-identical to `29c17ba`); cell-8 non-source fields + notebook top-level fields identical; all 27 cells code-type. Cell 8: 2275→2657 (+382) → 2832 (+175) source lines = the disclosed +382/+175. Def-level delta: RF-3 changes `parse_ai_text` ONLY; RF-4 additionally changes `apply_manual_translation`; hunk census = 7 (RF-3) + 6 (RF-4) — each hunk maps to a disclosed patch locus (module-level: prompt block, Test 24, Test 25; in-def: fallback/counter/print, marker check, apply guard). `export_ai_text` / `translate_manual_upload` / `translate_page` / the prompt span / cells 22+25 all byte-identical → Phase D APPROVED + RF-2 CLOSED verdicts carry. GLM_5_3.md deltas = the two RF records only. [FACT]
+
+## R2 TRAILING-ARROW — PASS
+
+Fallback verified on the fe879fe namespace: post-FIRST-arrow empty/whitespace + pre-arrow Bengali → pre-arrow becomes the translation with `original_text=""`, `trailing_arrow` counted (probes incl. `->`/`=>` arrow variants and trailing-whitespace post-arrow). English-only pre-arrow + empty post-arrow stays a REPORTED placeholder skip (no entry, `placeholder_skipped=1`, sentinel `skipped_lines` carries the line) — Tests 4/21 contract preserved, 23/23 regression gate green. The `📋 Lenient variant used: trailing-arrow=N` print is inside `parse_ai_text` itself (cell line 1234; AST) and every parse path funnels through `parse_ai_text` (upload c8:1399, cell-22 paste c22:390) → structurally visible on ALL paths. V-4a never silent: sentinel `("_unparsed", 0)` rides the stats on a trailing-arrow-only parse; a multi-category paste shows `trailing_arrow=1` AND `placeholder_skipped=1` simultaneously. [TEST RESULT]
+
+## R3 PROMPT FIDELITY — PASS
+
+`manual_copy_prompt` = the Owner-authored 10-section localization-engine prompt as a raw triple-quoted literal: all 10 numbered section headers + ROLE AND OBJECTIVE preamble + FINAL DIRECTIVE present; section 1 contains the literal backslash-bracket sequence `"\[PAGE:ID]"` (the raw-string justification); kana strings `こがねい`/`おてあらい` verbatim in the Test 24 Owner-paste fixture; old M004 template fully purged from cell 8 (zero matches outside the disclosure comment). Payload chain: `_build_external_ai_system_prompt()` (cell 8) reads the config key dynamically → payload == template verbatim + the glossary rider (merge path preserved); cell 25 is byte-identical and calls the builder dynamically (c25:186–187); `MANGABD_CONFIG` is defined only at cell 1:180 with no disk-load overwrite before cell 8 → `setdefault` lands the new prompt in every fresh kernel while preserving Owner-editable semantics. [TEST RESULT]
+
+## R4 TEST 24 + LIVE-STATE — PASS
+
+Verbatim-bytes exec (sha-chained): sandbox 25/25 and live-state 25/25 (pre-seeded real 21-col df + harness canary save hook). Independent replication (fixture extracted from pushed bytes via AST literal_eval, expected values derived mechanically by MY OWN FIRST-arrow split, not copied from the repo's fixture): Owner's real 6-line trailing-arrow paste → 6/6 entries byte-exact, `original_text==""` all, `trailing_arrow=6`, visible `trailing-arrow=6` line; real `apply_manual_translation` → applied=6, `translator_engine=manual` all, `bengali_valid` all True, `status=translated` all, save shielded (single guarded call). Live-state: post-exec df IS the pre-seeded object with pickle byte-identity; battery traceless (file census empty); harness canary identity preserved through the Test 24/25 monkeypatch-restore cycles (8 save sites, all `_B2_UNSET`-disciplined). Negative control: PRE-FIX bytes (29c17ba) parse the same paste → 0 entries, `placeholder_skipped=6`, no `trailing_arrow` key, no rescue print — the defect reproduced and RF-3 proven as the fix. [TEST RESULT]
+
+## R5 REGRESSIONS — PASS
+
+25/25 self-tests in both sandbox and live-state (23 prior + Test 24 + Test 25). RF-2 sentinel invariants carried (exhaustive AST scan of the full 2832-line cell 8): `__unset__` string 0 hits; `_B2_UNSET = object()` 1 def (line 2277); save sites 8 = 6 df-saves + 2 save-fn saves (2278/2410/2467/2488/2530/2656 df; 2531/2657 save-fn); `is _B2_UNSET` checks 8; zero bare-DataFrame truthiness; zero dangerous df==scalar equality (all flagged compares are len()/is None/elementwise masks — safe). m002_sim_v2: calibration `aabc592` = exactly 1 site (cells[14]:40) reproduced, base `8445328` = 0, RF-4 `fe879fe` = **0 abort sites**. Wire format: parse entry shape + sentinel key unchanged; stats keys purely additive (`trailing_arrow`, `marker_skipped`); apply return int + df schema unchanged; export path untouched; cells 22/25 byte-identical. [TEST RESULT]
+
+## R6 ADJUDICATIONS
+
+**(a) whole-pre-arrow semantics — ACCEPT (as disclosed).** On normal arrowed lines the translation comes from the post-arrow side ONLY (verified: `English source → বাংলা` → `original_text="English source"`, translation untouched by source) — the fallback fires exclusively on an EMPTY post-arrow, so no source leakage is possible on normal lines. The disclosed caveat stands: a hypothetical English-prefix+Bengali-suffix line with a dangling arrow applies the full mixed pre-arrow (arrowless-rule semantics; matches the Owner's real T/L-note line, where the prefix is intended content; 5 of the Owner's 6 real lines are pure Bengali). [TEST RESULT]
+**(b) parse-level counter print — ACCEPT.** The cell-8-only scope is the PM's own RF discipline; the print lives inside `parse_ai_text` so it fires on every parse path including the cell-22 flow, carrying count + reason. Merging `trailing-arrow`/`marker-skip` into cell-22's combined `📋 Lenient variants used:` line requires a cell-22 edit — correctly deferred as a 1-line future authorized RF. Also accepted: the English-only negative reports via the placeholder-skip channel (not `unparsed_lines`) — forced by the directive's own Tests 4/21 gate, verified at runtime. [ADJUDICATION]
+**(c) BARE [SKIP] — RF-4 LANDED, end-to-end verified.** Parse level: `[02.jpg:3] SOME TEXT → [SKIP]` → no entry, `marker_skipped=1`, `"(marker)"` reason in the sentinel skip report, visible `⏭️ marker-skip: 1` print; `[SKIP:OCR_FAILED]` (set-member), `[skip]` (case-insensitive) likewise. Apply level (belt-and-braces, after `clean_translation`): quoted `'"[SKIP]"'`, plain-string dict shape (the cell-22 paste loop's exact shape), and dict-entry shape (cache-rebuild shape) all refused with the visible `⏭️ Marker translation not applied` print; zero save calls when all rows refused; real Bengali NOT over-blocked (control applied 1/1, status=translated). Negative control on pre-fix bytes (c5f51c4): both `[SKIP]` and `[SKIP:OCR_FAILED]` stored as LITERAL translations (`applied=1` each, `status=non_bengali`/`marker`), save hook FIRED — the verify-first gate's defect reproduced; the micro-fix was required and is proven. [TEST RESULT]
+
+## REVIEWER INSTRUMENT DISCLOSURES (zero repo impact)
+
+(i) fixture extraction: module-level AST walk missed the try-nested `_rf3_sample` (fixed: full-tree walk + `literal_eval`); (ii) my sentinel save-site matcher treated `globals().get`'s receiver as a Name instead of a Call (returned 0; ground truth via grep = 8 sites, matcher fixed, counts now match the record); (iii) my multi-category print expectation was wrong — placeholder skips ride the sentinel `skipped_lines` (cell-22 prints them; parse-level prints are the RF-3/RF-4 categories only, per GLM-5.3's disclosure 3) — check corrected, not code; (iv) payload check initially demanded equality (the glossary rider makes `startswith` + rider-present the correct assertion — that rider IS the preserved merge path); (v) first m002 check asserted only returncode — tightened to parse "abort-class SITE count". All defects were in my instruments, none in the repo.
+
+## RF-3 (+RF-4) VERDICT
+
+**RF-3: CLOSED** (and RF-4, landed mid-round as a PM pre-ruled micro-fix, verified in the same round: **CLOSED**).
+
+| Check | Result |
+|-------|--------|
+| R1 scope (cell 8 + GLM_5_3.md records only; 26 cells byte-identical to 29c17ba; spans = disclosed 7+6 patches) | **PASS** |
+| R2 trailing-arrow (fallback semantics, English-only skip, counter+print all paths, V-4a never silent) | **PASS** |
+| R3 prompt fidelity (10 sections verbatim, `\[PAGE:ID]` literal, kana fixture, config-key payload, zero cell-25 change) | **PASS** |
+| R4 Test 24 (independent 6/6 byte-exact + trailing_arrow=6 + visible line; save shielded; live-state identity/pickle/traceless) | **PASS** |
+| R5 regressions (25/25 both modes; sentinels carried; m002 calibration 1 / base 0 / RF-4 0; wire format additive-only) | **PASS** |
+| R6a no source leakage on normal arrowed lines (whole-pre-arrow semantics disclosed + accepted) | **PASS** |
+| R6b parse-level counter print | **ACCEPT** |
+| R6c bare [SKIP] end-to-end (RF-4 marker-skip + visible report; negative control reproduced literal storage) | **PASS** |
+
+- Phase D APPROVED + RF-2 CLOSED carry: the only functional-span changes are the disclosed parser fallback / marker check / apply guard inside `parse_ai_text` + `apply_manual_translation`; everything else byte-identical.
+- Non-blocking observation (pre-existing, NOT an RF-3 regression): a double-arrow line `English → বাংলা →` stores `বাংলা →` (trailing arrow retained in the translation; applied=1) — FIRST-arrow split with empty-post-arrow fallback not applicable; cosmetic; future RF only if the Owner ever produces double-arrow lines. GLM-5.3's RF-4 disclosure 3 (quoted markers undercount at parse level while the apply guard still blocks storage) also noted as accepted division of labor.
+- Merge gate unchanged: Phase D + RF-2 CLOSED + RF-3/RF-4 delta CLOSED + **Owner live retest** (now exercises the trailing-arrow fallback, the new prompt, and the marker-skip path with real ChatGPT output) + Owner merge authorization.
+- Report-only NEW commit on `mangabd-005-b2`; no source/sample changes; no amend/merge.
