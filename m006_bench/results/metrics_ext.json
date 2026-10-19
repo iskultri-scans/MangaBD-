@@ -1,0 +1,555 @@
+{
+ "rows": [
+  {
+   "engine": "kellenok",
+   "mean_cer": 0.024,
+   "en_bubble_cer": 0.016,
+   "n2_match_rate": 0.333,
+   "en_n2_match": 0.4,
+   "r1_cer": 0.063,
+   "r1_variant": "rot90cw",
+   "r1_pred": "T/L note: Koganei in hiragani is speltこがねい whileOtearaiisspelt asおてあらい and both \"\" is pronounce as \"I\" which is a vowe!",
+   "cold_load_s": 0.169,
+   "warm_s_per_region": 0.352,
+   "peak_rss_mb": 365.9,
+   "line_boxes": true,
+   "model": "Kellenok/PP-OCRv6_manga v0.2 (det/manga_det_v0.2.onnx + rec/manga_rec_v0.2.onnx, ONNX FP32, onnxruntime CPU)"
+  },
+  {
+   "engine": "baberu",
+   "mean_cer": 0.068,
+   "en_bubble_cer": 0.016,
+   "n2_match_rate": 0.333,
+   "en_n2_match": 0.4,
+   "r1_cer": 0.325,
+   "r1_variant": "rot90cw",
+   "r1_pred": "T/ note: Kageninihinganiis.spetit こがねい\nwhile Deeramis-sped as あてあらい\nand butt I'v is ponnunce as \"With sawore",
+   "cold_load_s": 1.068,
+   "warm_s_per_region": 1.205,
+   "peak_rss_mb": 622.8,
+   "line_boxes": false,
+   "model": "genshiai-daichi/baberu-ocr v1.1 (onnx/vision_fp16.onnx + decoder_prefill/step_int8.onnx, 243 MB build, onnxruntime CPU)"
+  },
+  {
+   "engine": "paddle_v6",
+   "mean_cer": 0.186,
+   "en_bubble_cer": 0.211,
+   "n2_match_rate": 0.333,
+   "en_n2_match": 0.4,
+   "r1_cer": 0.063,
+   "r1_variant": "rot90cw",
+   "r1_pred": "T/L note: Koganei in hiragani is spelt ごがねl while Otearaiis spelt as おてあらしい and both \"l !\" is pronounce as \"I\" which is a vowel",
+   "cold_load_s": 6.491,
+   "warm_s_per_region": 1.071,
+   "peak_rss_mb": 845.3,
+   "line_boxes": true,
+   "model": "PaddlePaddle/PP-OCRv6_medium_det + PP-OCRv6_medium_rec (paddlepaddle 3.3.1 CPU + paddleocr 3.7.0, lang=en, mkldnn off)"
+  },
+  {
+   "engine": "paddle_v6_up",
+   "mean_cer": 0.019,
+   "en_bubble_cer": 0.016,
+   "n2_match_rate": 0.333,
+   "en_n2_match": 0.4,
+   "r1_cer": 0.032,
+   "r1_variant": "rot90cw",
+   "r1_pred": "T/L note : Koganei in hiragani is spelt こがねい while Otearai is spelt as おてあらい and both \"l!\" is pronounce as \"I\" which is a vowel",
+   "cold_load_s": 6.572,
+   "warm_s_per_region": 9.521,
+   "peak_rss_mb": 3092.7,
+   "line_boxes": true,
+   "model": "PaddlePaddle/PP-OCRv6_medium_det + PP-OCRv6_medium_rec (paddlepaddle 3.3.1 CPU + paddleocr 3.7.0, lang=en, mkldnn off)"
+  }
+ ],
+ "detail": [
+  {
+   "engine": "kellenok",
+   "region_id": 1,
+   "variant": "rot90cw",
+   "cer": 0.063,
+   "n2_match": false,
+   "pred": "T/L note: Koganei in hiragani is speltこがねい whileOtearaiisspelt asおてあらい and both \"\" is pronounce as \"I\" which is a vowe!",
+   "gt": "T/L note: Koganei in hiragani is spelt こがねい) while Otearai is spelt as おてあらい and both \"い\" is pronounce as \"I\" which is a vowel"
+  },
+  {
+   "engine": "kellenok",
+   "region_id": 2,
+   "variant": "upright",
+   "cer": 0.045,
+   "n2_match": false,
+   "pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"T'!",
+   "gt": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!"
+  },
+  {
+   "engine": "kellenok",
+   "region_id": 3,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "gt": "MY NAME'S KOGANEI YOU DUMBASS!"
+  },
+  {
+   "engine": "kellenok",
+   "region_id": 4,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "WHO THE HELL IS THAT PERSON!?",
+   "gt": "WHO THE HELL IS THAT PERSON!?"
+  },
+  {
+   "engine": "kellenok",
+   "region_id": 5,
+   "variant": "upright",
+   "cer": 0.03,
+   "n2_match": false,
+   "pred": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "gt": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?"
+  },
+  {
+   "engine": "kellenok",
+   "region_id": 6,
+   "variant": "upright",
+   "cer": 0.006,
+   "n2_match": false,
+   "pred": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+   "gt": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND"
+  },
+  {
+   "engine": "baberu",
+   "region_id": 1,
+   "variant": "rot90cw",
+   "cer": 0.325,
+   "n2_match": false,
+   "pred": "T/ note: Kageninihinganiis.spetit こがねい\nwhile Deeramis-sped as あてあらい\nand butt I'v is ponnunce as \"With sawore",
+   "gt": "T/L note: Koganei in hiragani is spelt こがねい) while Otearai is spelt as おてあらい and both \"い\" is pronounce as \"I\" which is a vowel"
+  },
+  {
+   "engine": "baberu",
+   "region_id": 2,
+   "variant": "upright",
+   "cer": 0.045,
+   "n2_match": false,
+   "pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+   "gt": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!"
+  },
+  {
+   "engine": "baberu",
+   "region_id": 3,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "gt": "MY NAME'S KOGANEI YOU DUMBASS!"
+  },
+  {
+   "engine": "baberu",
+   "region_id": 4,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "WHO\nTHE HELL IS\nTHAT\nPERSON!?",
+   "gt": "WHO THE HELL IS THAT PERSON!?"
+  },
+  {
+   "engine": "baberu",
+   "region_id": 5,
+   "variant": "upright",
+   "cer": 0.03,
+   "n2_match": false,
+   "pred": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "gt": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?"
+  },
+  {
+   "engine": "baberu",
+   "region_id": 6,
+   "variant": "upright",
+   "cer": 0.006,
+   "n2_match": false,
+   "pred": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+   "gt": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND"
+  },
+  {
+   "engine": "paddle_v6",
+   "region_id": 1,
+   "variant": "rot90cw",
+   "cer": 0.063,
+   "n2_match": false,
+   "pred": "T/L note: Koganei in hiragani is spelt ごがねl while Otearaiis spelt as おてあらしい and both \"l !\" is pronounce as \"I\" which is a vowel",
+   "gt": "T/L note: Koganei in hiragani is spelt こがねい) while Otearai is spelt as おてあらい and both \"い\" is pronounce as \"I\" which is a vowel"
+  },
+  {
+   "engine": "paddle_v6",
+   "region_id": 2,
+   "variant": "upright",
+   "cer": 0.023,
+   "n2_match": false,
+   "pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I!",
+   "gt": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!"
+  },
+  {
+   "engine": "paddle_v6",
+   "region_id": 3,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "gt": "MY NAME'S KOGANEI YOU DUMBASS!"
+  },
+  {
+   "engine": "paddle_v6",
+   "region_id": 4,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "WHO THE HELL IS THAT PERSON!?",
+   "gt": "WHO THE HELL IS THAT PERSON!?"
+  },
+  {
+   "engine": "paddle_v6",
+   "region_id": 5,
+   "variant": "upright",
+   "cer": 0.03,
+   "n2_match": false,
+   "pred": "WHO THE FUCK IS OTEARAI!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "gt": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?"
+  },
+  {
+   "engine": "paddle_v6",
+   "region_id": 6,
+   "variant": "upright",
+   "cer": 1.0,
+   "n2_match": false,
+   "pred": "",
+   "gt": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND"
+  },
+  {
+   "engine": "paddle_v6_up",
+   "region_id": 1,
+   "variant": "rot90cw",
+   "cer": 0.032,
+   "n2_match": false,
+   "pred": "T/L note : Koganei in hiragani is spelt こがねい while Otearai is spelt as おてあらい and both \"l!\" is pronounce as \"I\" which is a vowel",
+   "gt": "T/L note: Koganei in hiragani is spelt こがねい) while Otearai is spelt as おてあらい and both \"い\" is pronounce as \"I\" which is a vowel"
+  },
+  {
+   "engine": "paddle_v6_up",
+   "region_id": 2,
+   "variant": "upright",
+   "cer": 0.045,
+   "n2_match": false,
+   "pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+   "gt": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!"
+  },
+  {
+   "engine": "paddle_v6_up",
+   "region_id": 3,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "gt": "MY NAME'S KOGANEI YOU DUMBASS!"
+  },
+  {
+   "engine": "paddle_v6_up",
+   "region_id": 4,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "WHO THE HELL IS THAT PERSON!?",
+   "gt": "WHO THE HELL IS THAT PERSON!?"
+  },
+  {
+   "engine": "paddle_v6_up",
+   "region_id": 5,
+   "variant": "upright",
+   "cer": 0.03,
+   "n2_match": false,
+   "pred": "WHO THE FUCK IS OTEARAI!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "gt": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?"
+  },
+  {
+   "engine": "paddle_v6_up",
+   "region_id": 6,
+   "variant": "upright",
+   "cer": 0.006,
+   "n2_match": false,
+   "pred": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+   "gt": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND"
+  }
+ ],
+ "audit": {
+  "question": "Flash C9: kellenok vs baberu identical CERs on R2-R6 -- aggregation-copy bug or innocent? (binding amendment A2)",
+  "method": "deterministic re-measurement (A8 raw JSONs, 2026-10-19) + Phase A vlm_R2.json",
+  "per_region": [
+   {
+    "region_id": 1,
+    "kellenok_cer": 0.063,
+    "baberu_cer": 0.325,
+    "cer_equal": false,
+    "kellenok_pred": "T/L note: Koganei in hiragani is speltこがねい whileOtearaiisspelt asおてあらい and both \"\" is pronounce as \"I\" which is a vowe!",
+    "baberu_pred": "T/ note: Kageninihinganiis.spetit こがねい\nwhile Deeramis-sped as あてあらい\nand butt I'v is ponnunce as \"With sawore",
+    "raw_byte_equal": false,
+    "n1_byte_equal": false,
+    "kellenok_dist_over_len": "8/126",
+    "baberu_dist_over_len": "41/126"
+   },
+   {
+    "region_id": 2,
+    "kellenok_cer": 0.045,
+    "baberu_cer": 0.045,
+    "cer_equal": true,
+    "kellenok_pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"T'!",
+    "baberu_pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+    "raw_byte_equal": false,
+    "n1_byte_equal": false,
+    "kellenok_dist_over_len": "2/44",
+    "baberu_dist_over_len": "2/44"
+   },
+   {
+    "region_id": 3,
+    "kellenok_cer": 0.0,
+    "baberu_cer": 0.0,
+    "cer_equal": true,
+    "kellenok_pred": "MY NAME'S KOGANEI YOU DUMBASS!",
+    "baberu_pred": "MY NAME'S KOGANEI YOU DUMBASS!",
+    "raw_byte_equal": true,
+    "n1_byte_equal": true,
+    "kellenok_dist_over_len": "0/30",
+    "baberu_dist_over_len": "0/30"
+   },
+   {
+    "region_id": 4,
+    "kellenok_cer": 0.0,
+    "baberu_cer": 0.0,
+    "cer_equal": true,
+    "kellenok_pred": "WHO THE HELL IS THAT PERSON!?",
+    "baberu_pred": "WHO\nTHE HELL IS\nTHAT\nPERSON!?",
+    "raw_byte_equal": false,
+    "n1_byte_equal": true,
+    "kellenok_dist_over_len": "0/29",
+    "baberu_dist_over_len": "0/29"
+   },
+   {
+    "region_id": 5,
+    "kellenok_cer": 0.03,
+    "baberu_cer": 0.03,
+    "cer_equal": true,
+    "kellenok_pred": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+    "baberu_pred": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+    "raw_byte_equal": true,
+    "n1_byte_equal": true,
+    "kellenok_dist_over_len": "2/66",
+    "baberu_dist_over_len": "2/66"
+   },
+   {
+    "region_id": 6,
+    "kellenok_cer": 0.006,
+    "baberu_cer": 0.006,
+    "cer_equal": true,
+    "kellenok_pred": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+    "baberu_pred": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+    "raw_byte_equal": true,
+    "n1_byte_equal": true,
+    "kellenok_dist_over_len": "1/157",
+    "baberu_dist_over_len": "1/157"
+   }
+  ],
+  "identical_cers": "5/6",
+  "byte_identical_predictions_n1": "4/6",
+  "r2_arithmetic": {
+   "kellenok": "2/44",
+   "baberu": "2/44",
+   "both_0.045": true,
+   "different_strings_equal_edit_distance": true
+  },
+  "vlm_proxy_r2_vs_baberu_r2": {
+   "vlm_proxy_pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+   "baberu_pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+   "byte_identical_n1": true,
+   "note": "compared at the N1 metric level (NFKC+casefold+collapse) on both sides; raw VLM response is multi-line, baberu is single-line",
+   "source": "Phase A vlm_R2.json (glm-5v-turbo, session workspace; not repo-committed)"
+  },
+  "conclusion": "COINCIDENCE, NOT A BUG: the kellenok/baberu R2-R6 CER identity is genuine. R3-R6 predictions are byte-identical because both engines read the true image text (R3/R4 GT-verbatim; R5/R6 the GT-artifact-differing true text: GT contains the owner-accepted qwen artifacts OTEARAH!?/!!? and the SUDENLY typo, so a correct read of the image scores 2/66 and 1/157). R2 predictions DIFFER (kellenok reads the artifact tail as \"T'!, baberu reads the true text \"I\"!) with EQUAL edit distance 2/44 = 0.045 -- and baberu's R2 string is byte-identical to the independent VLM-proxy R2, which no aggregation-copy bug between the two ONNX runners could produce. The identical CERs arise from equal edit distances against a shared GT artifact set, not from copied values."
+ },
+ "reproduction": {
+  "note": "committed JSONs = RF-5 re-measurement 2026-10-19 (originals lost to sandbox recycle, Flash ext-review P0/A8). Deltas are disclosed, never substituted.",
+  "matrix": [
+   {
+    "engine": "kellenok",
+    "cells": {
+     "r1": {
+      "published": 0.103,
+      "re-measured": 0.063,
+      "match": false
+     },
+     "r2": {
+      "published": 0.045,
+      "re-measured": 0.045,
+      "match": true
+     },
+     "r3": {
+      "published": 0.0,
+      "re-measured": 0.0,
+      "match": true
+     },
+     "r4": {
+      "published": 0.0,
+      "re-measured": 0.0,
+      "match": true
+     },
+     "r5": {
+      "published": 0.03,
+      "re-measured": 0.03,
+      "match": true
+     },
+     "r6": {
+      "published": 0.006,
+      "re-measured": 0.006,
+      "match": true
+     },
+     "mean": {
+      "published": 0.031,
+      "re-measured": 0.024,
+      "match": false
+     }
+    },
+    "matched_cells": "5/7"
+   },
+   {
+    "engine": "baberu",
+    "cells": {
+     "r1": {
+      "published": 0.325,
+      "re-measured": 0.325,
+      "match": true
+     },
+     "r2": {
+      "published": 0.045,
+      "re-measured": 0.045,
+      "match": true
+     },
+     "r3": {
+      "published": 0.0,
+      "re-measured": 0.0,
+      "match": true
+     },
+     "r4": {
+      "published": 0.0,
+      "re-measured": 0.0,
+      "match": true
+     },
+     "r5": {
+      "published": 0.03,
+      "re-measured": 0.03,
+      "match": true
+     },
+     "r6": {
+      "published": 0.006,
+      "re-measured": 0.006,
+      "match": true
+     },
+     "mean": {
+      "published": 0.068,
+      "re-measured": 0.068,
+      "match": true
+     }
+    },
+    "matched_cells": "7/7"
+   },
+   {
+    "engine": "paddle_v6",
+    "cells": {
+     "r1": {
+      "published": 0.063,
+      "re-measured": 0.063,
+      "match": true
+     },
+     "r2": {
+      "published": 0.023,
+      "re-measured": 0.023,
+      "match": true
+     },
+     "r3": {
+      "published": 0.0,
+      "re-measured": 0.0,
+      "match": true
+     },
+     "r4": {
+      "published": 0.345,
+      "re-measured": 0.0,
+      "match": false
+     },
+     "r5": {
+      "published": 0.03,
+      "re-measured": 0.03,
+      "match": true
+     },
+     "r6": {
+      "published": 1.0,
+      "re-measured": 1.0,
+      "match": true
+     },
+     "mean": {
+      "published": 0.244,
+      "re-measured": 0.186,
+      "match": false
+     }
+    },
+    "matched_cells": "5/7"
+   },
+   {
+    "engine": "paddle_v6_up",
+    "cells": {
+     "r1": {
+      "published": 0.032,
+      "re-measured": 0.032,
+      "match": true
+     },
+     "r2": {
+      "published": 0.159,
+      "re-measured": 0.045,
+      "match": false
+     },
+     "r3": {
+      "published": 0.0,
+      "re-measured": 0.0,
+      "match": true
+     },
+     "r4": {
+      "published": 0.379,
+      "re-measured": 0.0,
+      "match": false
+     },
+     "r5": {
+      "published": 0.03,
+      "re-measured": 0.03,
+      "match": true
+     },
+     "r6": {
+      "published": 0.006,
+      "re-measured": 0.006,
+      "match": true
+     },
+     "mean": {
+      "published": 0.101,
+      "re-measured": 0.019,
+      "match": false
+     }
+    },
+    "matched_cells": "4/7"
+   }
+  ],
+  "summary": "kellenok=5/7 baberu=7/7 paddle_v6=5/7 paddle_v6_up=4/7"
+ },
+ "provenance": {
+  "generated": "2026-10-19T03:33:53",
+  "metrics": "M0 definitions verbatim (NFKC+casefold+collapse CER; N2 match)",
+  "inputs": [
+   "kellenok_results.json",
+   "baberu_results.json",
+   "paddle_v6_results.json"
+  ]
+ }
+}

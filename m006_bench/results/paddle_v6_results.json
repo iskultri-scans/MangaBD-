@@ -1,0 +1,169 @@
+{
+ "engine": "paddle_v6",
+ "started": "2026-10-19T03:24:39",
+ "policies": {
+  "default": {
+   "regions": [
+    {
+     "region_id": 1,
+     "policy": "default",
+     "variant": "upright",
+     "text": "Ln  ) nd  I\"I\" \"we hil",
+     "s": 1.58,
+     "n_lines": 3
+    },
+    {
+     "region_id": 1,
+     "policy": "default",
+     "variant": "rot90cw",
+     "text": "T/L note: Koganei in hiragani is spelt ごがねl while Otearaiis spelt as おてあらしい and both \"l !\" is pronounce as \"I\" which is a vowel",
+     "s": 1.846,
+     "n_lines": 3
+    },
+    {
+     "region_id": 2,
+     "policy": "default",
+     "variant": "upright",
+     "text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I!",
+     "s": 1.265,
+     "n_lines": 6
+    },
+    {
+     "region_id": 3,
+     "policy": "default",
+     "variant": "upright",
+     "text": "MY NAME'S KOGANEI YOU DUMBASS!",
+     "s": 1.023,
+     "n_lines": 4
+    },
+    {
+     "region_id": 4,
+     "policy": "default",
+     "variant": "upright",
+     "text": "WHO THE HELL IS THAT PERSON!?",
+     "s": 0.959,
+     "n_lines": 4
+    },
+    {
+     "region_id": 5,
+     "policy": "default",
+     "variant": "upright",
+     "text": "WHO THE FUCK IS OTEARAI!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+     "s": 1.425,
+     "n_lines": 6
+    },
+    {
+     "region_id": 6,
+     "policy": "default",
+     "variant": "upright",
+     "text": "",
+     "s": 0.174,
+     "n_lines": 0
+    }
+   ],
+   "cold_load_s": 6.491,
+   "peak_rss_mb": 845.3,
+   "effective_text_det_params": {
+    "limit_side_len": 64,
+    "limit_type": "min",
+    "thresh": 0.3,
+    "max_side_limit": 4000,
+    "box_thresh": 0.6,
+    "unclip_ratio": 1.5
+   },
+   "line_boxes": true
+  },
+  "960min": {
+   "regions": [
+    {
+     "region_id": 1,
+     "policy": "960min",
+     "variant": "upright",
+     "text": "L nt(t  r nd bt\"   \" \" we hile",
+     "s": 20.358,
+     "n_lines": 3
+    },
+    {
+     "region_id": 1,
+     "policy": "960min",
+     "variant": "rot90cw",
+     "text": "T/L note : Koganei in hiragani is spelt こがねい while Otearai is spelt as おてあらい and both \"l!\" is pronounce as \"I\" which is a vowel",
+     "s": 17.594,
+     "n_lines": 4
+    },
+    {
+     "region_id": 2,
+     "policy": "960min",
+     "variant": "upright",
+     "text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+     "s": 9.299,
+     "n_lines": 7
+    },
+    {
+     "region_id": 3,
+     "policy": "960min",
+     "variant": "upright",
+     "text": "MY NAME'S KOGANEI YOU DUMBASS!",
+     "s": 5.867,
+     "n_lines": 4
+    },
+    {
+     "region_id": 4,
+     "policy": "960min",
+     "variant": "upright",
+     "text": "WHO THE HELL IS THAT PERSON!?",
+     "s": 5.512,
+     "n_lines": 4
+    },
+    {
+     "region_id": 5,
+     "policy": "960min",
+     "variant": "upright",
+     "text": "WHO THE FUCK IS OTEARAI!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+     "s": 6.107,
+     "n_lines": 6
+    },
+    {
+     "region_id": 6,
+     "policy": "960min",
+     "variant": "upright",
+     "text": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+     "s": 9.986,
+     "n_lines": 13
+    }
+   ],
+   "cold_load_s": 6.572,
+   "peak_rss_mb": 3092.7,
+   "effective_text_det_params": {
+    "limit_side_len": 960,
+    "limit_type": "min",
+    "thresh": 0.3,
+    "max_side_limit": 4000,
+    "box_thresh": 0.6,
+    "unclip_ratio": 1.5
+   },
+   "line_boxes": true
+  }
+ },
+ "model": "PaddlePaddle/PP-OCRv6_medium_det + PP-OCRv6_medium_rec (paddlepaddle 3.3.1 CPU + paddleocr 3.7.0, lang=en, mkldnn off)",
+ "det_model": "PP-OCRv6_medium_det",
+ "notes": [
+  "two det policies measured, one process each (isolated per-process runners, A.1.0): default (max-type limit; small crops never upscaled) and 960min (min-type 960 upscale sensitivity row)",
+  "M2 workarounds retained: doc-orientation/unwarping/textline-orientation off, enable_mkldnn=False, text from nested result json res.rec_texts",
+  "R1 ladder variants upright+rot90cw; best-variant selection in m006_phaseA_ext_metrics.py",
+  "empty det result -> empty text (R6 default-policy CER 1.000, F11)"
+ ],
+ "page": {
+  "file": "samples/S003_batch2/original.jpg",
+  "source_md5": "446b357560122e97a28f2709d057bc69",
+  "crop_derivation": "detections.json [x,y,w,h] boxes (same derivation as the kellenok/baberu runners)"
+ },
+ "provenance": {
+  "run": "RF-5 re-measurement 2026-10-19: original 2026-10-18 outputs lost to sandbox recycle (Flash ext-review P0, A8); official model files re-downloaded by paddleocr 3.7 auto-download",
+  "official_model_files_sha256": {
+   "inference.json": "0b2e25e990bd072f1bf77d59d67d508bce6c4bd44af6624e0fb27d6da2cd00e8",
+   "inference.pdiparams": "1b01c79a914587933f615569e75de54f2e638ebb5d3f3b3c1b38c24ede8c7319"
+  },
+  "runtime": "paddlepaddle 3.3.1 CPU, paddleocr 3.7.0, paddlex 3.7.2"
+ }
+}

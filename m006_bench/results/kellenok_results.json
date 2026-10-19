@@ -1,0 +1,82 @@
+{
+ "engine": "kellenok",
+ "started": "2026-10-19T03:19:52",
+ "regions": [
+  {
+   "region_id": 1,
+   "variant": "upright",
+   "text": "Ks    :  1 hh s   l wnu s l  n h oe",
+   "s": 0.21,
+   "n_boxes": 3
+  },
+  {
+   "region_id": 1,
+   "variant": "rot90cw",
+   "text": "T/L note: Koganei in hiragani is speltこがねい whileOtearaiisspelt asおてあらい and both \"\" is pronounce as \"I\" which is a vowe!",
+   "s": 0.212,
+   "n_boxes": 3
+  },
+  {
+   "region_id": 2,
+   "variant": "upright",
+   "text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"T'!",
+   "s": 0.252,
+   "n_boxes": 7
+  },
+  {
+   "region_id": 3,
+   "variant": "upright",
+   "text": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "s": 0.309,
+   "n_boxes": 6
+  },
+  {
+   "region_id": 4,
+   "variant": "upright",
+   "text": "WHO THE HELL IS THAT PERSON!?",
+   "s": 0.292,
+   "n_boxes": 8
+  },
+  {
+   "region_id": 5,
+   "variant": "upright",
+   "text": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "s": 0.343,
+   "n_boxes": 6
+  },
+  {
+   "region_id": 6,
+   "variant": "upright",
+   "text": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+   "s": 0.706,
+   "n_boxes": 13
+  }
+ ],
+ "page": {
+  "file": "samples/S003_batch2/original.jpg",
+  "source_md5": "446b357560122e97a28f2709d057bc69",
+  "crop_derivation": "detections.json [x,y,w,h] boxes; byte-verified vs archived m006_bench/crops (6/6 identical)"
+ },
+ "notes": [
+  "onnxruntime port of examples/onnx_openvino.py (A.1.0 port disclosure applies)",
+  "det resize: 960 long-side normalization for crops (pixel-budget branch only when it downscales; disclosed port deviation -- see det_target_size docstring)",
+  "line order: y-ascending on horizontal regions; x-ascending columns after rot90cw (the R1 note's columns read LTR: T/L note first); x-descending RTL fallback not selected",
+  "R1 ladder variants upright+rot90cw; best-variant selection in m006_phaseA_ext_metrics.py",
+  "RF-5 re-measurement delta vs the A.1.2 table: R1 0.063 (8/126) re-measured vs 0.103 (13/126) recorded -- same rot90cw-best variant, kana-exact, same error class (quote/space/vowel slips); the original runner's exact R1 ladder det details are not fully pinned by the A.1.0 disclosure; R2-R6 reproduce EXACTLY"
+ ],
+ "cold_load_s": 0.169,
+ "model": "Kellenok/PP-OCRv6_manga v0.2 (det/manga_det_v0.2.onnx + rec/manga_rec_v0.2.onnx, ONNX FP32, onnxruntime CPU)",
+ "det_model": "det/manga_det_v0.2.onnx",
+ "line_boxes": true,
+ "peak_rss_mb": 365.9,
+ "provenance": {
+  "run": "RF-5 re-measurement 2026-10-19: original 2026-10-18 outputs lost to sandbox recycle (Flash ext-review P0, A8); deterministic ONNX CPU inference re-run",
+  "weights_sha256": {
+   "det/manga_det_v0.2.onnx": "d132078c46e292b226fb5a2ca52a7612ad319262dfdf493e7d8e3be435295978",
+   "rec/manga_rec_v0.2.onnx": "de12c84c63e62c80339e882e675983d886670dcb6f0147e1ed041afd6fa81888",
+   "ppocrv6_dict.txt": "b5f2bfe2bdd9448429e3e82b51c789775d9b42f2403d082b00662eb77e401c5d"
+  },
+  "hub_revision": "b3b65cbd29cd0240a6b471e49373eb5a80abac",
+  "runtime": "onnxruntime 1.31.0 CPU, numpy 2.1.3, opencv 4.13.0"
+ }
+}

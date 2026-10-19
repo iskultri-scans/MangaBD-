@@ -1,0 +1,78 @@
+{
+ "engine": "baberu",
+ "started": "2026-10-19T03:20:53",
+ "regions": [
+  {
+   "region_id": 1,
+   "variant": "upright",
+   "text": "これまではないのですが、このようになっているのですが、このようになりました。",
+   "s": 1.102
+  },
+  {
+   "region_id": 1,
+   "variant": "rot90cw",
+   "text": "T/ note: Kageninihinganiis.spetit こがねい\nwhile Deeramis-sped as あてあらい\nand butt I'v is ponnunce as \"With sawore",
+   "s": 1.4
+  },
+  {
+   "region_id": 2,
+   "variant": "upright",
+   "text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+   "s": 1.133
+  },
+  {
+   "region_id": 3,
+   "variant": "upright",
+   "text": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "s": 1.101
+  },
+  {
+   "region_id": 4,
+   "variant": "upright",
+   "text": "WHO\nTHE HELL IS\nTHAT\nPERSON!?",
+   "s": 0.973
+  },
+  {
+   "region_id": 5,
+   "variant": "upright",
+   "text": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "s": 1.27
+  },
+  {
+   "region_id": 6,
+   "variant": "upright",
+   "text": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+   "s": 1.649
+  }
+ ],
+ "page": {
+  "file": "samples/S003_batch2/original.jpg",
+  "source_md5": "446b357560122e97a28f2709d057bc69",
+  "crop_derivation": "detections.json [x,y,w,h] boxes; byte-verified vs archived m006_bench/crops (6/6 identical)"
+ },
+ "notes": [
+  "shipped onnx_infer.py inference embedded verbatim (as-shipped decode: greedy + rep-penalty 1.2 + run caps 12/16, max_new_tokens 256)",
+  "224x224 whole-crop input (do_center_crop=False) -- squashes the tall R1 note; R1 ladder variants upright+rot90cw",
+  "best-variant selection in m006_phaseA_ext_metrics.py"
+ ],
+ "cold_load_s": 1.068,
+ "model": "genshiai-daichi/baberu-ocr v1.1 (onnx/vision_fp16.onnx + decoder_prefill/step_int8.onnx, 243 MB build, onnxruntime CPU)",
+ "det_model": null,
+ "line_boxes": false,
+ "peak_rss_mb": 622.8,
+ "provenance": {
+  "run": "RF-5 re-measurement 2026-10-19: original 2026-10-18 outputs lost to sandbox recycle (Flash ext-review P0, A8); deterministic ONNX CPU inference re-run",
+  "weights_sha256": {
+   "onnx/vision_fp16.onnx": "4ce333804846b23f1983376efe363c164d4624ecc6bd16f99a15a859d8423117",
+   "onnx/decoder_prefill_int8.onnx": "91de16d4e70adaadc0c76ea536f0195b79f54b52e3279aeaac8fc06b46824c60",
+   "onnx/decoder_step_int8.onnx": "f6164e9daee6622891d2a52394f143faa7f0ccfdfb90e8d6443193aff36d4c2d"
+  },
+  "tokenizer_sha256": {
+   "tokenizer/vocab.json": "681de4eb83154a397af49e2ddae4705041b12a22e16fe00860b829e889e5f47c",
+   "tokenizer/tokenizer_config.json": "c6c8004b1d310bd7c56455387c25cdf4da28594bbd5713aaa3fddfd5eac8f483"
+  },
+  "hub_revision": "fdf292a15dae9f5af37dd76bb408679dc4bcdfe4",
+  "shipped_runner": "onnx_infer.py",
+  "runtime": "onnxruntime 1.31.0 CPU, numpy 2.1.3, pillow 11.3.0"
+ }
+}
