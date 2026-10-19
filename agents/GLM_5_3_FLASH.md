@@ -1898,3 +1898,67 @@ Verbatim-bytes exec (sha-chained): sandbox 25/25 and live-state 25/25 (pre-seede
 - Non-blocking observation (pre-existing, NOT an RF-3 regression): a double-arrow line `English → বাংলা →` stores `বাংলা →` (trailing arrow retained in the translation; applied=1) — FIRST-arrow split with empty-post-arrow fallback not applicable; cosmetic; future RF only if the Owner ever produces double-arrow lines. GLM-5.3's RF-4 disclosure 3 (quoted markers undercount at parse level while the apply guard still blocks storage) also noted as accepted division of labor.
 - Merge gate unchanged: Phase D + RF-2 CLOSED + RF-3/RF-4 delta CLOSED + **Owner live retest** (now exercises the trailing-arrow fallback, the new prompt, and the marker-skip path with real ChatGPT output) + Owner merge authorization.
 - Report-only NEW commit on `mangabd-005-b2`; no source/sample changes; no amend/merge.
+
+---
+
+# MANGABD-006 — RF-5 DELTA VERIFICATION
+
+**Reviewer:** GLM-5.3-Flash (independent). **Date:** 2026-10-19. **Reviewed bytes:** `main @ 52d987f` (RF-5: "A1 fix + A2 investigation + A8 artifacts committed", parent `e06c045`). **Scope:** verify the delta that closes the three binding amendments of the ext-review (`96839a6`, branch `mangabd-006-flash-ext-review`) — A1 (F12 sentence), A2 (C9 kellenok-vs-baberu identical-CER investigation), A8 (instruments + raw JSONs committed) — then adjudicate the `UNVERIFIED-BYTES-UNAVAILABLE` qualifier placed on the §A.1 MEASURED rows at ext-review P0. Method: pushed bytes only; NEW report-only commit; no source/sample changes; no amend/merge. Working tree at verification start: clean at `52d987f`; custody: `scripts/m006_phaseA_ext_metrics.py` sha256-16 `2b13ff68538b0d20`, `m006_bench/results/metrics_ext.json` sha256-16 `c2b037753d477581`.
+
+## R1 — A1 FIX (F12 sentence): PASS
+
+- **The amended sentence exists in place.** §A.1.3-F12 now carries the `[AMENDED RF-5/A1 (Flash C5 …)]` block stating: R2 ALSO has a unique winner — **PP-OCRv6 medium det-default R2 CER 0.023 (1/44)**, beating kellenok 0.045, baberu 0.045, VLM-proxy 0.045, v5 0.091, v4 0.114; only v6's own 960/min policy sits differently on R2; the chain conclusion survives (retries on FAILURE, not quality; kellenok's R2 0.045 is a passing read; v6-default still fails R4 and R6 by default). [FACT — read at 52d987f]
+- **"Unique" verified across BOTH tables, not just the extension table.** §A.1.2 per-region table gives v6-default R2 **0.023** vs kellenok/baberu/vlm 0.045, v5 0.091, v4 0.114, ovis2 0.227; the original Phase A §M2.2 table adds easyocr 0.364 and manga-ocr 0.465 — **no measured engine beats 0.023 on R2**. The 0.023 cell is itself REPRODUCED in the re-measurement (`metrics_ext.json` detail/matrix: paddle_v6 r2 re-measured 0.023, match). [TEST RESULT]
+- **Chain conclusion preserved.** The amendment keeps the operative semantics (fallback retries on failure, not on quality) — exactly the wording the ext-review C5 finding required. [FACT]
+
+## R2 — A2 INVESTIGATION (re-measured evidence): PASS — anomaly independently reproduced as COINCIDENCE
+
+- **Audit block present** in `m006_bench/results/metrics_ext.json` (`audit`): question, method, 6 per-region rows (CERs, predictions, `raw_byte_equal`, `n1_byte_equal`, dist/len), `identical_cers`, `byte_identical_predictions_n1`, `r2_arithmetic`, VLM-proxy comparison, conclusion. [FACT]
+- **Independent recomputation from repo bytes (the decisive check):** I imported the COMMITTED `scripts/m006_phaseA_ext_metrics.py` module and re-derived the audit with its own `n1/lev/cer` functions against the repo GT (`samples/S003_batch2/translation.json`) and the committed raw predictions (`{kellenok,baberu}_results.json`) — **all 6 per-region rows reproduce EXACTLY**: `identical_cers = 5/6`, `byte_identical_predictions_n1 = 4/6` (R3/R5/R6 raw-equal; R4 n1-equal newline-only; R1/R2 differ), **R2 arithmetic kellenok `2/44` = baberu `2/44` = 0.045 with DIFFERENT strings** — kellenok `…WAS "T'!`, baberu `…WAS "I"!`; R1 8/126 vs 41/126; R5 2/66; R6 1/157. [TEST RESULT — reviewer instrument `scripts/rf5_delta_verify.py`, repo-external, 71/71 checks PASS]
+- **GT artifacts confirmed in repo bytes** (the claimed mechanism's substrate): R2 GT (n1) is exactly 44 chars ending in the qwen artifact tail `"!!`; R5 GT 66 chars with `OTEARAH` + `!!?` tail; R6 GT 157 chars with the `SUDENLY` typo; R1 GT 126 chars. Equal edit distances against this shared GT-artifact set is therefore a *verified arithmetic property of the committed strings*, not a narrative claim. [TEST RESULT]
+- **Third-engine corroboration from committed bytes:** the committed paddle_v6 default-policy R2 read ends `NAME WAS "I!` — an architecturally unrelated engine reading the `"I`-class true text, supporting "baberu reads the true text" without needing the VLM artifact. [TEST RESULT]
+- **VLM-proxy R2 byte-identity — archive-evidence caveat (disclosed by GLM, recorded here):** the audit block embeds the claimed VLM-proxy R2 string and states `byte_identical_n1: true`, with source "Phase A `vlm_R2.json` (session workspace; not repo-committed)". That workspace artifact no longer exists in the reviewer sandbox (lost in the same recycle as the 2026-10-18 originals — consistent with the A8 narrative), so this ONE sub-claim is **not re-verifiable from bytes today** [UNKNOWN as to the artifact's current existence; the block's content is FACT]. Non-blocking: the coincidence conclusion does not rest on it — the equal-distance arithmetic (2/44 both, different strings) plus the committed v6 corroboration carry the verdict; the VLM comparison is redundant corroboration.
+- **§A.1.6 documents the mechanism with evidence** (per-region strings, distances, GT-artifact lineage, conclusion "COINCIDENCE, NOT A BUG", M6-B1 blocker discharged). Matches my recomputation in every checkable particular. [FACT + TEST RESULT]
+
+## R3 — A8 ARTIFACTS (8 files): PASS — runnable-from-repo-bytes adjudicated
+
+All 8 files exist in the `52d987f` tree (git ls-tree, sizes):
+
+| # | file | bytes |
+|---|------|-------|
+| 1 | `scripts/m006_phaseA_ext_kellenok.py` | 14,945 |
+| 2 | `scripts/m006_phaseA_ext_baberu.py` | 10,900 |
+| 3 | `scripts/m006_phaseA_ext_paddle_v6.py` | 7,628 |
+| 4 | `scripts/m006_phaseA_ext_metrics.py` | 13,218 |
+| 5 | `m006_bench/results/kellenok_results.json` | 3,195 |
+| 6 | `m006_bench/results/baberu_results.json` | 2,906 |
+| 7 | `m006_bench/results/paddle_v6_results.json` | 4,876 |
+| 8 | `m006_bench/results/metrics_ext.json` | 17,217 |
+
+- **Runnable-from-repo-bytes:** `m006_phaseA_ext_metrics.py` is **fully runnable from repo bytes NOW and was executed during this verification** (imports clean, py_compile 4/4 PASS on all scripts; its functions reproduce the committed `metrics_ext.json` audit/reproduction/rows from the committed raw JSONs + repo GT). The three engine runners parse clean, read their inputs from repo bytes (`samples/S003_batch2/original.jpg` md5 `446b3575…` + `detections.json` + `translation.json`, crop derivation byte-verified 6/6 per the JSONs' own `page` blocks), and pin external weights: kellenok hub revision `b3b65cbd…` + per-file sha256s, baberu `fdf292a1…` + sha256s incl. tokenizer, v6 via paddleocr auto-download (NOT revision-pinned — disclosed as the root-cause candidate for the v6 deltas). Model inference was NOT re-run by the reviewer (weights absent from sandbox; the delta-verification evidence is the committed outputs + metric-layer reproduction). [TEST RESULT / FACT]
+- **Reproduction matrix verified cell-by-cell (28/28)** against the published §A.1.2 values using the committed module: **baberu 7/7** (fully deterministic incl. mean 0.068); **kellenok 5/7** (R1 re-measured 0.063/8-of-126 vs published 0.103/13-of-126 — same rot90cw-best variant, kana `こがねい` exact, same error class, disclosed in the JSON's own notes + A.1.6; R2–R6 + mean-row cells exact); **paddle_v6 5/7** and **paddle_v6_up 4/7** (non-reproducing cells: v6-R4 published 0.345/0.379 → re-measured 0.000 under every probed faithful config; v6_up-R2 0.159 → 0.045 — both disclosed, never substituted; the R6 default-policy **empty-det failure IS reproduced** in the raw bytes: `text: "", n_lines: 0` → CER 1.000). [TEST RESULT]
+- **Chain-bearing facts reproduced:** v6 R6 empty-det (raw JSON), v6_up envelope 9.521 s/region + 3,092.7 MB RSS (A.1.6's "9.5 s / 3.09 GB"), kellenok 0.35 s / 366 MB-class, baberu 1.2 s / 623 MB — all match the A.1.6 envelope claims. [TEST RESULT]
+- **Scope boundaries honored:** ovis2 runner + raw JSON NOT committed (re-run skipped per PM directive) — ovis2 rows keep the qualifier (unchanged); no Unlimited-OCR JSON (UNMEASURED-VRAM, honest); `m006_ext/` weights not vendored (D12 open). The stale A.1.2 footnote that cited five never-committed JSON filenames (`baberu.json`, …, `ovis2.json`) — the ext-review P0 defect — is corrected in this commit to point at the three committed `_results.json` files + A.1.6. [FACT]
+- **Commit hygiene:** diff `e06c045..52d987f` = exactly `agents/GLM_5_3.md` (+4 scripts, +4 JSONs); **no `.ipynb` in the diff → notebook byte-identical to the ext-review base**; no other source touched. [FACT]
+
+## Qualifier adjudication + VERDICT
+
+| rows | evidence status | qualifier |
+|------|----------------|-----------|
+| kellenok (§A.1) | instruments + raw JSON committed; metric-layer reproduction from repo bytes; 5/7 repro matrix with disclosed R1 delta | **LIFTED** |
+| baberu (§A.1) | instruments + raw JSON committed; 7/7 repro matrix | **LIFTED** |
+| paddle_v6 / paddle_v6_up (§A.1) | instruments + raw JSON committed; chain-bearing cells (R6 empty-det, envelopes, R1/R2) reproduced; non-reproduced cells disclosed with root-cause candidate | **LIFTED** |
+| OvisOCR2 (§A.1) | re-run skipped per PM directive; no runner/JSON committed | **RETAINED** (unchanged, as A.1.6 already states) |
+| baidu/Unlimited-OCR | no measurement claimed | n/a (UNMEASURED-VRAM tag stands) |
+
+- **A1 CLOSED** (F12 unique-winner fact verified across both tables, chain conclusion preserved). **A2 CLOSED** (coincidence verdict independently reproduced from committed bytes; C9 blocker on the M6-B1 registry freeze discharged). **A8 CLOSED** (8/8 artifacts committed with provenance; reproducibility matrix disclosed cell-by-cell; scope boundaries honest).
+- **VERDICT: RF-5 CLOSED. The M6-B1 registry freeze is UNBLOCKED.** The freeze remains subject to the Owner's decisions D8–D12 (this verdict does not prejudge them); A3–A7 of the ext-review remain non-binding recommendations.
+
+## Non-blocking observations (for the record; no action required for RF-5)
+
+1. **F12 inline numbers remain the original-run cells** under the disclosed "published cells stand, deltas disclosed" policy: "960/min degrades R2 to 0.159" (re-measured 0.045) and "v6-default still fails R4 (0.345)" (re-measured 0.000). A.1.6 explicitly re-bases the v6 exclusion on the reproduced facts (R6 empty-det + resource envelope), so no verdict changes — but future F12 readers should read it together with §A.1.6 + the matrix.
+2. **v6 default-policy RSS delta**: published 1,628 MB vs re-measured 845.3 MB — not covered by A.1.6's envelope sentence (which cites v6 timing only). Same order of magnitude; not load-bearing (F16 co-residency places paddle engines on CPU where even 3.1 GB is trivial). One-line note if A.1.6 is ever revised.
+3. **`vlm_R2.json` is now a lost workspace artifact** — the A2 audit's VLM byte-identity sub-claim is archive-evidence only (disclosed inside the audit block itself). Redundant corroboration: the committed v6 R2 read (`"I`-class) independently supports the "baberu reads the true text" half of the mechanism.
+4. **Headline-table vs re-measured means**: §A.1.2 retains original-run means (kellenok 0.031 / v6 0.244 / v6_up 0.101) while `metrics_ext.json` rows carry re-measured means (0.024 / 0.186 / 0.019) — consistent with the disclosed policy; the corrected footnote + matrix provide the mapping.
+
+*Report-only NEW commit on `main` (parent `52d987f`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments: `scripts/rf5_delta_verify.py` (repo-external, 71 checks, ALL PASS).*
