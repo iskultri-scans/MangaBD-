@@ -1,0 +1,82 @@
+{
+  "base_ref": "0b5d11d",
+  "target_cells": [
+    0,
+    5,
+    7
+  ],
+  "patches": [
+    {
+      "cell": 0,
+      "name": "RF-8 onnxruntime in DETECTION_PACKAGES",
+      "old": "DETECTION_PACKAGES = [\n    \"shapely>=2.0.0\",\n    \"pyclipper>=1.3.0\",\n    \"networkx>=3.0\",\n    \"scikit-image>=0.21.0\",\n]",
+      "new": "DETECTION_PACKAGES = [\n    \"shapely>=2.0.0\",\n    \"pyclipper>=1.3.0\",\n    # RF-8 (owner live-test a0e6bbf): kellenok/baberu ONNX OCR engines-এর\n    # runtime — cell 0-তে নেই বলে fresh Colab-এ প্রথম run-এই দুটো engine\n    # graceful-fail করত। Version = RF-5/RF-7-এ verified 1.31.0।\n    \"onnxruntime>=1.31.0\",\n    \"networkx>=3.0\",\n    \"scikit-image>=0.21.0\",\n]"
+    },
+    {
+      "cell": 5,
+      "name": "RF-8 per-file download timeout constant",
+      "old": "    return digest.hexdigest()\n\n\nclass ModelManager:",
+      "new": "    return digest.hexdigest()\n\n\n# RF-8 (owner live-test a0e6bbf hang): per-file download timeout —\n# hf_hub_download আটকে গেলে এই সেকেন্ড অতিক্রান্ত হলে loud TIMEOUT\n# RuntimeError (নীরব 10-মিনিট+ hang নয়)। Self-test 29 ছোট মান patch\n# করে এই timeout-টাই যাচাই করে।\n_ENGINE_DOWNLOAD_TIMEOUT_SECONDS = 300\n\n\nclass ModelManager:"
+    },
+    {
+      "cell": 5,
+      "name": "RF-8 self-heal section header",
+      "old": "    # ───────────────────────────────────────────────────────\n    # OCR engine weights self-heal — MANGABD-006 B1 RF-7\n    # (vendored/Drive sha-verify → sha-pinned HF download)\n    # ───────────────────────────────────────────────────────",
+      "new": "    # ───────────────────────────────────────────────────────\n    # OCR engine weights self-heal — MANGABD-006 B1 RF-7\n    # (vendored/Drive sha-verify → sha-pinned HF download)\n    # RF-8: local_dir direct write + per-file timeout + progress\n    # ───────────────────────────────────────────────────────"
+    },
+    {
+      "cell": 5,
+      "name": "RF-8 downloader: local_dir direct write + timeout",
+      "old": "    def _download_engine_file(self, repo_id, revision, filename, dest_path):\n        \"\"\"\n        RF-7 downloader — HF hub থেকে একটা ফাইল, sha-pinned revision-এ।\n        Production path এটাই ব্যবহার করে; Self-test 29 এটাকে monkey-\n        patch করে (no real network)। Return: লেখা ফাইলের Path।\n        \"\"\"\n        import shutil\n\n        from huggingface_hub import hf_hub_download\n\n        dest = Path(dest_path)\n        dest.parent.mkdir(parents=True, exist_ok=True)\n\n        downloaded = Path(\n            hf_hub_download(\n                repo_id=repo_id,\n                revision=revision,\n                filename=filename,\n            )\n        )\n\n        shutil.copyfile(downloaded, dest)\n\n        return dest",
+      "new": "    def _download_engine_file(self, repo_id, revision, filename, dest_path):\n        \"\"\"\n        RF-7 downloader — HF hub থেকে একটা ফাইল, sha-pinned revision-এ।\n        RF-8 (owner live-test a0e6bbf hang): hf_hub_download এখন\n        local_dir-এ directly লেখে (cache-path + shutil.copyfile move-step\n        নেই — download-পরের copy/block hang দূর), আর প্রতিটা ফাইলে\n        per-file timeout (_ENGINE_DOWNLOAD_TIMEOUT_SECONDS) — অতিক্রান্ত\n        হলে loud TIMEOUT RuntimeError। Production path এটাই ব্যবহার\n        করে; Self-test 29 hf_hub_download monkey-patch করে (no real\n        network)। Return: লেখা ফাইলের Path।\n        \"\"\"\n        import threading\n\n        from huggingface_hub import hf_hub_download\n\n        dest = Path(dest_path)\n        dest.parent.mkdir(parents=True, exist_ok=True)\n\n        # local_dir = যে dir-এর নিচে filename বসবে (dest == local_dir/filename)\n        local_dir = dest\n\n        for part in str(filename).split(\"/\"):\n            if part:\n                local_dir = local_dir.parent\n\n        timeout_s = float(\n            globals().get(\"_ENGINE_DOWNLOAD_TIMEOUT_SECONDS\", 300)\n        )\n\n        result = {}\n\n        def _hf_download_worker():\n            try:\n                result[\"path\"] = hf_hub_download(\n                    repo_id=repo_id,\n                    revision=revision,\n                    filename=filename,\n                    local_dir=str(local_dir),\n                    force_download=False,\n                )\n            except BaseException as exc:\n                result[\"exc\"] = exc\n\n        # Daemon worker: download hang করলেও মূল flow এই timeout-এ\n        # বেরিয়ে loud diagnostic-এ যায় — নীরব block নয়; worker thread\n        # daemon বলে পরে নিজেই শেষ হয়।\n        worker = threading.Thread(target=_hf_download_worker, daemon=True)\n        worker.start()\n        worker.join(timeout_s)\n\n        if worker.is_alive():\n            raise RuntimeError(\n                f\"TIMEOUT: {filename} download {timeout_s:.0f}s-এ শেষ হয়নি — \"\n                f\"নেটওয়ার্ক stall বা HF lock-wait হতে পারে (repo {repo_id} \"\n                f\"@ {revision})। Kernel restart করে আবার চালাও — সম্পূর্ণ \"\n                f\"ফাইল sha-verify হয়ে থাকলে আর download হবে না, বাকিগুলো \"\n                f\"resume হবে।\"\n            )\n\n        if \"exc\" in result:\n            raise result[\"exc\"]\n\n        if not dest.is_file():\n            raise RuntimeError(\n                f\"{filename} download হয়েছে কিন্তু target-এ ফাইল নেই: \"\n                f\"{dest} — hf_hub_download(local_dir) path mismatch।\"\n            )\n\n        return dest"
+    },
+    {
+      "cell": 5,
+      "name": "RF-8 _ensure_engine_weights docstring tier-2",
+      "old": "          2. Missing → HF hub থেকে sha-pinned revision-এ auto-download\n             (one-time ~145 MB), models/<engine>/-এ save, প্রতিটা ফাইল\n             sha256-verify, তারপর load — পরের run থেকে offline।",
+      "new": "          2. Missing → HF hub থেকে sha-pinned revision-এ auto-download\n             (one-time ~145 MB), models/<engine>/-এ directly লেখে (RF-8:\n             post-download cache-copy নেই), প্রতিটা ফাইল immediate\n             sha256-verify + [N/M] progress লাইন, per-file timeout\n             (_ENGINE_DOWNLOAD_TIMEOUT_SECONDS), তারপর load — পরের\n             run থেকে offline।"
+    },
+    {
+      "cell": 5,
+      "name": "RF-8 download loop: per-file verify + progress",
+      "old": "        try:\n            for rel_path in missing:\n                self._download_engine_file(\n                    str(spec.get(\"hf_repo\", \"\")),\n                    str(spec.get(\"hf_revision\", \"\")),\n                    rel_path,\n                    target / rel_path,\n                )\n\n            # \"sha256-verify every file, then load\" — mismatch → refusal\n            self._verify_engine_weights(engine_name, target, pins)\n        except Exception as exc:\n            raise self._engine_weights_diagnostic(\n                engine_name,\n                tried + \"download/verify ব্যর্থ।\",\n                exc,\n            ) from exc",
+      "new": "        # RF-8: per-file download → immediate sha-verify → visible\n        # \"[N/M] sha256=<8hex> size=<bytes> OK\" progress; mismatch বা\n        # timeout হলে পরের ফাইলে যাওয়ার আগেই loud refusal।\n        progress = {\"done\": 0, \"last\": None}\n\n        try:\n            for i, rel_path in enumerate(missing, start=1):\n                progress[\"last\"] = rel_path\n                file_dest = target / rel_path\n\n                self._download_engine_file(\n                    str(spec.get(\"hf_repo\", \"\")),\n                    str(spec.get(\"hf_revision\", \"\")),\n                    rel_path,\n                    file_dest,\n                )\n\n                got_sha = _sha256_of_file(file_dest)\n                want_sha = str(pins[rel_path].get(\"sha256\", \"\"))\n\n                if got_sha != want_sha:\n                    raise RuntimeError(\n                        f\"{engine_name} downloaded sha mismatch: {rel_path} — \"\n                        f\"pin {want_sha[:12]}..., পাওয়া গেল {got_sha[:12]}... \"\n                        f\"(file: {file_dest})\"\n                    )\n\n                print(\n                    f\"    [{i}/{len(missing)}] sha256={got_sha[:8]} \"\n                    f\"size={file_dest.stat().st_size} OK\"\n                )\n\n                progress[\"done\"] = i\n\n            # \"sha256-verify every file, then load\" — mismatch → refusal\n            self._verify_engine_weights(engine_name, target, pins)\n        except Exception as exc:\n            raise self._engine_weights_diagnostic(\n                engine_name,\n                tried\n                + (\n                    f\"download/verify ব্যর্থ — শেষ চেষ্টা: {progress['last']} \"\n                    f\"(সম্পন্ন {progress['done']}/{len(missing)})।\"\n                ),\n                exc,\n            ) from exc"
+    },
+    {
+      "cell": 7,
+      "name": "RF-8 Tests 26-29 header comment",
+      "old": "# Test 29 (RF-7, Owner Colab live-test 20261019_192): weights self-heal —\n# monkey-patched candidates+downloader, NO real network।",
+      "new": "# Test 29 (RF-7, Owner Colab live-test 20261019_192): weights self-heal —\n# monkey-patched candidates+downloader, NO real network।\n# Test 29 ঙ-ফেজ (RF-8, owner live-test a0e6bbf): download-then-hang —\n# hf_hub_download sleep-stub + ছোট patched timeout → TIMEOUT refusal +\n# full diagnostic; এখানেও NO real network।"
+    },
+    {
+      "cell": 7,
+      "name": "RF-8 Test 29 header comment",
+      "old": "# Test 29: weights self-heal — vendored/Drive sha-verify → sha-pinned HF\n# download → refusal discipline (RF-7)। Hermetic: candidates+downloader\n# monkey-patched (NO real network), fake pins save/restored in finally।",
+      "new": "# Test 29: weights self-heal — vendored/Drive sha-verify → sha-pinned HF\n# download → refusal discipline (RF-7)। Hermetic: candidates+downloader\n# monkey-patched (NO real network), fake pins save/restored in finally।\n# RF-8: ঙ-ফেজ — hf_hub_download sleep-stub + timeout=1s (patched global)\n# → per-file TIMEOUT fire + full diagnostic assert (no real network)।"
+    },
+    {
+      "cell": 7,
+      "name": "RF-8 Test 29 imports (contextlib+io)",
+      "old": "    import hashlib as _hashlib29\n    import shutil as _shutil29\n    import tempfile as _tempfile29\n    from pathlib import Path as _Path29",
+      "new": "    import contextlib as _contextlib29\n    import hashlib as _hashlib29\n    import io as _io29\n    import shutil as _shutil29\n    import tempfile as _tempfile29\n    from pathlib import Path as _Path29"
+    },
+    {
+      "cell": 7,
+      "name": "RF-8 Test 29 phase ka: fail-fast assertion",
+      "old": "            _pin_call_ok29[_eng_name29] = (\n                _w29_calls[\"n\"] == len(_exp_files29)\n                and all(\n                    (_r == _exp_repo29) and (_v == _exp_rev29)\n                    for (_r, _v, _f) in _w29_calls[\"args\"]\n                )\n                and sorted(_f for (_r, _v, _f) in _w29_calls[\"args\"])\n                == _exp_files29\n            )",
+      "new": "            # RF-8: per-file immediate verify বলে wrong bytes প্রথম\n            # ফাইলেই fail-fast — পরের ফাইলে যাওয়ার আগেই থেমে যায়।\n            _pin_call_ok29[_eng_name29] = (\n                _w29_calls[\"n\"] == 1\n                and all(\n                    (_r == _exp_repo29) and (_v == _exp_rev29)\n                    for (_r, _v, _f) in _w29_calls[\"args\"]\n                )\n                and _w29_calls[\"args\"][0][2] in set(_exp_files29)\n            )"
+    },
+    {
+      "cell": 7,
+      "name": "RF-8 Test 29 phase kha: progress capture",
+      "old": "        _w29_calls[\"n\"] = 0\n        _w29_calls[\"args\"] = []\n\n        _dir29 = model_manager._ensure_engine_weights(\"kellenok\")\n\n        _ok_path29 = (",
+      "new": "        _w29_calls[\"n\"] = 0\n        _w29_calls[\"args\"] = []\n\n        # RF-8: [N/M] progress লাইনগুলোও assert — stdout capture-এ।\n        _captured29 = _io29.StringIO()\n\n        with _contextlib29.redirect_stdout(_captured29):\n            _dir29 = model_manager._ensure_engine_weights(\"kellenok\")\n\n        _progress_ok29 = (\n            \"[1/2] sha256=\" in _captured29.getvalue()\n            and \"[2/2] sha256=\" in _captured29.getvalue()\n            and \" OK\" in _captured29.getvalue()\n        )\n\n        _ok_path29 = ("
+    },
+    {
+      "cell": 7,
+      "name": "RF-8 Test 29 hang phase + verdict",
+      "old": "        _t29_ok = (\n            all(_pin_call_ok29.values())\n            and all(_pin_refusal_ok29.values())\n            and _ok_path29\n            and _vendored_ok29\n            and _corrupt_ok29\n        )\n\n        run_test(\n            \"OCR weights self-heal (RF-7)\",\n            _t29_ok,\n            \"; \".join(_pin_detail29)\n            + f\"; ok={_ok_path29}; vendored={_vendored_ok29}; \"\n            f\"corrupt-refusal={_corrupt_ok29}\",\n        )",
+      "new": "        # (ঙ) RF-8 — download-then-hang: hf_hub_download sleep-এ আটকে\n        # যায়, per-file timeout fire করে → TIMEOUT + full diagnostic।\n        _w29_state[\"phase\"] = \"hang\"\n        _saved_timeout29 = globals().get(\n            \"_ENGINE_DOWNLOAD_TIMEOUT_SECONDS\", 300\n        )\n        globals()[\"_ENGINE_DOWNLOAD_TIMEOUT_SECONDS\"] = 1\n\n        import huggingface_hub as _hfmod29\n\n        _saved_hf29 = _hfmod29.hf_hub_download\n        _saved_dl29 = model_manager._download_engine_file\n\n        def _w29_hang_download(**_kwargs29):\n            # Real hf_hub_download-এর জায়গায় sleep — কখনো return নয়।\n            import time as _time29\n\n            _time29.sleep(30)\n\n        _hang_refusal29 = None\n        _hang_elapsed29 = -1.0\n\n        try:\n            # REAL downloader + hanging hf_hub_download + 1s timeout।\n            model_manager._download_engine_file = _saved_downloader29\n            _hfmod29.hf_hub_download = _w29_hang_download\n\n            import time as _time29h\n\n            _t0_29 = _time29h.monotonic()\n\n            try:\n                model_manager._ensure_engine_weights(\"kellenok\")\n            except RuntimeError as _r29h:\n                _hang_refusal29 = str(_r29h)\n\n            _hang_elapsed29 = _time29h.monotonic() - _t0_29\n        finally:\n            _hfmod29.hf_hub_download = _saved_hf29\n            model_manager._download_engine_file = _saved_dl29\n            globals()[\"_ENGINE_DOWNLOAD_TIMEOUT_SECONDS\"] = _saved_timeout29\n\n        _hang_ok29 = (\n            _hang_refusal29 is not None\n            and \"TIMEOUT\" in _hang_refusal29\n            and \"1s\" in _hang_refusal29\n            and \"git clone\" in _hang_refusal29\n            and \"Drive\" in _hang_refusal29\n            and _hang_elapsed29 < 10\n        )\n\n        _t29_ok = (\n            all(_pin_call_ok29.values())\n            and all(_pin_refusal_ok29.values())\n            and _ok_path29\n            and _progress_ok29\n            and _vendored_ok29\n            and _corrupt_ok29\n            and _hang_ok29\n        )\n\n        run_test(\n            \"OCR weights self-heal (RF-7)\",\n            _t29_ok,\n            \"; \".join(_pin_detail29)\n            + f\"; ok={_ok_path29}; progress={_progress_ok29}; \"\n            f\"vendored={_vendored_ok29}; corrupt-refusal={_corrupt_ok29}; \"\n            f\"hang-timeout={_hang_ok29}\",\n        )"
+    }
+  ]
+}

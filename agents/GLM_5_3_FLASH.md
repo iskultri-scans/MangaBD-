@@ -1962,3 +1962,223 @@ All 8 files exist in the `52d987f` tree (git ls-tree, sizes):
 4. **Headline-table vs re-measured means**: §A.1.2 retains original-run means (kellenok 0.031 / v6 0.244 / v6_up 0.101) while `metrics_ext.json` rows carry re-measured means (0.024 / 0.186 / 0.019) — consistent with the disclosed policy; the corrected footnote + matrix provide the mapping.
 
 *Report-only NEW commit on `main` (parent `52d987f`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments: `scripts/rf5_delta_verify.py` (repo-external, 71 checks, ALL PASS).*
+
+---
+
+# MANGABD-006 — PHASE D VERIFICATION (M6-B1)
+
+**Reviewer:** GLM-5.3-Flash (independent). **Date:** 2026-10-19. **Reviewed bytes:** branch `mangabd-006-b1 @ d569c08` (Phase C delivery, parent = `main @ 86d4bdf` — verified: `d569c08^` == `86d4bdf`). **Method:** pushed bytes only; AST-segment-exec harness over committed cell bytes; real-ONNX runtime on the vendored weights; NEW report-only commit on the branch; no source changes; no amend/merge. Working tree clean at `d569c08` throughout; reviewer instruments repo-external (`scripts/m006b1_e1_scope.py`, `m006b1_e2_fundiff.py`, `m006b1_e35_runtime.py`, plus the M002-era `m002_sim_v2.py`).
+
+## E1 — SCOPE & STRUCTURE: PASS
+
+- **Changed cells (0-idx) == {5, 7, 15, 25} exactly** — full-field identity (source + outputs + metadata + execution_count) for all other 23 cells vs `86d4bdf`; notebook top-level fields unchanged; **cell-8 battery byte-untouched** (Tests 1–25 preserved). [TEST RESULT]
+- **Numstat/mode/rename:** 10 files — notebook (1558+/126−), `agents/GLM_5_3.md` (+65), 9 NEW files under `models/` (kellenok det 1,816,954 B + rec 21,167,540 B + dict 74,947 B; baberu vision_int4 52,293,486 B + decoder_prefill_int8 35,133,596 B + decoder_step_int8 34,715,466 B + tokenizer 2 files). No renames, no mode changes, no deletions. [FACT]
+- **Secret scan clean** (API-key/PAT/private-key/JWT patterns over every changed blob). **AST parse 27/27 both refs.** [TEST RESULT]
+
+## E2 — REGISTRY & CHAIN (cells 5 + 7): PASS
+
+- **Additive merge verified:** no wholesale `MANGABD_CONFIG["ocr"] = …` replacement and no `del` anywhere in cells 5/7 — only 4 key-level assignments (`engine` rebind `"qwen"→"auto"`, NEW `fallback_chain`, NEW `engines`, `allowed_engines` re-derived). Runtime-exec of the committed registry over the committed cell-1 ocr block: **all 9 cell-1 key groups preserved** (qwen_model_id, deterministic, do_sample, num_beams, max_new_tokens, min_confidence, confidence_threshold, preprocess, cache_ocr). [TEST RESULT]
+- **Chain order exact:** `["qwen", "openrouter_vision", "kellenok", "baberu"]` — registry literal + Test 26 + my runtime registry assertion agree. [TEST RESULT]
+- **Single-resident lazy-load proven at runtime BOTH directions** on the vendored weights: kellenok resident → `ensure_ocr_engine("baberu")` evicts kellenok (`instances == ["baberu"]`); baberu resident → kellenok cold load evicts baberu; force reload keeps single residency. Mechanism: `ensure_ocr_engine` calls `unload_all(exclude=[engine])` before every cold LOCAL load; cached resident early-returns. [TEST RESULT]
+- **Auto vs Manual semantics:** auto walks `fallback_chain` and returns on first `_ocr_chain_result_ok` success (non-empty text, no reject markers — the marker exclusion covers `QwenVLWrapper.recognize`'s exception-marker behavior, D-2); manual = single engine, break after one attempt → terminal `[SKIP:OCR_FAILED]` (status `failed`) — RF-4 never-applied guarantee inherited (marker is a cell-8 is_special_marker member, byte-untouched). Runtime-proven: T2/T2b (auto recovery), T6 (manual terminal skip, trace length exactly 1). [TEST RESULT]
+- **Fallback trace per attempt:** `{engine, outcome(ok/rejected/error), ms}` attached to every result + visible `🔁 recovered via <engine>` banner on stdout + WARN/ERROR `log_event` rows + chain-exhaustion trace in `warnings`. `ocr_page` adds `engine_counts` + stage-meta `ocr_engine_mode`/`ocr_engine_counts` (+ the honest D-5 fix: belt-and-braces except-path label `"qwen"` → `"failed"`). Wire format additive-only; `build_ocr_row` byte-identical. [TEST RESULT]
+- **Function-level diff (AST-segment, both refs):** every pre-existing function in cells 5/7/15/25 is byte-identical except exactly: `ocr_page` (+engine_mode, chain call, engine_counts), `ocr_all_pages` (+pass-through), `run_ocr_all`/`run_detection_ocr_all` (+engine_mode plumb), `on_ocr` (+dropdown value), plus NEW functions (registry/chain/ONNX classes). `ensure_qwen`, `unload_all`, `ocr_region`, `run_full_pipeline`, `QwenVLWrapper.*`, `build_ocr_row` all AST-equal. [TEST RESULT]
+
+## E3 — VENDORING (D-12 ADJUDICATION): PASS — int4 substitution ACCEPTABLE for production
+
+- **kellenok: 3/3 files sha256-EXACT to the RF-5 pins** (`d132078c…` det / `de12c84c…` rec / `b5f2bfe2…` dict = the committed `kellenok_results.json` provenance block) — the vendored bytes ARE the A.1.2/RF-5-measured weights. [TEST RESULT]
+- **baberu: 4/5 byte-exact to RF-5 pins** (decoder_prefill_int8 `91de16d4…`, decoder_step_int8 `f6164e9d…`, vocab.json `681de4eb…`, tokenizer_config.json `c6c8004b…`); the fifth file `vision_int4.onnx` (52,293,486 B, sha256 `9526bcf9…`) is **verified against the HF hub tree at the SAME pinned revision `fdf292a1…` via the HF API: sha256 and byte size match exactly** — the vendored int4 tower is the author's published int4 build, not a re-quantization. [TEST RESULT — live HF API check 2026-10-19]
+- **fp16 undeliverability confirmed:** `onnx/vision_fp16.onnx` at the same revision = 172,917,304 B (172.9 MB) > GitHub's 100 MB hard block; the vendor-or-bust rationale is factual. [FACT]
+- **Re-measurement claim: the claimed artifact does NOT exist where the record says it does** — `scripts/m006_b1_baberu_int4_remeasure.py` + `m006_b1_baberu_int4_results.json` (and every other `m006_b1_*` Phase C instrument: build/verify/patches manifest/download scripts) are in **NEITHER the pushed tree NOR the reviewer workspace** — exhaustive find, zero hits. Same defect class as the e06c045 P0 (P2 severity here: the load-bearing claims are independently checkable, see next line). [FACT — absence verified]
+- **Reviewer independently REPRODUCED the int4 claims on the vendored bytes** (my T5: runner-identical raw-box crops from `samples/S003_batch2`, md5 `446b3575…`; CER via the committed `m006_phaseA_ext_metrics.py`): **R2 0.045 / R3 0.000 / R4 0.000 / R5 0.030 / R6 0.006 — identical to the committed fp16 rows; EN-bubble 0.016 exactly; R1 rot90cw 0.294 — EXACTLY the claimed value (fp16 0.325); mean 0.062 ≈ claimed 0.063** (banker's rounding of 0.0625). The chain-bearing claim (baberu = VLM-proxy-class EN-bubble reader) carries to the vendored int4 bytes. [TEST RESULT]
+- **RULING (as asked): the int4 substitution is acceptable for production, no additional Owner sign-off required** — (i) provenance chain intact at the same hub revision for all 8 files; (ii) chain-bearing quality identical, R1 better; (iii) fp16 genuinely undeliverable in this GitHub-only workflow; (iv) D-12 discloses the deviation honestly with the A.1.2 fp16 rows standing. Owner may ratify as a formality when closing D-12. [ADJUDICATION]
+
+## E4 — D-3 ADJUDICATION (openrouter_vision registry keys): PASS
+
+- `ensure_openrouter_vision` builds a plain dict client (type/model/key_env/base_url) — **no model load, zero VRAM by construction**; `spec["type"] == "cloud"` → `ensure_ocr_engine` does NOT invoke `unload_all` → **a cloud load evicts nothing**. `unload_openrouter_vision` pops the dict only (no VRAM side effect). Runtime T2/T2b: cloud client "load" ms≈0 and the chain proceeds immediately. [TEST RESULT]
+- One benign interaction noted: a later LOCAL cold load's `unload_all(exclude=[engine])` also evicts the resident cloud *client* — harmless (rebuilt on demand, key read at call time per V-5). No VRAM/residency risk. [FACT]
+
+## E5 — RUNTIME & REGRESSIONS: PASS
+
+Reviewer harness: AST-extracted **committed cell segments** (cells 1/5/6/7 @ d569c08) exec'd in a minimal namespace (torch/transformers never touched — unavailable in this sandbox); real-ONNX on the vendored weights; py3.13 + onnxruntime 1.31.0 / pyclipper 1.4.0 / cv2 5.0.0. **34/34 checks PASS.**
+
+| scenario | result |
+|---|---|
+| T1 kellenok R3 (vendored weights, committed class) | **BYTE-EXACT** vs committed RF-5 `kellenok_results.json` R3 — the embedded class + vendored weights are the measured artifacts |
+| T2 auto recovery `[openrouter_vision, kellenok]` | no-key cloud error → kellenok ok; trace `[error, ok]`; visible `🔁 … recovered via kellenok` banner |
+| T2b auto on the **committed default chain** `[qwen, openrouter_vision, kellenok]` | walk order exact: qwen error (no transformers in sandbox env) → openrouter error (no key) → kellenok **ok** — auto-mode chain-walk proven on the real order |
+| T3 baberu int4 R3 manual | non-empty, contains KOGANEI |
+| T4 single-resident eviction | both directions + force reload — all single-resident |
+| T5 baberu int4 6-region bench | E3 reproduction (above) |
+| T6 manual mode with failing engine | terminal `[SKIP:OCR_FAILED]`, exactly 1 attempt, no fallback |
+| T7 V-3 ladder on vertical R1 (production path) | fires on the region predicate; chosen `rotate_90_clockwise`, both candidate scores in sidecar |
+| T8 guards | unknown engine → ValueError; unknown manual mode → ValueError; non-resident unload no-op |
+
+- **m002_sim_v2: 0 abort-class sites on BOTH `86d4bdf` (base) and `d569c08` (tip)** — no fresh-kernel regression; consistent with the RF-3-era calibration history (1 site @ the 002-era base, 0 @ current base). [TEST RESULT]
+- **Manual selection propagation:** static chain verified end-to-end — cell-25 `ocr_engine_sel` (options: Auto + the 4 registry engines) → `_apply_ocr_engine_sel` observer writes `MANGABD_CONFIG["ocr"]["engine"]` (seeded on build) → `on_ocr` passes `engine_mode=ocr_engine_sel.value` → `run_detection_ocr_all(force, engine_mode)` → `run_ocr_all` → `ocr_page(engine_mode=…)` → `ocr_region_with_fallback`; `run_full_pipeline` untouched (resolves CONFIG at call time). Runtime semantics of the `engine_mode` parameter proven (T2b/T6/T7). The ipywidgets dropdown slice was NOT re-executed by the reviewer (no widgets in sandbox) — static verification only. [TEST RESULT + FACT]
+- **V-3 ladder reuse:** `_is_vertical_ocr_region` predicate (`width < 90 and height > 2·width` on REGION geometry) and `_run_vertical_ladder` (rotated-only cw/ccw candidates, strict-`>` tie-break from ROTATE_90_CLOCKWISE) are semantics-identical to the byte-untouched `ocr_region` V-3 block; kellenok/baberu/openrouter adapters all route vertical regions through it. [TEST RESULT]
+
+## E6 — DISCLOSURES SWEEP (13/13): PASS
+
+| # | disclosure | adjudication |
+|---|-----------|--------------|
+| D-1 | registry additive merge, `engine` value `qwen`→`auto` | VERIFIED (no replacement/del; the one value-level change is exactly as disclosed) |
+| D-2 | success predicate = non-empty AND no reject-marker; min_text_len + repetition-ratio NOT implemented | VERIFIED; acceptable — ext-review A7 was non-binding; opens recorded |
+| D-3 | cloud engine gets load_fn/unload_fn for uniform dispatch | VERIFIED (E4) |
+| D-4 | chain retries on FAILURE only, quality labels not chain-failures | VERIFIED (`_ocr_chain_result_ok` + statuses flow to STEP 3) — F12 principle intact |
+| D-5 | except-path label `"qwen"`→`"failed"` | VERIFIED (no consumer branches on the old literal; remaining `"engine":"qwen"` literals are qwen-wrapper internals + pre-existing test fixtures) |
+| D-6 | `[EMPTY]` precheck duplicated into the chain wrapper | VERIFIED (M5 row 4 preserved) |
+| D-7 | onnxruntime NOT added to cell 0 (out of scope {5,7,15,25}) | VERIFIED (cell 0 byte-identical; engines self-disable via chain load-error path; Owner one-liner disclosed) |
+| D-8 | single-resident rule evicts non-OCR residents too | VERIFIED (behavior change disclosed; steady-state early-return unaffected) |
+| D-9 | `vrmb_gb` metadata-verbatim, no functional consumer | VERIFIED (4 refs = the registry literals only) |
+| D-10 | temperature 0 / max_tokens 512 / timeout 30 s; no A6 breaker; no fallback_model | VERIFIED in `_openrouter_vision_read` (temperature=0.0, max_tokens=512, timeout=30.0) |
+| D-11 | Tests 26–28 in cell 7, cell-8 battery untouched | VERIFIED (static + byte-identity; runtime equivalence via my T2/T2b/T6/T8 with REAL engines vs their fakes) |
+| D-12 | vendored baberu int4 ≠ fp16 measured build; re-measured separately | VERIFIED + reviewer-reproduced (E3); **note the P2 artifact-absence defect below** |
+| D-13 | V3 harness /root cache-path single-substring redirect | UNVERIFIED-BY-REVIEWER — the full-cell exec cannot be re-run in the current sandbox (torch absent); the byte-identity substance it claims is independently covered by my E1/E2 checks; disclosure itself is coherent |
+
+## Non-blocking observations (recorded; none affect merge-readiness)
+
+1. **P2 — Phase C instruments absent from tree AND workspace (D-12/D-13-adjacent).** All `m006_b1_*` instruments named in the record (`download_weights.py`, `baberu_int4_remeasure.py` + `_results.json`, `build.py` + `m006_b1_patches.json`, `verify.py` (99 checks), `extract_cells.py`, `cells_m006_b1*/`) are committed nowhere. The int4 re-measurement claims they carry are now reviewer-reproduced (E3/T5), so this does not block — but the repo should carry the small text artifacts (`baberu_int4_remeasure.py` + results JSON + the patches manifest) in a follow-up commit for the RF-5-style provenance standard. The 99-check `m006_b1_verify.py` claim is likewise UNVERIFIED-BY-REVIEWER (absent); every check it allegedly performs that matters was re-implemented and passed here.
+2. **R1 through the production baberu path is weak (0.579 CER on the context crop, heuristic ladder)** vs the runner's raw-crop 0.294 — expected: different input (context border) + heuristic (not oracle) variant selection; chain ordering covers R1 via qwen → openrouter → kellenok first. No action.
+3. **T2 production-path text** `"MY NAME'S . KOGANEI YOU DUMBASS!"` (context-crop variant) differs cosmetically from the raw-crop RF-5 read — input-pipeline difference, not a defect; byte-fidelity was proven on the runner-identical path (T1).
+
+## VERDICT
+
+- E1 SCOPE & STRUCTURE — **PASS**
+- E2 REGISTRY & CHAIN — **PASS**
+- E3 VENDORING (D-12) — **PASS** (int4 substitution ACCEPTABLE for production, no additional Owner sign-off required; P2 artifact-absence noted)
+- E4 D-3 CLOUD REGISTRY KEYS — **PASS**
+- E5 RUNTIME & REGRESSIONS — **PASS** (34/34 real-ONNX checks + m002 0/0 both refs)
+- E6 DISCLOSURES — **PASS** (13/13 adjudicated; D-13 environment-unverifiable, substance covered)
+
+**OVERALL: APPROVED.** M6-B1 Phase C implementation verified on the pushed bytes; the single-resident lazy-load fallback chain, registry, manual selection, and vendoring are production-ready as delivered. **Merge gate unchanged: Owner live retest (engine-kill scenario + manual selection test).** Non-blocking follow-ups: commit the Phase C instruments (obs. 1); A7 rejects/min_text_len, A6 cloud-timeout breaker, fallback_model (D-2/D-10 opens); onnxruntime into cell 0 in a future cell-0-authorized batch (D-7).
+
+*Report-only NEW commit on `mangabd-006-b1` (parent `d569c08`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments (repo-external): `scripts/m006b1_e1_scope.py` (11 checks), `m006b1_e2_fundiff.py`, `m006b1_e35_runtime.py` (34 checks, real-ONNX), `m002_sim_v2.py` (reused); HF API provenance check 2026-10-19.*
+
+---
+
+# MANGABD-006 — RF-7 DELTA CHECK (branch `mangabd-006-b1` @ `a0e6bbf`)
+
+**Reviewer:** GLM-5.3-Flash (independent). **Object:** RF-7 weight fallback (vendored → HF sha-pinned auto-download) + RF-6 instrument fold-in, delivered by GLM-5.3 as commit `a0e6bbf` on `mangabd-006-b1`, parent `186af82` (my Phase D APPROVED commit). **Method:** pushed bytes only (`git show`/`git diff` against `d569c08` and the parent), no source changes, no amend/merge; this section is a report-only NEW commit on the branch. Custody: parent chain `a0e6bbf → 186af82 → d569c08 → 86d4bdf` verified by `git rev-parse`; notebook byte-identical between `186af82` and `d569c08` (Phase D was report-only), so the cell-delta vs `d569c08` equals the delta vs the parent. Reviewer instruments (repo-external, all re-runnable): `scripts/rf7_delta_verify.py` (D1, 15 checks), `scripts/rf7_d2_fundiff.py` (D2 static, 15 checks), `scripts/rf7_runtime.py` (D2/D3/D4 runtime, 35 checks), `scripts/rf7_d5_rfclosure.py` (D5, 22 checks), plus `m002_sim_v2.py` re-run on both refs — **87 checks + 2 simulations, ALL PASS**. [FACT]
+
+## D1 — SCOPE & STRUCTURE: PASS
+
+15/15 checks. Changed cells (0-idx) **exactly {5, 7}** — source, outputs, and every non-source cell field; the **other 25 cells byte-identical to `d569c08`** (explicitly re-proven for the cell-8 25-test battery, cell 15, and cell 25). Notebook top-level fields (nbformat/metadata) unchanged. Delta `186af82..a0e6bbf`: notebook + `agents/GLM_5_3.md` (+39) modified, **18 NEW files, all under `scripts/`** (the RF-6 fold-in), **no renames, no mode changes, no deletions**. Secret scan at TIP: zero hits under live-token patterns (`sk-…`/`ghp_…`/`AKIA…`/PEM/JWT); the **2 pre-disclosed scanner-regex-literal files** (`m006_b1_precommit.py`, `m006_b1_verify.py`) verified to contain scanner DETECTION patterns (`ghp_…` + `[A-Za-z0-9]`-class regex literals) and the fake `sk-test` fixture value — **no literal matching a live-secret shape exists in either file**; the disclosure's characterization ("detection patterns, not secrets") is accurate. AST parse **27/27 at both `d569c08` and `a0e6bbf`** (warnings-as-errors equivalent: zero SyntaxErrors). [TEST RESULT]
+
+## D2 — LOADER FALLBACK LOGIC (`_ensure_engine_weights`, cell 5): PASS
+
+**Static (15/15).** Function-level AST diff of cell 5 `d569c08 → a0e6bbf`: NEW callables are exactly the 6 disclosed (`_sha256_of_file` module-level, 1 MB-chunk streaming; `ModelManager.{_engine_weights_candidates, _download_engine_file, _verify_engine_weights, _engine_weights_diagnostic, _ensure_engine_weights}`); **nothing removed**; the only changed pre-existing methods are `ensure_kellenok`/`ensure_baberu`, each an **exact one-line call-site swap** (`_resolve_vendored_engine_dir` → `_ensure_engine_weights`), and `_resolve_vendored_engine_dir` itself is **byte-identical** (legacy contract retained for pin-less engines). Registry pins: exactly 2 pinned engine specs — kellenok `Kellenok/PP-OCRv6_manga @ b3b65cbd29cd0240a6b471e49373eb5a80abac` (3 files, sha256+size) and baberu `genshiai-daichi/baberu-ocr @ fdf292a15dae9f5af37dd76bb408679dc4bcdfe4` (5 files) — **registry pins == `m006_b1_weights_manifest.json` == the RF-5 A8 pin sets** (`d132078c`/`de12c84c`/`b5f2bfe2`; `91de16d4`/`f6164e9d`/`681de4eb`/`c6c8004b`/`9526bcf9`) with the int4 vision pin from Phase D. Vendored tree at TIP: **8/8 files sha256+size EXACT vs the embedded pins** (models/ untouched by RF-7, consistent with D1). Runtime registry (exec'd committed bytes) also equals the manifest. [TEST RESULT]
+
+**Vendored path — zero network, byte-for-byte unchanged when valid (D-21 adjudicated).** `hf_hub_download` is imported only inside `_download_engine_file`, reachable only from the tier-2 missing-file loop — a complete bundle returns from tier-1 with **no network call**. Runtime tripwire: with vendored weights present, the downloader is invoked **ZERO** times; stdout carries the M6-B1 load banner and **no download banner**; kellenok R3 through the full new path is **BYTE-EXACT vs the committed RF-5 measurement JSON**; vendored bytes unchanged after load. For a complete valid bundle the same first-hit candidate dir is returned (same order as the legacy resolver), so downstream behavior is identical; the disclosed deltas are strictly-better-only (silent sha-verify ~0.1–1 s; corrupt bundle refuses EARLY instead of failing inside onnxruntime; partial bundle self-heals at file granularity). [TEST RESULT]
+
+**Download path — pinned, sha-verified, refuse-on-mismatch.** Per missing file: `hf_hub_download(repo_id=spec.hf_repo, revision=spec.hf_revision, filename=rel)` + copyfile into the target dir; afterwards `_verify_engine_weights` re-verifies **ALL pins (not just the downloaded files)** — stricter than the gate text. Mismatch → `RuntimeError` wrapped into `_engine_weights_diagnostic`: what was tried (candidate paths + pinned repo@rev + file count), root cause, and the three remedies — (a) the exact `git clone https://github.com/iskultri-scans/MangaBD-.git` one-liner, (b) the Drive `MODELS_DIR/<engine>` alternative, (c) delete the corrupt/partial file and re-run. **REAL-network hermetic self-heal (reviewer-executed):** on an empty dir, kellenok **3/3 files downloaded from the HF hub at the pinned revision, every sha == pin** (download banner emitted), second run on the completed bundle = verify+use with no re-download (offline path), and the **R3 read on the DOWNLOADED bytes is BYTE-EXACT vs the committed RF-5 JSON** ("MY NAME'S KOGANEI YOU DUMBASS!"). Baberu: ONNX trio seeded from vendored bytes per the disclosed D-28 scope, **tokenizer pair 2/2 REAL-downloaded**, all 5 shas == pins, self-healed bundle R3 = KOGANEI. Corrupt-VENDORED bundle with REAL pins: refusal carries "sha mismatch" + the git-clone remedy + Drive path, the **downloader is NOT invoked** and the tampered file is **NOT overwritten** (no silent use, no auto-heal of corrupt bytes — matches D-22 exactly). No path loads unverified bytes for the two pinned engines; failure raises `RuntimeError` — the same class the legacy resolver raised — so chain semantics are unchanged. D-24 verified: qwen/openrouter paths untouched (function diff = zero changes beyond the disclosed set). [TEST RESULT]
+
+## D3 — TEST 29 (cell 7): PASS
+
+Static audit: Test 29 is a top-level try/finally in the Tests 26-28 block; **monkey-patched `_engine_weights_candidates` + `_download_engine_file` (hermetic per-phase `mkdtemp` dirs, NO real network anywhere)**; scenario (ক) asserts the downloader is invoked exactly once per pinned file with the pinned repo+revision+filename for **BOTH engines** (kellenok 3 @ `b3b65cbd…`, baberu 5 @ `fdf292a1…`) and that deliberately-wrong bytes produce a refusal whose message carries "sha mismatch" AND the git-clone remedy; (খ) fake pins → download → verify → use; (গ) vendored-valid → verified+used with **ZERO downloader calls**; (ঘ) vendored-corrupt → refusal, zero network; all patches save/restored in `finally`, real registry pins restored (verified: the test leaves `files`/`hf_repo`/`hf_revision` intact). **Independent execution:** full cell-7 exec at TIP in my own harness (real committed config + registry + ModelManager; storage surface mocked) → battery `tests` == **10/10 ALL PASS** (Tests 1–6 + 26 + 27 + 28 + **29**), zero ❌, the cell's own self-test gate not triggered — the same gate DID fire during harness bring-up when two of my storage mocks were wrong, confirming it enforces. Cell-8 battery: source **byte-untouched (25/25)**; Flash's V3 additionally re-exec'd 25/25 (environment-unverifiable here, substance carried by byte-identity + my Phase D E5 checks). [TEST RESULT]
+
+## D4 — REGRESSIONS: PASS
+
+Single-resident discipline through the NEW path: baberu cold load evicts kellenok, kellenok cold load evicts baberu, force-reload stays single-resident. Chain semantics unchanged: auto recovery trace `[error, ok]` via kellenok with the visible 🔁 recovery banner; **FULL committed chain walk qwen → openrouter_vision → kellenok in exact order** (`[error, error, ok]`); manual single-engine failure → terminal `[SKIP:OCR_FAILED]` with exactly 1 attempt and no fallback. V-3 ladder intact: vertical R1 triggers the rotated-only ladder with `chosen_orientation` + both candidate scores and a non-empty read; guards intact (unknown engine/mode → `ValueError`; non-resident unload no-op). **m002_sim_v2 fresh-kernel simulation: 0 abort-class sites on BOTH `d569c08` (base) and `a0e6bbf` (tip)** — 27 code cells simulated each run; no fresh-kernel regression. [TEST RESULT]
+
+## D5 — RF-6 CLOSURE: PASS
+
+**18/18 instrument files present under `scripts/`** and referenced: 15 named with full `m006_b1_*` names in the record's fold-in paragraph; `content7.py`/`content7b.py` via the disclosed `content5/7/7b.py` shorthand; `rf7_docs.py` via the instrument roster inside `m006_b1_rf7_precommit.py` (suffix-name roster convention). `rf7_verify.py` references the weights manifest; the manifest is the single provenance source the registry pins mirror. **The int4 re-measurement artifact is committed** (`scripts/m006_b1_baberu_int4_results.json` + `m006_b1_baberu_int4_remeasure.py`) and its content **supports every Phase C claim**: scored mean **0.063**, EN-bubble **0.016**, R1 **0.294** (rot90cw), per-region detail R1–R6 = **0.294 / 0.045 / 0.000 / 0.000 / 0.030 / 0.006**, cold load **0.689 s** (vs embedded fp16 baseline 0.068 / 0.016 / 0.325 / 1.068 s), int4 weight provenance sha `9526bcf9…` embedded; **R2–R6 rows equal the committed fp16 per-region rows in `m006_bench/results/metrics_ext.json`** (independent of the artifact) and equal my Phase D T5 reviewer-side reproduction; the R2 pred carries the A2-era `WAS "I"!` string corroborated in RF-5. **Phase D non-blocking observation P2 is DISCHARGED by this fold-in.** [TEST RESULT]
+
+## Disclosure adjudication (RF-7 interpretation disclosures)
+
+| Item | Verdict |
+|---|---|
+| D-21 vendored-present strictness upgrade (silent sha-verify + early refusal; stdout-identical, zero-network) | VERIFIED — byte-identity on valid bundles proven at runtime (zero downloader calls, byte-exact R3, unchanged bytes) |
+| D-22 sha mismatch → refusal, never silent use, never auto-overwrite | VERIFIED (corrupt-vendored runtime test; downloader not invoked; bytes untouched) |
+| D-23 target rule (first existing candidate completed in place; else fresh `MODELS_DIR/<engine>`) | VERIFIED in code + exercised both branches at runtime (hermetic fresh-dir download; completed-bundle re-run) |
+| D-24 qwen / openrouter_vision untouched; pin-less engines keep legacy resolver | VERIFIED (function-level AST diff) |
+| D-25 incomplete-dir handling at file granularity | VERIFIED in code (`missing` computed per file; pre-existing files still sha-verified before load) |
+| D-26 harness torch env note | PARTIALLY UNVERIFIABLE (no torch in this sandbox) — substance covered by V1 byte-identity + my torch-free runtime |
+| D-27 battery count 9 → 10 with Test 29; cell-8 stays 25/25 byte-untouched | VERIFIED (my exec: exactly 10 tests; cell-8 byte-identical) |
+| D-28 baberu ONNX trio not re-downloaded in-harness | HONEST — scope as disclosed; compensated (see obs. 1) |
+
+## Non-blocking observations (recorded; none affect merge-readiness)
+
+1. **D-28 residual:** the three baberu ONNX files (~122 MB) were not re-fetched from the hub end-to-end today, by Flash's V5 or by this review. Compensation: Phase D E3 live-verified that exact hub tree at the same pinned revision `fdf292a1` via the HF API; the vendored bytes sha-match the pins (8/8); the per-file downloader code path is identical and was proven end-to-end on kellenok 3/3 (download → verify → byte-exact read) plus the baberu tokenizer pair 2/2. Residual risk ≈ nil; noted for completeness.
+2. **Cross-candidate mixed state nit:** if file A sits in candidate 1 and file B in candidate 2 (neither dir complete), tier-2 completes the FIRST EXISTING candidate dir, re-downloading A there — one redundant download possible. Correctness unaffected (all pins verified before load); consistent with D-23/D-25 as disclosed. Cosmetic.
+3. **Roster naming:** instruments are referenced by suffix names inside rosters (`rf7_docs.py`) and shorthand (`content5/7/7b.py`) rather than uniformly full `m006_b1_*` names in the record. Discoverable; cosmetic.
+4. **HF unauthenticated rate-limit warning** appears on download (disclosed known-open; benign — a warning, not a failure).
+
+## VERDICT
+
+- D1 SCOPE & STRUCTURE — **PASS**
+- D2 LOADER FALLBACK LOGIC — **PASS** (pins == manifest == RF-5; vendored path zero-network byte-identical; download path sha-pinned + refuse-on-mismatch; diagnostic complete; no unverified bytes loadable)
+- D3 TEST 29 + BATTERY — **PASS** (10/10 reviewer-executed; hermetic; both engines' pins asserted; refusal + vendored + corrupt scenarios)
+- D4 REGRESSIONS — **PASS** (single-resident, chain order, manual terminal skip, V-3 ladder, guards; m002_sim_v2 0/0 on base and tip)
+- D5 RF-6 CLOSURE — **PASS** (18/18 present + referenced; int4 artifact committed and supports every claim; Phase D P2 discharged)
+
+**OVERALL: RF-7 CLOSED.** The three-tier weights self-heal (vendored sha-verified → HF sha-pinned auto-download → refusal + Bengali diagnostic) is production-ready as delivered on the pushed bytes; RF-6 instrument fold-in closes the Phase D provenance follow-up. **Merge gate unchanged: Owner live retest** — with weights now auto-downloading, the retest should include a notebook-only Colab session (no repo tree, no Drive copy) to exercise tier-2 end-to-end, plus the existing engine-kill + manual-selection scenarios. Known-opens remain non-blocking (huggingface_hub availability on bare envs surfaces inside the diagnostic; HF_TOKEN optional; ~145 MB one-time bandwidth).
+
+*Report-only NEW commit on `mangabd-006-b1` (parent `a0e6bbf`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments (repo-external): `scripts/rf7_delta_verify.py` (15), `scripts/rf7_d2_fundiff.py` (15), `scripts/rf7_runtime.py` (35, real-ONNX + real HF downloads on hermetic dirs), `scripts/rf7_d5_rfclosure.py` (22), `m002_sim_v2.py` (reused, both refs). 87 checks + 2 simulations ALL PASS. HF live-download provenance re-check 2026-10-20.*
+
+
+---
+
+# MANGABD-006 — RF-8 DELTA CHECK
+
+**Reviewer:** GLM-5.3-Flash (independent). **Scope:** delta `0b5d11d..7bb1369` on branch `mangabd-006-b1` (RF-8 = "onnxruntime in cell 0 + download hang robustness"), pushed bytes only; parent verified `7bb1369^ == 0b5d11d` (my RF-7 CLOSED commit). No source changes, no amend, no merge; report-only NEW commit. Verification date 2026-10-21. Instruments repo-external under `/home/z/my-project/scripts/`: `rf8_delta_verify.py` (15), `rf8_d2_fundiff.py` (38), `rf8_runtime.py` (49, real-ONNX + REAL HF downloads through the NEW `local_dir` path), `rf8_d30_chainwalk.py` (11), `m002_sim_v2.py` (reused, both refs) — **113 checks + 2 simulations ALL PASS**. [FACT]
+
+**Gate verdicts: D1 PASS · D2 PASS · D3 PASS · D4 ADJUDICATED-ACCEPTABLE · D5 PASS · D6 PASS — OVERALL: RF-8 CLOSED.**
+
+## D1 SCOPE — PASS
+
+- Changed cells (0-idx) exactly **{0, 5, 7}** full-field (source == full-field JSON compare; no output/metadata-only edits); **24 non-target cells byte-identical to `0b5d11d`**, explicitly incl. cell-8 battery (idx 8) and Phase C cells 15/25. [TEST RESULT]
+- Notebook top-level fields (non-`cells`) unchanged. [TEST RESULT]
+- 8-file delta: notebook (+182/−21), `agents/GLM_5_3.md` (+42/−2, the PC1-C5 record + disclosures D-29..D-35), and **6 NEW `scripts/m006_b1_rf8_*` instrument files** (build/content/docs/patches.json/precommit/verify). No renames, no mode changes, no deletions; all new blobs 100644. [FACT]
+- Secret scan (sk-/ghp_/gho_/github_pat_/AIza/PEM/xox/AKIA/JWT patterns) across all 8 delta files: **zero hits** — this delta adds no token-shaped material at all. [TEST RESULT]
+- AST parse **27/27 at BOTH `0b5d11d` and `7bb1369`**. [TEST RESULT]
+
+## D2 DEFECT-1 (cell 0, onnxruntime) — PASS
+
+- Cell-0 delta is **exactly 4 inserted lines**: a 3-line Bengali comment (stating the provenance: RF-5/RF-7-verified 1.31.0, owner live-test a0e6bbf) + `"onnxruntime>=1.31.0",`, inserted inside `DETECTION_PACKAGES` (the group already carrying `pyclipper`). [FACT]
+- **Pin provenance verified:** 1.31.0 is the version measured in the Phase A extension env (`GLM_5_3.md` §A.1 env note) and the version in MY Phase D reviewer harness ("py3.13 + onnxruntime 1.31.0, 34/34 checks PASS", `GLM_5_3_FLASH.md` Phase D) — and the version installed in this verification sandbox, on which every runtime check below (incl. both byte-exact R3 reads) executed. Floor-form `>=` per the directive's literal text; D-29's "supersedes D-7" reading is consistent with the Phase D record (D-7 documented exactly this gap). [FACT]
+- **No other package-list or install-order changes:** the pin string appears exactly ONCE in the whole notebook (in `DETECTION_PACKAGES`); absent from CORE/ML/TRANSLATION lists; the 4 `pip_install(...)` group calls keep order core→ml→detection→translation; cell 0's only `onnxruntime` occurrence is the pin line (all other 14 occurrences are pre-existing lazy imports/install-hints/probe banners in cells 5). [TEST RESULT]
+
+## D3 DEFECT-2 (cell 5, download path) — PASS
+
+**Function-level AST diff of cell 5 (`0b5d11d` → `7bb1369`): NEW ∅, GONE ∅, CHANGED exactly `{ModelManager container, _download_engine_file, _ensure_engine_weights}`** — a modification-only delta. Byte-identity of every vendored-path callable proven individually: `_resolve_vendored_engine_dir`, `_verify_engine_weights`, `_engine_weights_diagnostic`, `_engine_weights_candidates`, `ensure_kellenok`, `ensure_baberu`, `ensure_qwen`, `ensure_openrouter_vision`, `unload_all`, module-level `_sha256_of_file`, and the registry pin specs (== base == manifest == RF-5 pin sets: kellenok `b3b65cbd…` ×3, baberu `fdf292a1…` int4 ×5 incl `9526bcf9`). [TEST RESULT]
+
+**New downloader (`_download_engine_file`):** `hf_hub_download(repo_id, revision=PINNED, filename, local_dir=<target>, force_download=False)` — `local_dir` derived from `dest` by walking up one parent per `filename` part, so `local_dir == target` exactly when `dest == target/rel_path` (the call site passes exactly that). **No `cache_dir` arg, no `shutil`/`copyfile`/`snapshot_download` anywhere in the method's code** (docstring prose mentions are the only hits; `import shutil` → `import threading`); a repo-wide grep confirms no cache→copyfile move step remains anywhere in the loader (remaining `cache` strings are pre-existing Qwen/RTDETR code, byte-identical regions). [TEST RESULT]
+
+**Per-file timeout:** daemon worker thread + `join(timeout_s)`, `timeout_s` read at call time from module global `_ENGINE_DOWNLOAD_TIMEOUT_SECONDS` (300, module-level, Test-29-patchable); on expiry a **loud `RuntimeError("TIMEOUT: <file> download 300s-এ শেষ হয়নি …")`** naming repo + revision; worker exception re-raised (`if "exc" in result: raise result["exc"]` — no swallow, original class preserved); post-download `dest.is_file()` guard closes the path-mismatch silent case. [FACT/TEST RESULT]
+
+**Fail-fast + progress in `_ensure_engine_weights` loop:** per file — download → **immediate** `_sha256_of_file(file_dest)` vs pin → mismatch raises `downloaded sha mismatch` BEFORE the next file is attempted → visible `[{i}/{len(missing)}] sha256={sha8} size={bytes} OK` line → after the loop `_verify_engine_weights` re-verifies ALL pins (belt-and-braces, unchanged) → the `except` wraps everything into the SAME `_engine_weights_diagnostic` (byte-identical function: git-clone one-liner + Drive path + delete-and-rerun) `from exc` — **refusal class into the chain is unchanged RuntimeError, and mismatch/timeout can structurally never reach a load** (`raise` precedes `return target` inside the try). The `tried`-string construction is byte-identical; only the failure suffix gained the last-tried-file + `সম্পন্ন N/M` counter. [TEST RESULT]
+
+**Runtime (real bytes):** vendored-present tier-1 — downloader tripwire **0 calls**, load banner only (no download banner, no `[N/M]` lines), kellenok **R3 read BYTE-EXACT vs the committed RF-5 measurement JSON** (`"MY NAME'S KOGANEI YOU DUMBASS!"`), vendored bytes sha-unchanged after load. REAL-network self-heal through the NEW `local_dir` path on hermetic dirs — kellenok **3/3** and **baberu FULL 5/5 incl. the ~117 MB ONNX trio** (independently re-proving D-34/D-28 at the sha level: every file sha == pin), `[1/3]..[3/3]` and `[1/5]..[5/5]` sha8+size+OK progress lines captured, offline re-run returns the same dir with zero download output, and **R3 read on the DOWNLOADED kellenok bytes is BYTE-EXACT vs the committed RF-5 JSON**. [TEST RESULT]
+
+**Independent never-silent proofs (outside Test 29):** corrupt-vendored (real pins) → refusal with git-clone+Drive remedies, downloader trap never fired, tampered bytes not overwritten; **REAL timeout mechanism** — real downloader + hang-stubbed `hf_hub_download` + patched 1 s → TIMEOUT refusal in **1.0 s** wall, wrapped into the full diagnostic carrying `git clone https://github.com/iskultri-scans/MangaBD-.git` + Drive + `সম্পন্ন 0/3`, failure class RuntimeError; wrong-bytes download → fail-fast with downloader called **exactly once**, at pinned repo+rev. [TEST RESULT]
+
+**No path loads unverified bytes; no fallback hides corruption:** tier-1 verifies before returning; tier-2 verifies per file and re-verifies the whole bundle before load; every refusal is a loud RuntimeError into the byte-identical chain-catch path. One residual timing window is disclosed-and-covered (see observations): a timed-out daemon worker may complete later and write into the target — the next load re-verifies all pins, so those bytes can never be *loaded* unverified; nothing can silently substitute a read. [ADJUDICATION]
+
+## D4 D-30 ADJUDICATION (fail-fast semantics delta) — ACCEPTABLE, chain contract intact
+
+The delta: with per-file immediate verify, a poisoned bundle refuses after the FIRST bad file (phase ক downloader calls 3→1) instead of after fetching all files; phase খ progress lines are now asserted via stdout capture. Ruling: **an acceptable consequence of the fix, not a contract break.** Reasons: (a) the refusal is the SAME object the chain already handled — RuntimeError wrapped in the byte-identical `_engine_weights_diagnostic`, `from exc` chained; only the firing time moves earlier, so per-engine the chain still observes exactly one error event; (b) the chain contract ("walk to the next engine on any failure; no engine's failure may abort the whole page") is enforced in the byte-identical `ocr_region_with_fallback` catch path, untouched by RF-8; (c) it is strictly better: less bandwidth wasted on a bundle that will refuse anyway, and the diagnostic now names the failing file + completed count. **Runtime proof at tip (the decisive test, beyond static reasoning):** full chain walk with kellenok forced to fail through the REAL download path (hang-stubbed `hf_hub_download`, patched 1 s timeout) — trace `[(kellenok, error, ms=1000), (baberu, ok)]`, 🔁 recovery banner, page result is a real read (`"MY NAME'S KOGANEI YOU DUMBASS!"`), **no abort, no silent fall-through**; the earlier auto-recovery (2-chain) and full-committed-chain (3-engine `[error,error,ok]`) walks also re-passed. [TEST RESULT]
+
+## D5 TEST-29 EXTENSION (cell 7) — PASS
+
+Static audit of the committed Test 29: phase **ঙ** restores the REAL `_download_engine_file`, monkey-patches `huggingface_hub.hf_hub_download` with a `sleep(30)` stub (never returns; **no real network**), patches the timeout global to 1 s, and asserts the refusal carries `TIMEOUT` + the patched value (`1s`) + `git clone` + `Drive` with wall-clock < 10 s — i.e. the timeout genuinely fired AND the full diagnostic path was taken; `finally` restores hf stub + downloader + timeout global (outer `finally` additionally restores candidates/pins and removes the tmpdir — restore discipline verified live: timeout constant back to 300 after the battery). Phase খ now runs under `redirect_stdout` and asserts `[1/2]`/`[2/2]` sha256+` OK` progress; phase ক updated to the fail-fast semantics (exactly 1 downloader call at a pinned file, pinned repo+rev) — the pinned repo+rev+filename assertions are retained, so this is a semantics update, not a coverage reduction; phases গ/ঘ unchanged. **Independent full cell-7 exec: battery 10/10 ALL PASS** (Tests 1–6 + 26/27/28/29), with direct namespace evidence the hang phase ran inside the battery (`_hang_ok29=True`, elapsed **1.0007 s**, last phase `hang`, `_progress_ok29=True`; battery wall 2.3 s); **cell-8 byte-identical to `0b5d11d` AND re-executed 25/25 in this sandbox**. [TEST RESULT]
+
+## D6 REGRESSIONS — PASS
+
+- `m002_sim_v2` fresh-kernel simulator: **abort-class sites = 0 on BOTH `0b5d11d` (base) and `7bb1369` (tip)**, 27 code cells each (module-call maps 2149/2158; the +9 are the new cell-5 call sites). [TEST RESULT]
+- Single-resident discipline at tip: baberu cold load evicts kellenok, reverse, `force=True` keeps single-resident — all through the (unchanged) ensure path. [TEST RESULT]
+- Chain order `qwen → openrouter_vision → kellenok → baberu` intact; auto recovery `[error, ok]` + 🔁 banner; manual mode failure → terminal `[SKIP:OCR_FAILED]` in exactly 1 attempt; V-3 ladder fires on vertical R1 (rot90cw chosen, 2 candidate scores); unknown-engine ValueError guard intact. [TEST RESULT]
+
+## OBSERVATIONS (non-blocking)
+
+1. **D-31 zombie worker (disclosed by GLM-5.3, reviewer-concurred):** the timed-out daemon thread is unkillable and may later complete, writing pinned-path bytes into the target after the refusal — harmless to the load contract (next load sha-verifies everything before use; this run proved the verify-before-load order structurally and at runtime), but a same-session retry of the SAME engine could contend on an HF file lock and time out again (still loud, never silent). Kernel-restart advice in the TIMEOUT message is the right remediation. [HYPOTHESIS on lock contention — env-unverifiable here; the loud-failure half is TEST RESULT]
+2. **D-32 `.cache` staging dir** lives under `models/<engine>/.cache/huggingface/` — invisible to the pins (completeness/verify walk only pinned relpaths; runtime-confirmed) but it is new unmanaged bytes inside the vendored tree; on a Drive-mounted models dir this adds sync noise. Cosmetic. [FACT]
+3. **huggingface_hub version spread:** this sandbox ran 1.9.2 vs the RF-8 harness's 2.2.0 — the NEW `local_dir` path worked identically on both (all downloads + timeout mechanics), which is incidental cross-version evidence for the pin-less `huggingface_hub` dependency. [TEST RESULT]
+4. Phase ক's file-identity assertion is now `args[0][2] in exp_files` (order-agnostic) rather than the full sorted list — acceptable since per-file pin enforcement moved into production (per-file sha vs pin) and phase খ still asserts the full set at correct repo+rev; noting for the record. [FACT]
+
+## OVERALL: RF-8 CLOSED
+
+Both owner live-test defects are fixed on the pushed bytes exactly as disclosed: the fresh-Colab first-run no longer degrades both ONNX engines (cell-0 pin, D-7 superseded per directive), and the post-download hang class is eliminated structurally (direct `local_dir` write, no copy step) with a loud 300 s per-file backstop and per-file sha discipline that cannot reach a load unverified. The D-30 fail-fast delta preserves the chain contract — proven at runtime with the failure injected through the real download path. **Merge gate unchanged: Owner live retest** — ideally the exact scenario that exposed the defects: a notebook-only Colab session exercising tier-2 auto-download end-to-end (expect the `[N/M] sha256=… OK` progress lines and, if a stall occurs, the loud TIMEOUT diagnostic instead of a 10-minute silence), plus the standing engine-kill + manual-selection scenarios. Carried known-opens remain non-blocking (cross-candidate mixed-state redundant-download nit; HF rate-limit warning; ~145 MB first-run bandwidth).
+
+*Report-only NEW commit on `mangabd-006-b1` (parent `7bb1369`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments (repo-external): `scripts/rf8_delta_verify.py` (15), `scripts/rf8_d2_fundiff.py` (38), `scripts/rf8_runtime.py` (49, real-ONNX + REAL ~140 MB pinned downloads on hermetic dirs), `scripts/rf8_d30_chainwalk.py` (11), `m002_sim_v2.py` (reused, both refs). 113 checks + 2 simulations ALL PASS. Env: py3.12, onnxruntime 1.31.0 (the pin), pyclipper 1.4.0, huggingface_hub 1.9.2; torch never touched (torch-bearing cell-5 spans byte-identical to `0b5d11d`, D-26 lineage).*

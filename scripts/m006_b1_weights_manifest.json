@@ -1,0 +1,54 @@
+{
+ "kellenok": {
+  "repo": "Kellenok/PP-OCRv6_manga",
+  "revision": "b3b65cbd29cd0240a6b471e49373eb5a80abac",
+  "files": {
+   "det/manga_det_v0.2.onnx": {
+    "sha256": "d132078c46e292b226fb5a2ca52a7612ad319262dfdf493e7d8e3be435295978",
+    "size": 1816954,
+    "pin": "rf5-committed"
+   },
+   "rec/manga_rec_v0.2.onnx": {
+    "sha256": "de12c84c63e62c80339e882e675983d886670dcb6f0147e1ed041afd6fa81888",
+    "size": 21167540,
+    "pin": "rf5-committed"
+   },
+   "ppocrv6_dict.txt": {
+    "sha256": "b5f2bfe2bdd9448429e3e82b51c789775d9b42f2403d082b00662eb77e401c5d",
+    "size": 74947,
+    "pin": "rf5-committed"
+   }
+  }
+ },
+ "baberu": {
+  "repo": "genshiai-daichi/baberu-ocr",
+  "revision": "fdf292a15dae9f5af37dd76bb408679dc4bcdfe4",
+  "files": {
+   "onnx/decoder_prefill_int8.onnx": {
+    "sha256": "91de16d4e70adaadc0c76ea536f0195b79f54b52e3279aeaac8fc06b46824c60",
+    "size": 35133596,
+    "pin": "rf5-committed"
+   },
+   "onnx/decoder_step_int8.onnx": {
+    "sha256": "f6164e9daee6622891d2a52394f143faa7f0ccfdfb90e8d6443193aff36d4c2d",
+    "size": 34715466,
+    "pin": "rf5-committed"
+   },
+   "onnx/vision_int4.onnx": {
+    "sha256": "9526bcf99eb8de805df7ea2f66b385cfcbcb5dff0e99a5dcfb02bdb2d4182bde",
+    "size": 52293486,
+    "pin": "new-int4-bundle"
+   },
+   "tokenizer/vocab.json": {
+    "sha256": "681de4eb83154a397af49e2ddae4705041b12a22e16fe00860b829e889e5f47c",
+    "size": 130761,
+    "pin": "rf5-committed"
+   },
+   "tokenizer/tokenizer_config.json": {
+    "sha256": "c6c8004b1d310bd7c56455387c25cdf4da28594bbd5713aaa3fddfd5eac8f483",
+    "size": 937,
+    "pin": "rf5-committed"
+   }
+  }
+ }
+}

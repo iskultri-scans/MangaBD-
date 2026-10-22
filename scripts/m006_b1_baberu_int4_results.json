@@ -1,0 +1,136 @@
+{
+ "engine": "baberu_int4_vendored",
+ "purpose": "M6-B1 vendored-bundle provenance re-measurement (vision_int4 + decoder int8)",
+ "regions": [
+  {
+   "region_id": 1,
+   "variant": "upright",
+   "text": "このようになっているのですが、これまではないでしょうか。",
+   "s": 0.953
+  },
+  {
+   "region_id": 1,
+   "variant": "rot90cw",
+   "text": "T/ note: Kaganinihinagoniis.spell ごがねい\nwhile Deeraiis spent as おであらい\nand butt I'v is pronunce as \"With a work",
+   "s": 1.417
+  },
+  {
+   "region_id": 2,
+   "variant": "upright",
+   "text": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+   "s": 0.911
+  },
+  {
+   "region_id": 3,
+   "variant": "upright",
+   "text": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "s": 0.802
+  },
+  {
+   "region_id": 4,
+   "variant": "upright",
+   "text": "WHO\nTHE HELL IS\nTHAT\nPERSON!?",
+   "s": 0.884
+  },
+  {
+   "region_id": 5,
+   "variant": "upright",
+   "text": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "s": 1.075
+  },
+  {
+   "region_id": 6,
+   "variant": "upright",
+   "text": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+   "s": 1.532
+  }
+ ],
+ "scored": {
+  "engine": "baberu_int4",
+  "mean_cer": 0.063,
+  "en_bubble_cer": 0.016,
+  "n2_match_rate": 0.333,
+  "en_n2_match": 0.4,
+  "r1_cer": 0.294,
+  "r1_variant": "rot90cw",
+  "r1_pred": "T/ note: Kaganinihinagoniis.spell ごがねい\nwhile Deeraiis spent as おであらい\nand butt I'v is pronunce as \"With a work"
+ },
+ "detail": [
+  {
+   "engine": "baberu_int4",
+   "region_id": 1,
+   "variant": "rot90cw",
+   "cer": 0.294,
+   "n2_match": false,
+   "pred": "T/ note: Kaganinihinagoniis.spell ごがねい\nwhile Deeraiis spent as おであらい\nand butt I'v is pronunce as \"With a work",
+   "gt": "T/L note: Koganei in hiragani is spelt こがねい) while Otearai is spelt as おてあらい and both \"い\" is pronounce as \"I\" which is a vowel"
+  },
+  {
+   "engine": "baberu_int4",
+   "region_id": 2,
+   "variant": "upright",
+   "cer": 0.045,
+   "n2_match": false,
+   "pred": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"I\"!",
+   "gt": "THE ONLY LETTER CORRECT IN THAT NAME WAS \"!!"
+  },
+  {
+   "engine": "baberu_int4",
+   "region_id": 3,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "MY NAME'S KOGANEI YOU DUMBASS!",
+   "gt": "MY NAME'S KOGANEI YOU DUMBASS!"
+  },
+  {
+   "engine": "baberu_int4",
+   "region_id": 4,
+   "variant": "upright",
+   "cer": 0.0,
+   "n2_match": true,
+   "pred": "WHO\nTHE HELL IS\nTHAT\nPERSON!?",
+   "gt": "WHO THE HELL IS THAT PERSON!?"
+  },
+  {
+   "engine": "baberu_int4",
+   "region_id": 5,
+   "variant": "upright",
+   "cer": 0.03,
+   "n2_match": false,
+   "pred": "WHO THE FUCK IS OTEARA!!? DOES THAT BITCH KNOW HIM OR SOMETHING!?",
+   "gt": "WHO THE FUCK IS OTEARAH!? DOES THAT BITCH KNOW HIM OR SOMETHING!!?"
+  },
+  {
+   "engine": "baberu_int4",
+   "region_id": 6,
+   "variant": "upright",
+   "cer": 0.006,
+   "n2_match": false,
+   "pred": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND",
+   "gt": "THIS WAS THE RESULT OF MY MISTAKE OF ASSUMING THAT SHE WAS INTO ME, SHE SUDENLY CALLED FOR ME AFTER CLASS TO REFUSE MY CONFESSION FOR HER TO BE MY GIRLFRIEND"
+  }
+ ],
+ "cold_load_s": 0.689,
+ "committed_fp16_scored": {
+  "engine": "baberu",
+  "mean_cer": 0.068,
+  "en_bubble_cer": 0.016,
+  "n2_match_rate": 0.333,
+  "en_n2_match": 0.4,
+  "r1_cer": 0.325,
+  "r1_variant": "rot90cw",
+  "r1_pred": "T/ note: Kageninihinganiis.spetit こがねい\nwhile Deeramis-sped as あてあらい\nand butt I'v is ponnunce as \"With sawore",
+  "cold_load_s": 1.068,
+  "warm_s_per_region": 1.205,
+  "peak_rss_mb": 622.8,
+  "line_boxes": false,
+  "model": "genshiai-daichi/baberu-ocr v1.1 (onnx/vision_fp16.onnx + decoder_prefill/step_int8.onnx, 243 MB build, onnxruntime CPU)"
+ },
+ "weights": {
+  "vision": "onnx/vision_int4.onnx (sha256 9526bcf99eb8de805df7ea2f66b385cfcbcb5dff0e99a5dcfb02bdb2d4182bde)",
+  "decoders": "onnx/decoder_prefill_int8.onnx + onnx/decoder_step_int8.onnx (RF-5 pins 91de16d4... / f6164e9d...)",
+  "hub_revision": "fdf292a15dae9f5af37dd76bb408679dc4bcdfe4"
+ },
+ "peak_rss_mb": 306.2
+}
