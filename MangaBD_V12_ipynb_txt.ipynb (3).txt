@@ -926,7 +926,7 @@
         "    \"inpainting\": {\n",
         "        \"engine\": \"lama\",\n",
         "        \"fallback_engine\": \"opencv\",\n",
-        "        \"lama_size\": 1024,\n",
+        "        \"lama_size\": 2048,\n",
         "        \"mask_dilate_radius\": 6,\n",
         "        \"adaptive_dilation\": True,\n",
         "        \"clean_mask\": True,\n",
