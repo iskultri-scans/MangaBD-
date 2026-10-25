@@ -2524,3 +2524,66 @@ The committed Phase A instrument (`scripts/m008_b1_kana_repro.py`, tip version) 
 **Merge gate (unchanged, Owner-side live acceptance): Colab Run All — cell 4 battery 10/10 with the JP-font sha ✅ line, cell 10 battery 12/12, cells 11/12 QUALITY CORE glyph-coverage 5/5, zero ❌ — then render S007 R1+R2 and visually confirm no tofu (danda + kana + the R2 quote). The committed instruments already simulate the failure classes deterministically, so the live run is confirmation, not discovery.**
 
 *Report-only NEW commit on `mangabd-008-b1` (parent `b848c75`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_flash_e1.py` (16), `m008_flash_e2e3e4_cell10.py` (61), `m008_flash_e5e7_vertical.py` (28), `m008_flash_e6_cell4.py` (22), `m008_flash_e7_static.py` (11), `m008_flash_e8_supplement.py` (25), `m002_sim_v2.py` (reused; base + tip), plus the committed `scripts/m008_b1_kana_repro.py` re-run on the pushed bytes. Env: py3.12, PIL 11.3.0 + raqm, fontTools 4.62.1; Bengali fonts = notofonts hinted release (network fetch, release-stable cmap facts); JP font = the exact pushed vendored blob via `git cat-file`; no source files modified; no weights touched.*
+
+---
+
+# MANGABD-008 — RF-10 DELTA CHECK (GLM-5.3-Flash, independent reviewer, 2026-10-26)
+
+**Scope:** commit `9b232f0` on `mangabd-008-b1` (RF-10: cell-10 test fixture path fix), parent `33d5183` (my Phase D APPROVED report — docs-only, its notebook blob == `b848c75`'s). Pushed bytes only; no source changes by me; no amend/merge; report-only NEW commit on the branch. Method: independent instruments (repo-external), all claims adjudicated on the pushed bytes.
+
+**Topology (FACT):** `9b232f0^` == `33d5183` == merge-base (single fresh commit, no lineage caveat). `origin/main` unchanged @ `73ca565`. Delta files exactly 6: notebook M (+46/−13), `agents/GLM_5_3.md` M (+26/−0), 4 NEW instruments (`m008_b1_rf10_build.py` 281 L, `m008_b1_rf10_patches.json` 4 entries, `m008_b1_rf10_precommit.py` 205 L, `m008_b1_rf10_verify.py` 387 L). `agents/GLM_5_3_FLASH.md` NOT touched by RF-10. Notebook blob `dcfc184f…` (md5 `9111fd66…` — commit-message claim verified exact).
+
+## R1 — Scope & structure (19/19 PASS; scripts/m008_rf10_flash_e1.py)
+
+- **R1.1** Changed cells exactly **{10}**; cell-10 delta confined to the `source` key; other **26 cells byte-identical** to the Phase D state (base notebook `33d5183` == `b848c75` — delta-base validity proven by blob equality `02b570d5…`).
+- **R1.2 Fixtures-only proof (mechanical):** cell-10 diff starts immediately after the `# Test 9:` header (first diff line 1407; header @1406); sections 1–9 byte-identical (everything before `# 10. Self-tests`); the section-10 pre-Test-9 span (Tests 1–8, 157 lines) byte-identical; post-diff remainder byte-identical. ⇒ the delta lives strictly inside the Tests 9–12 blocks. **TEST RESULT**
+- **R1.3** AST 27/27 parse (warnings-as-errors) on both refs; no mode changes/renames/deletes; new files all `100644`; secret scan clean (credential-shape patterns, 971 added lines).
+- **R1.4** Vendored font untouched: 9,589,900 B, sha256 `c2f3b4d4…50fc68f`, bytes base==tip.
+
+## R2 — RF-10 fixture-pattern static proof (12/12 PASS; scripts/m008_rf10_flash_e2.py)
+
+- **R2.1 Tests 9/12 (D-1/D-2 real-font fixtures):** registry pin `MANGABD_ASSETS["fonts"]["fallback_path"]` occurs exactly **2×** in tip cell-10 (0× in base); loud `assert Path(real_jp_path).exists(), f"Vendored font missing: …"` 2×; config pin + `_FB_CACHE.clear()` around every pinned load with `finally`-restore + re-clear.
+- **R2.2 Tests 10/11 (degradation fixtures):** explicit `"/tmp/MISSING-test-font.ttf"` exactly **2×** (0× in base); `assert not Path(missing_path).exists()  # intentional degradation` 2×; the derived `Path(fb_real).parent / "MISSING-…"` pattern: **0× in tip vs 2× in base** (eliminated, not relocated).
+- **R2.3 Cache-clear census:** tip 9 / base 5 (+4 — one per pin), every occurrence confined to the Tests 9–12 span; every config-pin assignment followed by a clear within 2 lines (the (size,bold)-keyed stale-object hazard addressed).
+- **R2.4 Manifest re-derivation:** the 4 `{cell,name,old,new}` entries each match **exactly once** in the base cell-10 source; `base + exactly these 4 patches` == tip cell-10 **byte-exact**; file-level diff (7 hunks) entirely confined to the cell-10 `source` array in the notebook JSON ⇒ full-notebook re-derivation holds at byte level.
+- **R2.5 Registry contract:** cell-4 defines `"fallback_path"` inside the `MANGABD_ASSETS["fonts"]` literal (1-idx L566 — the disclosure's line citation is exact); Run-All namespace satisfies the new pins.
+
+## R3 — Ambient-independence matrix (11/11 PASS; scripts/m008_rf10_flash_e3.py) — the RF-10 delta proof
+
+Cell-10 executed verbatim from pushed bytes per arm (namespace = Run-All contract with cell-4's registry; main fonts = real NotoSansBengali hinted; ambient = `MANGABD_CONFIG["rendering"]["font_fallback"]`):
+
+| Arm | Cell | Ambient fallback | Result |
+|---|---|---|---|
+| A | tip | real vendored JP | **12/12** (sig TTTTTTTTTTTT) |
+| B | **base** | **loadable-but-wrong bytes** (Bengali bytes @ Drive-style `NotoSansJP.ttf`) | **EXACTLY the Owner's live signature**: 9❌ 12❌ 10✓ 11✓ = 10/12 (sig TTTTTTTTFTTF); failing lines name D-1/D-2 and D-2 |
+| C | **tip** | same wrong-bytes ambient | **12/12** — the fix makes D-1/D-2 fixtures ambient-independent |
+| D | tip | genuinely-missing ambient | Tests **9/12 GREEN via the registry pin**; Tests **10/11 fail loudly** as named env diagnostics (sig TTTTTTTTFFT — the exact complement of B) |
+| E | base | real JP at a Drive-style path | **12/12** (pre-fix correct when ambient correct — consistent with my Phase D 12/12; no conflict) |
+
+- **R3.1** Arm B reproduces the Owner's Colab 10/12 **deterministically and exactly** (indices 9 and 12, same named tests) — the fixture-defect diagnosis is proven, not hypothesized. **TEST RESULT**
+- **R3.2** Arm C/D prove the post-fix D-1/D-2 fixtures no longer consult the ambient fallback at all (registry-pinned), while Tests 10/11 degrade loudly only when the environment is genuinely broken. **TEST RESULT**
+- **R3.3** Arm E rules out "RF-10 masks a Phase C regression": the pre-fix battery was already 12/12 under a correct ambient (my Phase D result), so the Owner's 10/12 was environmental, exactly as GLM-5.3 diagnosed.
+- **R3.4 Batteries on the Run-All chain:** cells 10+11 chain → cell-10 **12/12** + cell-11 §7.5 **5/5**; cells 10+12 chain → cell-10 **12/12** + cell-12 §7.5 **5/5** (both with warnings-as-errors). **TEST RESULT**
+- **R3.5** §7.5 block byte-identical across the cell-11/12 mirrors (2,343 chars, unchanged bytes).
+
+## R4 — m002_sim_v2 (TEST RESULT)
+
+0 abort-class sites on **both** `9b232f0` (27 cells, call map 2396) and `33d5183` (2390). The +6 call-map delta matches the fixture-only cell-10 growth.
+
+## R5 — Docs & disclosures adjudication
+
+- `GLM_5_3.md` +26 lines: CURRENT PHASE entry + §M8-C7 record. Record claims cross-checked: notebook blob/md5 exact; "4 anchored patches, all inside the §10 span" exact; "2× registry pin / 2× explicit /tmp missing / zero derived missing" exact; §7.5 5/5 and m002 0-site re-proven.
+- Disclosures **(i)–(v) all ACCEPTABLE**: (i) key-name (`fallback_path` vs the directive's "jp_fallback") — the fixtures read the real key; line cite L566 exact; (ii) Owner-ambient provenance unobservable from the sandbox — honest boundary; the behavioral class (Config F) is proven and my Arm B independently reproduces it; (iii) minimal-fix spec (Test 10 real arm + Test 11 canvas_a stay ambient) — matches the pushed code and is the correct reading of the directive; on a broken ambient they fail loudly (my Arm D), never silently; (iv) Phase C verify suite superseded on the branch — reasonable; the Phase C instrument left byte-identical as the historical record; (v) main-font side env-owned by design — correct (routing must be verified against the production main font).
+- RF-9: build driver + 4-patch manifest + verify suite + precommit committed **in** the RF-10 commit (AST-clean). Non-blocking: the forensic repro script (`m008_rf10_forensic.py`) remains workspace-external — same class as prior observations; the behavioral claim is independently re-proven here (Arm B), so it does not affect the verdict.
+
+## Constraints
+
+"No source changes (test fixtures only)" proven mechanically (R1.2 + R2.4). The 6 hard constraints transfer: render-relevant surfaces byte-identical to `b848c75` (R1.1), whose bytes carry my Phase D E1–E9 approval — conjunct shaping, danda fix, V-3 vertical layout, M004-B1 calibration, reading order, Batch-1 darkness all unaffected. No amend: `b848c75` and `33d5183` both remain citable and byte-unchanged.
+
+## VERDICT
+
+**RF-10 CLOSED.** 42 checks + 2 simulator runs ALL PASS across R1–R4; zero required fixes. The fixture defect is proven (exact forensic reproduction, Arm B), the fix is proven effective and ambient-independent (Arms C/D), and no non-fixture surface changed (R1/R2). The Phase D approval of `b848c75` remains valid for every non-fixture surface.
+
+**Merge gate (Owner live acceptance, unchanged in substance):** Colab download of the `9b232f0` notebook → Run All → expect cell 4 10/10 (JP sha ✅ line), cell 10 **12/12**, cells 11/12 **5/5**, zero ❌ → render S007 R1+R2 and visually confirm no tofu (danda `।` + the R2 quote `"`). Green ⇒ merge authorization.
+
+*Report-only NEW commit on `mangabd-008-b1` (parent `9b232f0`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_rf10_flash_e1.py` (19), `m008_rf10_flash_e2.py` (12), `m008_rf10_flash_e3.py` (11), `m002_sim_v2.py` (reused; both refs). Env: py3.12, PIL 11.3.0+raqm, fontTools 4.62.1; main fonts = notofonts hinted release extracts from the Phase D harness; JP font = the exact pushed vendored blob (sha-verified); no source files modified.*
