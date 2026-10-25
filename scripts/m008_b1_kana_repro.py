@@ -6,6 +6,15 @@ Docs + instrument ONLY — reads the notebook, NEVER writes it. No source change
 Provenance: MANGABD-008 B1 Phase A directive (Owner-authorized, PM relay).
 Base: main @ 63259a8 (notebook blob md5 a48538b9830e26e350fcd6478eb3f0b5).
 
+MANGABD-008 Phase C update (branch mangabd-008-b1): get_font_fb now
+returns None on fallback-load failure (D-4 WARN-never-silent) and
+callers draw with the main font; this instrument's run-layout
+replication mirrors that None-contract (`get_font_fb(...) or
+get_font(...)`). On post-fix bytes the notebook md5 differs from
+BASE_MD5_EXPECT — the provenance warning at load is the expected
+disclosure, and S1/S3 verdicts flip to the FIXED state (danda
+routes MAIN; horizontal kana render as real JP glyphs).
+
 What this proves (the Phase A root-cause matrix):
   S1  vertical path (cells 11/12 QC patch) + NotoSansJP fallback present
       -> kana runs render as REAL (dark) glyphs; the trailing danda U+0964
@@ -216,7 +225,7 @@ def vertical_run_positions(ns, text, w, h, bold, padding=4):
         def measure(runs_, scale_):
             ws, tot = [], 0
             for t2, im_ in runs_:
-                f = ns["get_font"](size, bold) if im_ else ns["get_font_fb"](int(size * scale_), bold)
+                f = ns["get_font"](size, bold) if im_ else (ns["get_font_fb"](int(size * scale_), bold) or ns["get_font"](size, bold))
                 wv = draw.textlength(t2, font=f)
                 ws.append(wv); tot += wv
             return ws, tot
@@ -228,7 +237,7 @@ def vertical_run_positions(ns, text, w, h, bold, padding=4):
         lx = (int(h) - total) // 2
         ly = sy + i * lh
         for (t2, is_main), wv in zip(runs, widths):
-            f = ns["get_font"](size, bold) if is_main else ns["get_font_fb"](int(size * scale), bold)
+            f = ns["get_font"](size, bold) if is_main else (ns["get_font_fb"](int(size * scale), bold) or ns["get_font"](size, bold))
             out.append({
                 "text": t2, "main": is_main, "size": size if is_main else int(size * scale),
                 "tc_x": lx, "tc_y": ly if is_main else ly + asc_main - f.getmetrics()[0],
