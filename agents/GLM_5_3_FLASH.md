@@ -2400,3 +2400,127 @@ B2 Phase C is verified on the pushed bytes: scope is exactly cells {5, 8} with t
 **Merge gate (unchanged, Owner-side): live acceptance test — simulate an embedding load failure (e.g., a session without sentence-transformers) and exercise paste-back edge cases (double-escaped / mixed / trailing-backslash pastes); expect the Bengali ⚠️ diagnostic in console + session log with the pipeline continuing (no crash), and the edge pastes applying 100% with no unparsed lines. Note the committed batteries already simulate both failure classes deterministically, so a plain Run All (10/10 + 32/32, zero ❌) plus one manual edge paste is sufficient coverage.**
 
 *Report-only NEW commit on `mangabd-007-b2` (parent `4fd1fd0`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m007b2_flash_e1.py` (24), `m007b2_flash_e2e4.py` (21), `m007b2_flash_e4.py` (25), `m007b2_flash_e3.py` (18), `m007b2_flash_e5e6.py` (28), `m007b2_flash_e7.py` (17), `m002_sim_v2.py` (reused; base + tip). Env: py3.12 venv, numpy 2.1.3 / pillow 11.3.0; torch + nest_asyncio stubbed (disclosed above); engines not loaded; no network used; no real weights touched.*
+
+# MANGABD-008 — PHASE D VERIFICATION (BATCH 1) (GLM-5.3-Flash, independent reviewer, 2026-10-25)
+
+**Scope of this review:** branch `mangabd-008-b1` @ `b848c75` (Phase C, single commit) vs base `main @ 73ca565` (the Phase A ruling commit). Verified independently on the pushed bytes only; no source changes; no amend/merge. Deliverable under review: the glyph-coverage fix — D-1+D-2 cmap-coverage routing, D-3 horizontal/rotated per-run fallback, D-4 WARN-never-silent `get_font_fb`, D-5 baseline clamp, cell-4 vendored NotoSansJP registration + font vendoring. Lineage: `b848c75^ == 73ca565 == origin/main == merge-base` — a single fresh commit cut from the directive's exact base, no lineage caveat. [FACT]
+
+**Environment note (disclosed):** reviewer sandbox = py3.12, PIL 11.3.0 **with libraqm** (features.check = True), fontTools 4.62.1, numpy/pandas/cv2 present, network available. Bengali fonts fetched from the notofonts hinted release (same release family as the Phase A disclosure: `notofonts.github.io` hinted ttf — cmap facts release-stable); the JP font is the EXACT vendored blob extracted from the pushed commit via `git cat-file` (sha256 re-verified on extraction). All runtime render proofs below run against these two fonts. [FACT]
+
+---
+
+## E1 — SCOPE & STRUCTURE — PASS (16/16)
+
+- **E1.01–03** base and tip JSON parse, 27 cells each; ALL top-level non-cells fields identical (`metadata`, `nbformat`, `nbformat_minor`). [TEST RESULT]
+- **E1.04–06** changed cells exactly **{4, 10, 11, 12}**; the other 23 cells byte-identical (JSON-canonicalized per-cell byte compare); the 4 changed cells differ ONLY in `source` (non-source fields byte-identical). [TEST RESULT]
+- **E1.07–08** AST parse **27/27 on BOTH refs** with warnings-as-errors. [TEST RESULT]
+- **E1.09–12b** the committed 20-patch manifest (`scripts/m008_b1_phaseC_patches.json`, 20 × {cell,name,old,new}) re-derives the tip **BYTE-EXACTLY**: all 20 cell-scoped anchors occur exactly once, in manifest order; every rebuilt cell source == tip cell source; full notebook rebuild (`splitlines(keepends=True)` + `json.dumps(nb, indent=2, ensure_ascii=False)`) == the tip file byte-for-byte at 1,112,089 bytes. The build script's documented patch semantics (cell-scoped anchored replace, in-order, byte-faithful writer) independently reproduce the delivered artifact. [TEST RESULT]
+- **E1.13** secret scan 0 hits on 3,078 added lines (10 pattern classes: api keys, bearer, aws, private keys, token assigns, gh-pat, google, hf, sk-, slack). [TEST RESULT]
+- **E1.14–15** `git diff --name-status` = exactly 13 paths: **3 M** (notebook, `agents/GLM_5_3.md`, `scripts/m008_b1_kana_repro.py` — the Phase A instrument's disclosed None-contract update) + **10 A** (font, OFL license, 8 Phase C instruments); **A/M only, zero renames, zero mode switches, all 100644**; samples/, models/, S007 zip untouched. [FACT]
+- **Font vendoring pins**: `assets/fonts/NotoSansJP[wght].ttf` = **9,589,900 bytes** (exact) with sha256 **`c2f3b4d463500a2ddcd3849cded1fceeb9fd6d1c32e6cbecd568453ba50fc68f`** (exact match to the directive pin `c2f3b4d4…50fc68f`); `assets/fonts/OFL-NotoSansJP.txt` committed with the SIL OFL 1.1 body. [FACT]
+- **RF-9**: build + 4 content modules (`content4`, `content10`, `content10b`, `content1112`) + verify + precommit + the 20-patch manifest are ALL committed IN `b848c75` — zero uncommitted-instrument gap. [FACT]
+
+## E2 — D-1+D-2: CMAP-COVERAGE ROUTING — PASS
+
+Verified by FULL-CELL verbatim exec of the pushed tip cell-10 source (warnings-as-errors) + fontTools cmap probes on both real fonts (61-check instrument, shared with E3/E4):
+
+- **Routing table on real cmaps** [TEST RESULT]: danda `।` U+0964 → **MAIN (True)** (NotoSansBengali owns U+0964/0965 — cmap-proven; the vendored JP does NOT); ASCII `"` `(` `)` `,` `/` `:` → **FALLBACK (False)**; em-dash `—` → FALLBACK; kana `こがねい` → FALLBACK; Bengali `অ` + conjunct pieces → MAIN; `➔` U+2794 (in NO font) → MAIN + **once-WARN** (print + `log_event` WARN, exactly one record; second call adds nothing); ZWSP U+200B → MAIN silently (the `_ROUTE_QUIET` zero-width set).
+- **cmap ownership theorem** [TEST RESULT]: Bengali hinted font HAS danda/ddanda/Bengali block, LACKS all of `A " ( ) , / : — こがねい`; vendored JP HAS all 26 archived-text chars the Bengali font lacks (plus `➔` in neither — matching Phase A). missing-from-both across the 36 archived texts = **0** (instrument inventory).
+- **Old-predicate contrast** [TEST RESULT]: the base `_main_font_ok` (hardcoded `0x0980–0x09FF ∪ Latin-1 ∪ punct ∪ currency ∪ arrows`) misroutes danda→FALLBACK (old_ok(।)=False → JP lacks it → tofu) AND quote→MAIN (old_ok(")=True → Bengali lacks it → tofu). The tip routing flips BOTH — the fix is real, not cosmetic.
+- **`_split_runs`** on the mixed directive line: Bengali runs MAIN (trailing danda inside the final MAIN run), kana/ASCII/em-dash runs FALLBACK. [TEST RESULT]
+- **fb-cmap-unknown optimistic route**: poisoning the fb coverage cache → kana still routes FALLBACK, danda still routes MAIN. [TEST RESULT]
+- **Degraded arm** (fontTools import broken): danda→MAIN (the added `0x0900–0x097F` Devanagari range), kana→FALLBACK (old ranges kept), quote→MAIN (old ranges kept — disclosed behavior); the `cmap coverage unavailable` WARN fires and the coverage cache degrades gracefully. [TEST RESULT]
+- **SHARED_BLOCK mirror**: the 4,958-char SHARED_BLOCK appears **exactly once, byte-identical, in each of cells 10/11/12** on the pushed bytes (extracted from the committed content module, counted in all three tip cell sources). [TEST RESULT]
+- **Primary path is cmap-routing**: in all three cells the range check appears exactly once and only in the degraded arm after the `cov is not None` early returns. [TEST RESULT]
+
+## E3 — D-3: HORIZONTAL/ROTATED FALLBACK — PASS
+
+- **Cell-10 battery**: full-cell exec runs the battery **12/12, zero ❌** (incl. the 4 new M008 tests: routing D-1/D-2, WARN-never-silent D-4, horizontal mixed A/B D-3, hollow-detector D-2). [TEST RESULT]
+- **Pure-Bengali byte parity (the hard guarantee)**: base cell-10 vs tip cell-10 exec'd side by side (identical namespaces/fonts) — 5-string pure-Bengali corpus (incl. the conjunct string ক্ষ ত্র জ্ঞ ঙ্ক ষ্ট, Bengali digits) renders **byte-identical horizontal AND rotated(90°)**. A danda-bearing pure line (`বাক্য।`) is ALSO byte-identical horizontal — correct, because base cell-10 had NO fallback at all (single-font draw; horizontal danda was never tofu — the danda defect lived in the VERTICAL routing) and tip routes danda MAIN by cmap. [TEST RESULT]
+- **Kana-only horizontal run**: `_draw_runs_horizontal` output **byte-equals a direct draw with the vendored JP font** at the same computed position/size/stroke (V-1 knobs: fb at size×1.25, stroke 1, run-sequence centering, amendment-1 ladder mirrored). [TEST RESULT]
+- **Positioned NCC classification**: kana region vs JP reference NCC **0.816** vs main-font .notdef **−0.001**; quote region vs JP ref **1.000-class** (after matching the fb stroke) vs .notdef **−0.199** — real glyphs, no tofu. [TEST RESULT]
+- **Mixed horizontal** (`নোট: "কোগানেই" — こがねই।`): renders, ink>60. **Rotated mixed**: renders without crash; `_needs_fb_rot` path live (fb-present vs fb-missing outputs differ); `_render_rotated_text` gains the `bold` param (AST signature diff vs base) and the call site passes `bold=bold` (+1 occurrence). [TEST RESULT]
+
+## E4 — D-4: WARN-NEVER-SILENT — PASS
+
+- **None contract**: with `font_fallback` pointed at a missing file, `get_font_fb(24)` returns **None** (never a silent main-font substitute). [TEST RESULT]
+- **Directive-exact Bengali WARN**: the printed message matches the pushed-source template verbatim with the real exception text — `⚠️ JP fallback font unavailable (cannot open resource)। ASCII/কানা tofu হবে। Fix: repo-র assets/fonts/NotoSansJP[wght].ttf অথবা fonts dir-এ NotoSansJP.ttf রাখো।`; the template itself is present verbatim in the pushed cell-10 source (regex-verified). [TEST RESULT]
+- **log_event ERROR**: the identical semantic message `JP fallback font unavailable — ASCII/kana will tofu` is logged at **level=ERROR** (recorder captured). [TEST RESULT]
+- **Once-guard**: a second failing call (new size key) produces NO duplicate WARN (the `fb_load` sentinel). [TEST RESULT]
+- **Caller contract**: with fb missing, the mixed-text render completes WITHOUT crash and the Bengali runs still ink (main-font draw at the None-contract `or get_font(...)` fallbacks); the fb-missing canvas differs from the fb-present canvas — the defect can no longer hide. [TEST RESULT]
+
+## E5 — D-5: BASELINE CLAMP (cells 11/12 + the cell-10 mirror) — PASS
+
+Verified by FULL-CELL verbatim exec of tip cells 10+11 (and 10+12) with pipeline-tail stubs, base cells 10+11 likewise, 28-check instrument:
+
+- **Static formula diff**: base draw loop `ly_run = ly if im else ly + asc_main − f.getmetrics()[0]` (UNCLAMPED) → tip `max(0, ly + asc_main − f.getmetrics()[0])` in cell 11 AND cell 12; the cell-10 `_draw_runs_horizontal` mirrors `max(0, int(line_y) + asc_main − asc_fb)`; no residual unclamped formula. [FACT]
+- **Phase A edge reproduced**: geometry 61×298, text `こ` → fitted size **33**, sy=4, asc_main=31, asc_fb=48 → pre-clamp anchor **−13** (the exact Phase A S4a CLIP-RISK value). [TEST RESULT]
+- **Anchor interception at draw time** (PIL `ImageDraw.text` monkeypatch): BASE draws the fb run at **y = −13.0**; TIP draws at **y = 0.0** (clamped). The clamp is live at render time, not just in source. [TEST RESULT]
+- **Observable clip**: scanning kana at the same geometry, `グ` clips in base (span 39 vs full 40) and is FULL in tip; `こ`'s top bearing hides the clip for that glyph (span 34 = full in both) — the §7.5 D-5 check (`drawn ≥ ref−2`) passes 5/5 in both mirror cells. [TEST RESULT]
+- **Normal cases unaffected**: wide-column geometry (anchor ≥ 0, computed +37) → base == tip **byte-identical** — the clamp is a strict no-op when the anchor is already non-negative. [TEST RESULT]
+- **Cell-12 mirror**: §7.5 self-checks **5/5**; the 61×298 clamp render is byte-identical to cell-11's. [TEST RESULT]
+
+## E6 — CELL 4: FONT REGISTRATION + VENDORED PATH — PASS (22/22)
+
+Verbatim span-exec from the pushed bytes (§8.5 / §9 / registry / battery; the Phase C harness pattern — disclosed §M8-C5(i) — with MORE real environment than Phase C: real raqm check + real Bengali render):
+
+- **Vendored-present** (cwd = repo checkout): the candidate `assets/fonts/NotoSansJP[wght].ttf` resolves, sha256-verify passes against the pin, config `font_fallback` set to the vendored path, visible `✅ sha256-verified` print; the resolved file's sha256 re-computed == the directive pin. [TEST RESULT]
+- **Corrupt candidate** (sha-mismatched bytes at the fonts dir): skipped with the visible `corrupt/different bytes` line, NOT accepted; the clear Bengali missing-font diagnostic prints; `log_event` WARN recorded; config still set (pipeline continues — never silent, never an abort). [TEST RESULT]
+- **Registry**: `MANGABD_ASSETS["fonts"]` carries `fallback_sha256` == pin, `fallback_size` == 9589900, `fallback_license` == "OFL-1.1", `fallback_sha_ok` == True, `fallback_path` endswith the vendored asset — and keeps all pre-existing font fields. [TEST RESULT]
+- **Battery**: 10 tests, **10/10, "Cell 4 result: SUCCESS"**, including the new **"JP fallback font registered (MANGABD-008)"** test; base battery was 9 calls → tip 10 (+1). Boundary disclosed: 3 of the 10 conditions (zyddnys repo / patched count / repo imports) are environment-injected values in the harness (no manga repo in this sandbox — as in Phase C's own harness); the 7 font/raqm/render conditions run REAL. The injected tests' source is otherwise byte-verified via the E1 20-patch re-derivation (none of the 20 patches touch those test bodies). `log_event` completion carries `fallback_ok=True` + `tests_total=10`. [TEST RESULT]
+- **Download logic deleted**: tip cells 11/12 have **0** `urlretrieve` occurrences (base had 1 each) and refresh the config key from `MANGABD_ASSETS["fonts"]["fallback_path"]` only-if-unset. [TEST RESULT]
+
+## E7 — REGRESSIONS: THE 6 HARD CONSTRAINTS — ALL VERIFIED
+
+1. **Bengali conjunct shaping** — dedicated 5-conjunct render (ক্ষ ত্র জ্ঞ ঙ্ক ষ্ট) base vs tip: **byte-identical** regular AND bold paths, under raqm (E7.12/13; also inside the E3.03 parity corpus). [TEST RESULT]
+2. **Danda** — **NOW FIXED**: routing MAIN (E2.01), vertical trailing-glyph flip proven per archived text (E8.01–03: base = .notdef box, tip = real bar, overlay NCC 1.000), horizontal danda = real Bengali glyph (instrument S3: Bengali-ref NCC **1.000**; vs JP .notdef 0.389). [TEST RESULT]
+3. **V-3 vertical layout** — pure-kana S003 text base == tip **byte-identical**; full S003 R1 differs only where routing intentionally flips, change localized to the note region; fit ladder/line-heights/rotation/paste AST-untouched; `setdefault` V-1 knobs (wght 600 / scale 1.25 / stroke 1) byte-identical to base in cells 11/12 and present in the tip SHARED_BLOCK. [TEST RESULT]
+4. **M004-B1 size/weight calibration** — 9 calibration functions (`measure_text`, `get_line_height`, `split_long_word`, `split_text_to_lines`, `fit_font_size`, `choose_text_color`, `choose_stroke_width`, `choose_stroke_color`, `get_font`) **AST-dump identical** base vs tip. [TEST RESULT]
+5. **Reading order** — cells 13/15/23 **byte-identical** to base. [FACT]
+6. **Darkness/legibility (Batch-1 signature)** — clamp-no-op vertical kana render base == tip byte-identical ⇒ identical contrast/luminance (ink 4687 px, mean lum 18.76, min 0 — dark, real); at the −13 geometry tip keeps ≥ base ink (2448 vs 2445 px — the clamp only ADDS ink, never lightens). [TEST RESULT]
+
+## E8 — ARCHIVED SAMPLE CROSS-CHECK — PASS
+
+The committed Phase A instrument (`scripts/m008_b1_kana_repro.py`, tip version) re-run on the post-fix bytes (`--repo` = this checkout, fonts dir = hinted NotoSansBengali + the exact vendored JP bytes):
+
+- Notebook md5 reads **`35389d01aa549179c16cbbab7b2fedb1`** — exactly the blob recorded in the Phase C commit message and §M8-C1; the provenance warning is the disclosed expected path. [FACT]
+- In-cell §7.5 self-checks fire inside the instrument exec: **QUALITY CORE glyph-coverage 5/5**. [TEST RESULT]
+- **Probes flipped**: routing table shows `। → MAIN(Bengali)`, `こ/a/—/→ → FALLBACK(JP)`; coverage: Bengali owns U+0964/0965/0995, JP owns the kana set; archived-text inventory missing-from-both = 0. [TEST RESULT]
+- **S1/S1b/S2**: S1 (S007 R1 vertical) has **NO danda fallback-run** (pre-fix S1 drew the danda as the JP .notdef box); S2 (fb missing) emits the **loud D-4 WARN** in captured stdout (the Phase A silent-degrade reproduction is now noisy by design). Per-run NCC values at fitted size 10–12 are noise-dominated exactly as disclosed (§M8-C5(ii)) — corroborating only, and my positioned/structural proofs below carry the verdicts. [TEST RESULT]
+- **S3 (horizontal, S007 text)**: `।` vs Bengali ref NCC **1.000** (real glyph on the horizontal path too); vs JP .notdef **0.389 < 0.5**. The whole-canvas kana .notdef NCC reads 0.711 (vs the pre-fix pixel-exact 1.000) — the spurious dense-ink correlation §M8-C5(iii) anticipated; my E3 positioned byte-equality + positioned NCC (0.816 vs −0.001) are the decisive kana proofs. [TEST RESULT]
+- **X archived cross-check deterministic**: S005_manual **0.875** / S005_openrouter **0.771** / S007 **0.880** — EXACTLY the Phase A values; the archived finals are historical renders containing the old box (as expected — the fix applies to future renders). [FACT]
+- **Supplement (25/25, reviewer instrument)**: all THREE danda-bearing archived R1 texts (S005_manual / S005_openrouter / S007) re-rendered through the post-fix vertical path — draw-call interception proves the final run (ending `।`) is drawn **with the Bengali font file on tip** vs **with NotoSansJP on base**; isolated single-run replay crops the trailing glyph: tip = thin solid **bar** (aspect 0.167, fill 1.0, overlay NCC vs danda ref **1.000**), base = the **.notdef box** (aspect 0.833, NCC vs box 0.581). S007 R2 `"` (the archived tofu at page (271,232)): tip horizontal render draws the quote with the vendored JP (positioned NCC vs JP ref **0.860** vs .notdef 0.348); base = Bengali .notdef box. [TEST RESULT]
+
+## E9 — m002_sim_v2 + DISCLOSURES — PASS
+
+- **m002_sim_v2** (the committed M002 Phase D simulator, unchanged): **0 abort-class sites** on tip `b848c75` (27 code cells, 2390 module calls) AND on base `73ca565` (2259 calls). Def sites intact (`run_inpaint_render_all` 5 sites, `run_inpaint_all`/`run_render_all` cell 15). [TEST RESULT]
+- **Disclosure sweep (§M8-C1..C6 + §PC8 cross-check)** — adjudicated item by item:
+  - (i) span-exec harness scope — conservative and accurate; my Phase D ran FULL-CELL exec for cells 10/11/12 (with pipeline-tail stubs: `get_page`, empty `translation_df`, artifact loaders) and span-exec for cell 4, exceeding the disclosed surface. No challenge. **ACCEPTABLE**
+  - (ii) tiny-size NCC noise — independently reproduced (S1/S1b classifier values swing at size 10–12); decisive evidence is elsewhere (routing+cmap+parity+structural). **ACCEPTABLE**
+  - (iii) S3 whole-canvas 0.71 — reproduced exactly (0.763/0.711); interpretation confirmed by my positioned proofs. **ACCEPTABLE**
+  - (iv) sandbox font provenance — consistent with my independent fetch (notofonts hinted release); JP = exact vendored bytes. **ACCEPTABLE**
+  - (v) fb-missing degrade draws fb-routed runs with the main font at `fb_stroke` — verified in source (`sw = int(stroke_width) if im else fb_stroke`); identical ink to the base-era silent degrade, now preceded by the loud ERROR. **ACCEPTABLE**
+  - (vi) workspace-only instrument outputs — no repo pollution (E1 path inventory). **ACCEPTABLE**
+- **Record claims spot-checked (9/9)**: per-cell line counts 629→703 / 1231→1554 / 238→382 / 190→332 all exact; notebook md5 exact; protected trees untouched; the build-asserted WARN-string counts (3 in cell 10, 2 each in 11/12) exact. [FACT]
+
+---
+
+## NON-BLOCKING OBSERVATIONS (no action required)
+
+1. **OFL license file header** reads "Copyright 2014-2021 Adobe … Reserved Font Name 'Source'" above the standard SIL OFL 1.1 body — this is the google/fonts `ofl/notosansjp` OFL text (Noto Sans JP derives from Source Han Sans); §M8-C2 already discloses the Adobe copyright line. HYPOTHESIS (standard template provenance) — no action.
+2. **Vendored font name table** reads "Noto Sans JP Thin" because the variable font's fvar default is wght=100 (axis 100–900); runtime weight is set by `set_variation_by_axes([600])`/bold ≥700 (V-1 knobs) — verified live in E3.08 byte-equality and the darkness checks. Cosmetic only. FACT.
+3. **Degraded arm keeps quote→MAIN** (documented in-source and in the record): with fontTools absent the quote would tofu again — acceptable because fontTools ships with matplotlib in Colab, and the degraded arm ADDS the Devanagari range so danda stays fixed even there. No action.
+4. **E8 S3 free-search kana NCC margin is thin** (0.763 JP vs 0.711 notdef) at size 48 whole-canvas search — the positioned/byte-equality proofs (E3.08/3.10) and the hollow-detector (battery Test 12) are the right discriminators; noted so future reviews don't over-read the free-search number. No action.
+5. **Cell-4 battery environment boundary** (E6): 3/10 conditions are environment-injected in BOTH the Phase C harness and mine (no manga repo in either sandbox); the Owner's Colab live run covers them for real. Already the merge gate's job. No action.
+
+---
+
+## OVERALL VERDICT
+
+**MANGABD-008 B1 Phase C is verified on the pushed bytes: scope is exactly cells {4, 10, 11, 12} with the other 23 byte-identical to `73ca565`; the 20-patch manifest re-derives the delivered notebook byte-exactly; the vendored font's size/sha256/license pins are exact; D-1+D-2 cmap routing is proven with real cmaps (danda→MAIN, the 26 Bengali-missing chars→JP, neither-font→WARN-once) against the old predicate's double misrouting; D-3 extends per-run fallback to the horizontal and rotated paths with pure-Bengali renders byte-identical pre→post; D-4 converts the silent degrade into print + ERROR + None with the directive-exact Bengali message and a live once-guard; D-5 clamps the baseline anchor (base −13 → tip 0 at draw time, observable clip eliminated, strict no-op otherwise); cell-4 registration is sha-verified with corrupt/missing diagnostics and a 10/10 battery; all 6 hard constraints are preserved (5-conjunct byte-parity included); the archived cross-check reproduces Phase A deterministically and the three danda-bearing archived texts now render the real danda (overlay NCC 1.000) with S007 R2's quote drawn by the vendored JP; `m002_sim_v2` 0/0; all §M8-C disclosures check out.**
+
+**163 checks + 2 simulator runs + 1 Phase A instrument re-run: ALL PASS. Zero required fixes.**
+
+**Merge gate (unchanged, Owner-side live acceptance): Colab Run All — cell 4 battery 10/10 with the JP-font sha ✅ line, cell 10 battery 12/12, cells 11/12 QUALITY CORE glyph-coverage 5/5, zero ❌ — then render S007 R1+R2 and visually confirm no tofu (danda + kana + the R2 quote). The committed instruments already simulate the failure classes deterministically, so the live run is confirmation, not discovery.**
+
+*Report-only NEW commit on `mangabd-008-b1` (parent `b848c75`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_flash_e1.py` (16), `m008_flash_e2e3e4_cell10.py` (61), `m008_flash_e5e7_vertical.py` (28), `m008_flash_e6_cell4.py` (22), `m008_flash_e7_static.py` (11), `m008_flash_e8_supplement.py` (25), `m002_sim_v2.py` (reused; base + tip), plus the committed `scripts/m008_b1_kana_repro.py` re-run on the pushed bytes. Env: py3.12, PIL 11.3.0 + raqm, fontTools 4.62.1; Bengali fonts = notofonts hinted release (network fetch, release-stable cmap facts); JP font = the exact pushed vendored blob via `git cat-file`; no source files modified; no weights touched.*
