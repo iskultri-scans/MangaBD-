@@ -1,0 +1,20 @@
+[
+ {
+  "cell": 10,
+  "name": "T9 fixture: clear+pin+DIRECT probe right before the load",
+  "old": "        fb_real = MANGABD_CONFIG[\"rendering\"].get(\"font_fallback\", \"\")\n        try:\n            MANGABD_CONFIG[\"rendering\"][\"font_fallback\"] = str(real_jp_path)\n            _FB_CACHE.clear()\n            ok = (\n                _main_font_ok(\"ক\") is True",
+  "new": "        fb_real = MANGABD_CONFIG[\"rendering\"].get(\"font_fallback\", \"\")\n        try:\n            # RF-12: clear এখন load-এর ঠিক আগে — Test 10-এর D-4 pollution\n            # (cached None) এই load-কে আর ছুঁতে পারবে না। Registry থেকে\n            # config pin, তারপর DIRECT ImageFont.truetype — get_font_fb-এর\n            # cached-None arm পুরোপুরি বাইপাস।\n            _FB_CACHE.clear()\n            MANGABD_CONFIG[\"rendering\"][\"font_fallback\"] = str(real_jp_path)\n            _m9_probe = ImageFont.truetype(\n                MANGABD_CONFIG[\"rendering\"][\"font_fallback\"], 24\n            )\n            ok = (\n                _m9_probe is not None\n                and _main_font_ok(\"ক\") is True"
+ },
+ {
+  "cell": 10,
+  "name": "post-T10 pollution clear",
+  "old": "except Exception as exc:\n    run_test(\"JP fallback WARN-never-silent (D-4)\", False, str(exc)[:160])\n\n\n# Test 11: horizontal mixed-script render — fallback glyphs real (MANGABD-008 D-3)",
+  "new": "except Exception as exc:\n    run_test(\"JP fallback WARN-never-silent (D-4)\", False, str(exc)[:160])\n\n# RF-12: Test 10-এর D-4 degradation _FB_CACHE-তে (size, bold) -> None বসায়;\n# battery-র বাকি test-গুলোর আগে সেই pollution সাফ করা হলো।\n_FB_CACHE.clear()  # Clear pollution from D-4 test\n\n\n# Test 11: horizontal mixed-script render — fallback glyphs real (MANGABD-008 D-3)"
+ },
+ {
+  "cell": 10,
+  "name": "T12 fixture: clear+pin+DIRECT probe right before the load",
+  "old": "        fb_real = MANGABD_CONFIG[\"rendering\"].get(\"font_fallback\", \"\")\n        try:\n            MANGABD_CONFIG[\"rendering\"][\"font_fallback\"] = str(real_jp_path)\n            _FB_CACHE.clear()\n            fb_solid = _m8_hollow(get_font_fb(48), \"H\") is False",
+  "new": "        fb_real = MANGABD_CONFIG[\"rendering\"].get(\"font_fallback\", \"\")\n        try:\n            # RF-12: Test 9-এর মতোই — clear load-এর ঠিক আগে, registry থেকে\n            # config pin, তারপর DIRECT probe। get_font_fb(48) তখন ফাঁকা\n            # cache থেকে fresh load করে — cached-None arm পুরোপুরি বাইপাস।\n            _FB_CACHE.clear()\n            MANGABD_CONFIG[\"rendering\"][\"font_fallback\"] = str(real_jp_path)\n            _m12_probe = ImageFont.truetype(\n                MANGABD_CONFIG[\"rendering\"][\"font_fallback\"], 24\n            )\n            fb_solid = (\n                _m12_probe is not None\n                and _m8_hollow(get_font_fb(48), \"H\") is False\n            )"
+ }
+]

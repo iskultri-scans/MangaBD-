@@ -2400,3 +2400,382 @@ B2 Phase C is verified on the pushed bytes: scope is exactly cells {5, 8} with t
 **Merge gate (unchanged, Owner-side): live acceptance test — simulate an embedding load failure (e.g., a session without sentence-transformers) and exercise paste-back edge cases (double-escaped / mixed / trailing-backslash pastes); expect the Bengali ⚠️ diagnostic in console + session log with the pipeline continuing (no crash), and the edge pastes applying 100% with no unparsed lines. Note the committed batteries already simulate both failure classes deterministically, so a plain Run All (10/10 + 32/32, zero ❌) plus one manual edge paste is sufficient coverage.**
 
 *Report-only NEW commit on `mangabd-007-b2` (parent `4fd1fd0`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m007b2_flash_e1.py` (24), `m007b2_flash_e2e4.py` (21), `m007b2_flash_e4.py` (25), `m007b2_flash_e3.py` (18), `m007b2_flash_e5e6.py` (28), `m007b2_flash_e7.py` (17), `m002_sim_v2.py` (reused; base + tip). Env: py3.12 venv, numpy 2.1.3 / pillow 11.3.0; torch + nest_asyncio stubbed (disclosed above); engines not loaded; no network used; no real weights touched.*
+
+# MANGABD-008 — PHASE D VERIFICATION (BATCH 1) (GLM-5.3-Flash, independent reviewer, 2026-10-25)
+
+**Scope of this review:** branch `mangabd-008-b1` @ `b848c75` (Phase C, single commit) vs base `main @ 73ca565` (the Phase A ruling commit). Verified independently on the pushed bytes only; no source changes; no amend/merge. Deliverable under review: the glyph-coverage fix — D-1+D-2 cmap-coverage routing, D-3 horizontal/rotated per-run fallback, D-4 WARN-never-silent `get_font_fb`, D-5 baseline clamp, cell-4 vendored NotoSansJP registration + font vendoring. Lineage: `b848c75^ == 73ca565 == origin/main == merge-base` — a single fresh commit cut from the directive's exact base, no lineage caveat. [FACT]
+
+**Environment note (disclosed):** reviewer sandbox = py3.12, PIL 11.3.0 **with libraqm** (features.check = True), fontTools 4.62.1, numpy/pandas/cv2 present, network available. Bengali fonts fetched from the notofonts hinted release (same release family as the Phase A disclosure: `notofonts.github.io` hinted ttf — cmap facts release-stable); the JP font is the EXACT vendored blob extracted from the pushed commit via `git cat-file` (sha256 re-verified on extraction). All runtime render proofs below run against these two fonts. [FACT]
+
+---
+
+## E1 — SCOPE & STRUCTURE — PASS (16/16)
+
+- **E1.01–03** base and tip JSON parse, 27 cells each; ALL top-level non-cells fields identical (`metadata`, `nbformat`, `nbformat_minor`). [TEST RESULT]
+- **E1.04–06** changed cells exactly **{4, 10, 11, 12}**; the other 23 cells byte-identical (JSON-canonicalized per-cell byte compare); the 4 changed cells differ ONLY in `source` (non-source fields byte-identical). [TEST RESULT]
+- **E1.07–08** AST parse **27/27 on BOTH refs** with warnings-as-errors. [TEST RESULT]
+- **E1.09–12b** the committed 20-patch manifest (`scripts/m008_b1_phaseC_patches.json`, 20 × {cell,name,old,new}) re-derives the tip **BYTE-EXACTLY**: all 20 cell-scoped anchors occur exactly once, in manifest order; every rebuilt cell source == tip cell source; full notebook rebuild (`splitlines(keepends=True)` + `json.dumps(nb, indent=2, ensure_ascii=False)`) == the tip file byte-for-byte at 1,112,089 bytes. The build script's documented patch semantics (cell-scoped anchored replace, in-order, byte-faithful writer) independently reproduce the delivered artifact. [TEST RESULT]
+- **E1.13** secret scan 0 hits on 3,078 added lines (10 pattern classes: api keys, bearer, aws, private keys, token assigns, gh-pat, google, hf, sk-, slack). [TEST RESULT]
+- **E1.14–15** `git diff --name-status` = exactly 13 paths: **3 M** (notebook, `agents/GLM_5_3.md`, `scripts/m008_b1_kana_repro.py` — the Phase A instrument's disclosed None-contract update) + **10 A** (font, OFL license, 8 Phase C instruments); **A/M only, zero renames, zero mode switches, all 100644**; samples/, models/, S007 zip untouched. [FACT]
+- **Font vendoring pins**: `assets/fonts/NotoSansJP[wght].ttf` = **9,589,900 bytes** (exact) with sha256 **`c2f3b4d463500a2ddcd3849cded1fceeb9fd6d1c32e6cbecd568453ba50fc68f`** (exact match to the directive pin `c2f3b4d4…50fc68f`); `assets/fonts/OFL-NotoSansJP.txt` committed with the SIL OFL 1.1 body. [FACT]
+- **RF-9**: build + 4 content modules (`content4`, `content10`, `content10b`, `content1112`) + verify + precommit + the 20-patch manifest are ALL committed IN `b848c75` — zero uncommitted-instrument gap. [FACT]
+
+## E2 — D-1+D-2: CMAP-COVERAGE ROUTING — PASS
+
+Verified by FULL-CELL verbatim exec of the pushed tip cell-10 source (warnings-as-errors) + fontTools cmap probes on both real fonts (61-check instrument, shared with E3/E4):
+
+- **Routing table on real cmaps** [TEST RESULT]: danda `।` U+0964 → **MAIN (True)** (NotoSansBengali owns U+0964/0965 — cmap-proven; the vendored JP does NOT); ASCII `"` `(` `)` `,` `/` `:` → **FALLBACK (False)**; em-dash `—` → FALLBACK; kana `こがねい` → FALLBACK; Bengali `অ` + conjunct pieces → MAIN; `➔` U+2794 (in NO font) → MAIN + **once-WARN** (print + `log_event` WARN, exactly one record; second call adds nothing); ZWSP U+200B → MAIN silently (the `_ROUTE_QUIET` zero-width set).
+- **cmap ownership theorem** [TEST RESULT]: Bengali hinted font HAS danda/ddanda/Bengali block, LACKS all of `A " ( ) , / : — こがねい`; vendored JP HAS all 26 archived-text chars the Bengali font lacks (plus `➔` in neither — matching Phase A). missing-from-both across the 36 archived texts = **0** (instrument inventory).
+- **Old-predicate contrast** [TEST RESULT]: the base `_main_font_ok` (hardcoded `0x0980–0x09FF ∪ Latin-1 ∪ punct ∪ currency ∪ arrows`) misroutes danda→FALLBACK (old_ok(।)=False → JP lacks it → tofu) AND quote→MAIN (old_ok(")=True → Bengali lacks it → tofu). The tip routing flips BOTH — the fix is real, not cosmetic.
+- **`_split_runs`** on the mixed directive line: Bengali runs MAIN (trailing danda inside the final MAIN run), kana/ASCII/em-dash runs FALLBACK. [TEST RESULT]
+- **fb-cmap-unknown optimistic route**: poisoning the fb coverage cache → kana still routes FALLBACK, danda still routes MAIN. [TEST RESULT]
+- **Degraded arm** (fontTools import broken): danda→MAIN (the added `0x0900–0x097F` Devanagari range), kana→FALLBACK (old ranges kept), quote→MAIN (old ranges kept — disclosed behavior); the `cmap coverage unavailable` WARN fires and the coverage cache degrades gracefully. [TEST RESULT]
+- **SHARED_BLOCK mirror**: the 4,958-char SHARED_BLOCK appears **exactly once, byte-identical, in each of cells 10/11/12** on the pushed bytes (extracted from the committed content module, counted in all three tip cell sources). [TEST RESULT]
+- **Primary path is cmap-routing**: in all three cells the range check appears exactly once and only in the degraded arm after the `cov is not None` early returns. [TEST RESULT]
+
+## E3 — D-3: HORIZONTAL/ROTATED FALLBACK — PASS
+
+- **Cell-10 battery**: full-cell exec runs the battery **12/12, zero ❌** (incl. the 4 new M008 tests: routing D-1/D-2, WARN-never-silent D-4, horizontal mixed A/B D-3, hollow-detector D-2). [TEST RESULT]
+- **Pure-Bengali byte parity (the hard guarantee)**: base cell-10 vs tip cell-10 exec'd side by side (identical namespaces/fonts) — 5-string pure-Bengali corpus (incl. the conjunct string ক্ষ ত্র জ্ঞ ঙ্ক ষ্ট, Bengali digits) renders **byte-identical horizontal AND rotated(90°)**. A danda-bearing pure line (`বাক্য।`) is ALSO byte-identical horizontal — correct, because base cell-10 had NO fallback at all (single-font draw; horizontal danda was never tofu — the danda defect lived in the VERTICAL routing) and tip routes danda MAIN by cmap. [TEST RESULT]
+- **Kana-only horizontal run**: `_draw_runs_horizontal` output **byte-equals a direct draw with the vendored JP font** at the same computed position/size/stroke (V-1 knobs: fb at size×1.25, stroke 1, run-sequence centering, amendment-1 ladder mirrored). [TEST RESULT]
+- **Positioned NCC classification**: kana region vs JP reference NCC **0.816** vs main-font .notdef **−0.001**; quote region vs JP ref **1.000-class** (after matching the fb stroke) vs .notdef **−0.199** — real glyphs, no tofu. [TEST RESULT]
+- **Mixed horizontal** (`নোট: "কোগানেই" — こがねই।`): renders, ink>60. **Rotated mixed**: renders without crash; `_needs_fb_rot` path live (fb-present vs fb-missing outputs differ); `_render_rotated_text` gains the `bold` param (AST signature diff vs base) and the call site passes `bold=bold` (+1 occurrence). [TEST RESULT]
+
+## E4 — D-4: WARN-NEVER-SILENT — PASS
+
+- **None contract**: with `font_fallback` pointed at a missing file, `get_font_fb(24)` returns **None** (never a silent main-font substitute). [TEST RESULT]
+- **Directive-exact Bengali WARN**: the printed message matches the pushed-source template verbatim with the real exception text — `⚠️ JP fallback font unavailable (cannot open resource)। ASCII/কানা tofu হবে। Fix: repo-র assets/fonts/NotoSansJP[wght].ttf অথবা fonts dir-এ NotoSansJP.ttf রাখো।`; the template itself is present verbatim in the pushed cell-10 source (regex-verified). [TEST RESULT]
+- **log_event ERROR**: the identical semantic message `JP fallback font unavailable — ASCII/kana will tofu` is logged at **level=ERROR** (recorder captured). [TEST RESULT]
+- **Once-guard**: a second failing call (new size key) produces NO duplicate WARN (the `fb_load` sentinel). [TEST RESULT]
+- **Caller contract**: with fb missing, the mixed-text render completes WITHOUT crash and the Bengali runs still ink (main-font draw at the None-contract `or get_font(...)` fallbacks); the fb-missing canvas differs from the fb-present canvas — the defect can no longer hide. [TEST RESULT]
+
+## E5 — D-5: BASELINE CLAMP (cells 11/12 + the cell-10 mirror) — PASS
+
+Verified by FULL-CELL verbatim exec of tip cells 10+11 (and 10+12) with pipeline-tail stubs, base cells 10+11 likewise, 28-check instrument:
+
+- **Static formula diff**: base draw loop `ly_run = ly if im else ly + asc_main − f.getmetrics()[0]` (UNCLAMPED) → tip `max(0, ly + asc_main − f.getmetrics()[0])` in cell 11 AND cell 12; the cell-10 `_draw_runs_horizontal` mirrors `max(0, int(line_y) + asc_main − asc_fb)`; no residual unclamped formula. [FACT]
+- **Phase A edge reproduced**: geometry 61×298, text `こ` → fitted size **33**, sy=4, asc_main=31, asc_fb=48 → pre-clamp anchor **−13** (the exact Phase A S4a CLIP-RISK value). [TEST RESULT]
+- **Anchor interception at draw time** (PIL `ImageDraw.text` monkeypatch): BASE draws the fb run at **y = −13.0**; TIP draws at **y = 0.0** (clamped). The clamp is live at render time, not just in source. [TEST RESULT]
+- **Observable clip**: scanning kana at the same geometry, `グ` clips in base (span 39 vs full 40) and is FULL in tip; `こ`'s top bearing hides the clip for that glyph (span 34 = full in both) — the §7.5 D-5 check (`drawn ≥ ref−2`) passes 5/5 in both mirror cells. [TEST RESULT]
+- **Normal cases unaffected**: wide-column geometry (anchor ≥ 0, computed +37) → base == tip **byte-identical** — the clamp is a strict no-op when the anchor is already non-negative. [TEST RESULT]
+- **Cell-12 mirror**: §7.5 self-checks **5/5**; the 61×298 clamp render is byte-identical to cell-11's. [TEST RESULT]
+
+## E6 — CELL 4: FONT REGISTRATION + VENDORED PATH — PASS (22/22)
+
+Verbatim span-exec from the pushed bytes (§8.5 / §9 / registry / battery; the Phase C harness pattern — disclosed §M8-C5(i) — with MORE real environment than Phase C: real raqm check + real Bengali render):
+
+- **Vendored-present** (cwd = repo checkout): the candidate `assets/fonts/NotoSansJP[wght].ttf` resolves, sha256-verify passes against the pin, config `font_fallback` set to the vendored path, visible `✅ sha256-verified` print; the resolved file's sha256 re-computed == the directive pin. [TEST RESULT]
+- **Corrupt candidate** (sha-mismatched bytes at the fonts dir): skipped with the visible `corrupt/different bytes` line, NOT accepted; the clear Bengali missing-font diagnostic prints; `log_event` WARN recorded; config still set (pipeline continues — never silent, never an abort). [TEST RESULT]
+- **Registry**: `MANGABD_ASSETS["fonts"]` carries `fallback_sha256` == pin, `fallback_size` == 9589900, `fallback_license` == "OFL-1.1", `fallback_sha_ok` == True, `fallback_path` endswith the vendored asset — and keeps all pre-existing font fields. [TEST RESULT]
+- **Battery**: 10 tests, **10/10, "Cell 4 result: SUCCESS"**, including the new **"JP fallback font registered (MANGABD-008)"** test; base battery was 9 calls → tip 10 (+1). Boundary disclosed: 3 of the 10 conditions (zyddnys repo / patched count / repo imports) are environment-injected values in the harness (no manga repo in this sandbox — as in Phase C's own harness); the 7 font/raqm/render conditions run REAL. The injected tests' source is otherwise byte-verified via the E1 20-patch re-derivation (none of the 20 patches touch those test bodies). `log_event` completion carries `fallback_ok=True` + `tests_total=10`. [TEST RESULT]
+- **Download logic deleted**: tip cells 11/12 have **0** `urlretrieve` occurrences (base had 1 each) and refresh the config key from `MANGABD_ASSETS["fonts"]["fallback_path"]` only-if-unset. [TEST RESULT]
+
+## E7 — REGRESSIONS: THE 6 HARD CONSTRAINTS — ALL VERIFIED
+
+1. **Bengali conjunct shaping** — dedicated 5-conjunct render (ক্ষ ত্র জ্ঞ ঙ্ক ষ্ট) base vs tip: **byte-identical** regular AND bold paths, under raqm (E7.12/13; also inside the E3.03 parity corpus). [TEST RESULT]
+2. **Danda** — **NOW FIXED**: routing MAIN (E2.01), vertical trailing-glyph flip proven per archived text (E8.01–03: base = .notdef box, tip = real bar, overlay NCC 1.000), horizontal danda = real Bengali glyph (instrument S3: Bengali-ref NCC **1.000**; vs JP .notdef 0.389). [TEST RESULT]
+3. **V-3 vertical layout** — pure-kana S003 text base == tip **byte-identical**; full S003 R1 differs only where routing intentionally flips, change localized to the note region; fit ladder/line-heights/rotation/paste AST-untouched; `setdefault` V-1 knobs (wght 600 / scale 1.25 / stroke 1) byte-identical to base in cells 11/12 and present in the tip SHARED_BLOCK. [TEST RESULT]
+4. **M004-B1 size/weight calibration** — 9 calibration functions (`measure_text`, `get_line_height`, `split_long_word`, `split_text_to_lines`, `fit_font_size`, `choose_text_color`, `choose_stroke_width`, `choose_stroke_color`, `get_font`) **AST-dump identical** base vs tip. [TEST RESULT]
+5. **Reading order** — cells 13/15/23 **byte-identical** to base. [FACT]
+6. **Darkness/legibility (Batch-1 signature)** — clamp-no-op vertical kana render base == tip byte-identical ⇒ identical contrast/luminance (ink 4687 px, mean lum 18.76, min 0 — dark, real); at the −13 geometry tip keeps ≥ base ink (2448 vs 2445 px — the clamp only ADDS ink, never lightens). [TEST RESULT]
+
+## E8 — ARCHIVED SAMPLE CROSS-CHECK — PASS
+
+The committed Phase A instrument (`scripts/m008_b1_kana_repro.py`, tip version) re-run on the post-fix bytes (`--repo` = this checkout, fonts dir = hinted NotoSansBengali + the exact vendored JP bytes):
+
+- Notebook md5 reads **`35389d01aa549179c16cbbab7b2fedb1`** — exactly the blob recorded in the Phase C commit message and §M8-C1; the provenance warning is the disclosed expected path. [FACT]
+- In-cell §7.5 self-checks fire inside the instrument exec: **QUALITY CORE glyph-coverage 5/5**. [TEST RESULT]
+- **Probes flipped**: routing table shows `। → MAIN(Bengali)`, `こ/a/—/→ → FALLBACK(JP)`; coverage: Bengali owns U+0964/0965/0995, JP owns the kana set; archived-text inventory missing-from-both = 0. [TEST RESULT]
+- **S1/S1b/S2**: S1 (S007 R1 vertical) has **NO danda fallback-run** (pre-fix S1 drew the danda as the JP .notdef box); S2 (fb missing) emits the **loud D-4 WARN** in captured stdout (the Phase A silent-degrade reproduction is now noisy by design). Per-run NCC values at fitted size 10–12 are noise-dominated exactly as disclosed (§M8-C5(ii)) — corroborating only, and my positioned/structural proofs below carry the verdicts. [TEST RESULT]
+- **S3 (horizontal, S007 text)**: `।` vs Bengali ref NCC **1.000** (real glyph on the horizontal path too); vs JP .notdef **0.389 < 0.5**. The whole-canvas kana .notdef NCC reads 0.711 (vs the pre-fix pixel-exact 1.000) — the spurious dense-ink correlation §M8-C5(iii) anticipated; my E3 positioned byte-equality + positioned NCC (0.816 vs −0.001) are the decisive kana proofs. [TEST RESULT]
+- **X archived cross-check deterministic**: S005_manual **0.875** / S005_openrouter **0.771** / S007 **0.880** — EXACTLY the Phase A values; the archived finals are historical renders containing the old box (as expected — the fix applies to future renders). [FACT]
+- **Supplement (25/25, reviewer instrument)**: all THREE danda-bearing archived R1 texts (S005_manual / S005_openrouter / S007) re-rendered through the post-fix vertical path — draw-call interception proves the final run (ending `।`) is drawn **with the Bengali font file on tip** vs **with NotoSansJP on base**; isolated single-run replay crops the trailing glyph: tip = thin solid **bar** (aspect 0.167, fill 1.0, overlay NCC vs danda ref **1.000**), base = the **.notdef box** (aspect 0.833, NCC vs box 0.581). S007 R2 `"` (the archived tofu at page (271,232)): tip horizontal render draws the quote with the vendored JP (positioned NCC vs JP ref **0.860** vs .notdef 0.348); base = Bengali .notdef box. [TEST RESULT]
+
+## E9 — m002_sim_v2 + DISCLOSURES — PASS
+
+- **m002_sim_v2** (the committed M002 Phase D simulator, unchanged): **0 abort-class sites** on tip `b848c75` (27 code cells, 2390 module calls) AND on base `73ca565` (2259 calls). Def sites intact (`run_inpaint_render_all` 5 sites, `run_inpaint_all`/`run_render_all` cell 15). [TEST RESULT]
+- **Disclosure sweep (§M8-C1..C6 + §PC8 cross-check)** — adjudicated item by item:
+  - (i) span-exec harness scope — conservative and accurate; my Phase D ran FULL-CELL exec for cells 10/11/12 (with pipeline-tail stubs: `get_page`, empty `translation_df`, artifact loaders) and span-exec for cell 4, exceeding the disclosed surface. No challenge. **ACCEPTABLE**
+  - (ii) tiny-size NCC noise — independently reproduced (S1/S1b classifier values swing at size 10–12); decisive evidence is elsewhere (routing+cmap+parity+structural). **ACCEPTABLE**
+  - (iii) S3 whole-canvas 0.71 — reproduced exactly (0.763/0.711); interpretation confirmed by my positioned proofs. **ACCEPTABLE**
+  - (iv) sandbox font provenance — consistent with my independent fetch (notofonts hinted release); JP = exact vendored bytes. **ACCEPTABLE**
+  - (v) fb-missing degrade draws fb-routed runs with the main font at `fb_stroke` — verified in source (`sw = int(stroke_width) if im else fb_stroke`); identical ink to the base-era silent degrade, now preceded by the loud ERROR. **ACCEPTABLE**
+  - (vi) workspace-only instrument outputs — no repo pollution (E1 path inventory). **ACCEPTABLE**
+- **Record claims spot-checked (9/9)**: per-cell line counts 629→703 / 1231→1554 / 238→382 / 190→332 all exact; notebook md5 exact; protected trees untouched; the build-asserted WARN-string counts (3 in cell 10, 2 each in 11/12) exact. [FACT]
+
+---
+
+## NON-BLOCKING OBSERVATIONS (no action required)
+
+1. **OFL license file header** reads "Copyright 2014-2021 Adobe … Reserved Font Name 'Source'" above the standard SIL OFL 1.1 body — this is the google/fonts `ofl/notosansjp` OFL text (Noto Sans JP derives from Source Han Sans); §M8-C2 already discloses the Adobe copyright line. HYPOTHESIS (standard template provenance) — no action.
+2. **Vendored font name table** reads "Noto Sans JP Thin" because the variable font's fvar default is wght=100 (axis 100–900); runtime weight is set by `set_variation_by_axes([600])`/bold ≥700 (V-1 knobs) — verified live in E3.08 byte-equality and the darkness checks. Cosmetic only. FACT.
+3. **Degraded arm keeps quote→MAIN** (documented in-source and in the record): with fontTools absent the quote would tofu again — acceptable because fontTools ships with matplotlib in Colab, and the degraded arm ADDS the Devanagari range so danda stays fixed even there. No action.
+4. **E8 S3 free-search kana NCC margin is thin** (0.763 JP vs 0.711 notdef) at size 48 whole-canvas search — the positioned/byte-equality proofs (E3.08/3.10) and the hollow-detector (battery Test 12) are the right discriminators; noted so future reviews don't over-read the free-search number. No action.
+5. **Cell-4 battery environment boundary** (E6): 3/10 conditions are environment-injected in BOTH the Phase C harness and mine (no manga repo in either sandbox); the Owner's Colab live run covers them for real. Already the merge gate's job. No action.
+
+---
+
+## OVERALL VERDICT
+
+**MANGABD-008 B1 Phase C is verified on the pushed bytes: scope is exactly cells {4, 10, 11, 12} with the other 23 byte-identical to `73ca565`; the 20-patch manifest re-derives the delivered notebook byte-exactly; the vendored font's size/sha256/license pins are exact; D-1+D-2 cmap routing is proven with real cmaps (danda→MAIN, the 26 Bengali-missing chars→JP, neither-font→WARN-once) against the old predicate's double misrouting; D-3 extends per-run fallback to the horizontal and rotated paths with pure-Bengali renders byte-identical pre→post; D-4 converts the silent degrade into print + ERROR + None with the directive-exact Bengali message and a live once-guard; D-5 clamps the baseline anchor (base −13 → tip 0 at draw time, observable clip eliminated, strict no-op otherwise); cell-4 registration is sha-verified with corrupt/missing diagnostics and a 10/10 battery; all 6 hard constraints are preserved (5-conjunct byte-parity included); the archived cross-check reproduces Phase A deterministically and the three danda-bearing archived texts now render the real danda (overlay NCC 1.000) with S007 R2's quote drawn by the vendored JP; `m002_sim_v2` 0/0; all §M8-C disclosures check out.**
+
+**163 checks + 2 simulator runs + 1 Phase A instrument re-run: ALL PASS. Zero required fixes.**
+
+**Merge gate (unchanged, Owner-side live acceptance): Colab Run All — cell 4 battery 10/10 with the JP-font sha ✅ line, cell 10 battery 12/12, cells 11/12 QUALITY CORE glyph-coverage 5/5, zero ❌ — then render S007 R1+R2 and visually confirm no tofu (danda + kana + the R2 quote). The committed instruments already simulate the failure classes deterministically, so the live run is confirmation, not discovery.**
+
+*Report-only NEW commit on `mangabd-008-b1` (parent `b848c75`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_flash_e1.py` (16), `m008_flash_e2e3e4_cell10.py` (61), `m008_flash_e5e7_vertical.py` (28), `m008_flash_e6_cell4.py` (22), `m008_flash_e7_static.py` (11), `m008_flash_e8_supplement.py` (25), `m002_sim_v2.py` (reused; base + tip), plus the committed `scripts/m008_b1_kana_repro.py` re-run on the pushed bytes. Env: py3.12, PIL 11.3.0 + raqm, fontTools 4.62.1; Bengali fonts = notofonts hinted release (network fetch, release-stable cmap facts); JP font = the exact pushed vendored blob via `git cat-file`; no source files modified; no weights touched.*
+
+---
+
+# MANGABD-008 — RF-10 DELTA CHECK (GLM-5.3-Flash, independent reviewer, 2026-10-26)
+
+**Scope:** commit `9b232f0` on `mangabd-008-b1` (RF-10: cell-10 test fixture path fix), parent `33d5183` (my Phase D APPROVED report — docs-only, its notebook blob == `b848c75`'s). Pushed bytes only; no source changes by me; no amend/merge; report-only NEW commit on the branch. Method: independent instruments (repo-external), all claims adjudicated on the pushed bytes.
+
+**Topology (FACT):** `9b232f0^` == `33d5183` == merge-base (single fresh commit, no lineage caveat). `origin/main` unchanged @ `73ca565`. Delta files exactly 6: notebook M (+46/−13), `agents/GLM_5_3.md` M (+26/−0), 4 NEW instruments (`m008_b1_rf10_build.py` 281 L, `m008_b1_rf10_patches.json` 4 entries, `m008_b1_rf10_precommit.py` 205 L, `m008_b1_rf10_verify.py` 387 L). `agents/GLM_5_3_FLASH.md` NOT touched by RF-10. Notebook blob `dcfc184f…` (md5 `9111fd66…` — commit-message claim verified exact).
+
+## R1 — Scope & structure (19/19 PASS; scripts/m008_rf10_flash_e1.py)
+
+- **R1.1** Changed cells exactly **{10}**; cell-10 delta confined to the `source` key; other **26 cells byte-identical** to the Phase D state (base notebook `33d5183` == `b848c75` — delta-base validity proven by blob equality `02b570d5…`).
+- **R1.2 Fixtures-only proof (mechanical):** cell-10 diff starts immediately after the `# Test 9:` header (first diff line 1407; header @1406); sections 1–9 byte-identical (everything before `# 10. Self-tests`); the section-10 pre-Test-9 span (Tests 1–8, 157 lines) byte-identical; post-diff remainder byte-identical. ⇒ the delta lives strictly inside the Tests 9–12 blocks. **TEST RESULT**
+- **R1.3** AST 27/27 parse (warnings-as-errors) on both refs; no mode changes/renames/deletes; new files all `100644`; secret scan clean (credential-shape patterns, 971 added lines).
+- **R1.4** Vendored font untouched: 9,589,900 B, sha256 `c2f3b4d4…50fc68f`, bytes base==tip.
+
+## R2 — RF-10 fixture-pattern static proof (12/12 PASS; scripts/m008_rf10_flash_e2.py)
+
+- **R2.1 Tests 9/12 (D-1/D-2 real-font fixtures):** registry pin `MANGABD_ASSETS["fonts"]["fallback_path"]` occurs exactly **2×** in tip cell-10 (0× in base); loud `assert Path(real_jp_path).exists(), f"Vendored font missing: …"` 2×; config pin + `_FB_CACHE.clear()` around every pinned load with `finally`-restore + re-clear.
+- **R2.2 Tests 10/11 (degradation fixtures):** explicit `"/tmp/MISSING-test-font.ttf"` exactly **2×** (0× in base); `assert not Path(missing_path).exists()  # intentional degradation` 2×; the derived `Path(fb_real).parent / "MISSING-…"` pattern: **0× in tip vs 2× in base** (eliminated, not relocated).
+- **R2.3 Cache-clear census:** tip 9 / base 5 (+4 — one per pin), every occurrence confined to the Tests 9–12 span; every config-pin assignment followed by a clear within 2 lines (the (size,bold)-keyed stale-object hazard addressed).
+- **R2.4 Manifest re-derivation:** the 4 `{cell,name,old,new}` entries each match **exactly once** in the base cell-10 source; `base + exactly these 4 patches` == tip cell-10 **byte-exact**; file-level diff (7 hunks) entirely confined to the cell-10 `source` array in the notebook JSON ⇒ full-notebook re-derivation holds at byte level.
+- **R2.5 Registry contract:** cell-4 defines `"fallback_path"` inside the `MANGABD_ASSETS["fonts"]` literal (1-idx L566 — the disclosure's line citation is exact); Run-All namespace satisfies the new pins.
+
+## R3 — Ambient-independence matrix (11/11 PASS; scripts/m008_rf10_flash_e3.py) — the RF-10 delta proof
+
+Cell-10 executed verbatim from pushed bytes per arm (namespace = Run-All contract with cell-4's registry; main fonts = real NotoSansBengali hinted; ambient = `MANGABD_CONFIG["rendering"]["font_fallback"]`):
+
+| Arm | Cell | Ambient fallback | Result |
+|---|---|---|---|
+| A | tip | real vendored JP | **12/12** (sig TTTTTTTTTTTT) |
+| B | **base** | **loadable-but-wrong bytes** (Bengali bytes @ Drive-style `NotoSansJP.ttf`) | **EXACTLY the Owner's live signature**: 9❌ 12❌ 10✓ 11✓ = 10/12 (sig TTTTTTTTFTTF); failing lines name D-1/D-2 and D-2 |
+| C | **tip** | same wrong-bytes ambient | **12/12** — the fix makes D-1/D-2 fixtures ambient-independent |
+| D | tip | genuinely-missing ambient | Tests **9/12 GREEN via the registry pin**; Tests **10/11 fail loudly** as named env diagnostics (sig TTTTTTTTFFT — the exact complement of B) |
+| E | base | real JP at a Drive-style path | **12/12** (pre-fix correct when ambient correct — consistent with my Phase D 12/12; no conflict) |
+
+- **R3.1** Arm B reproduces the Owner's Colab 10/12 **deterministically and exactly** (indices 9 and 12, same named tests) — the fixture-defect diagnosis is proven, not hypothesized. **TEST RESULT**
+- **R3.2** Arm C/D prove the post-fix D-1/D-2 fixtures no longer consult the ambient fallback at all (registry-pinned), while Tests 10/11 degrade loudly only when the environment is genuinely broken. **TEST RESULT**
+- **R3.3** Arm E rules out "RF-10 masks a Phase C regression": the pre-fix battery was already 12/12 under a correct ambient (my Phase D result), so the Owner's 10/12 was environmental, exactly as GLM-5.3 diagnosed.
+- **R3.4 Batteries on the Run-All chain:** cells 10+11 chain → cell-10 **12/12** + cell-11 §7.5 **5/5**; cells 10+12 chain → cell-10 **12/12** + cell-12 §7.5 **5/5** (both with warnings-as-errors). **TEST RESULT**
+- **R3.5** §7.5 block byte-identical across the cell-11/12 mirrors (2,343 chars, unchanged bytes).
+
+## R4 — m002_sim_v2 (TEST RESULT)
+
+0 abort-class sites on **both** `9b232f0` (27 cells, call map 2396) and `33d5183` (2390). The +6 call-map delta matches the fixture-only cell-10 growth.
+
+## R5 — Docs & disclosures adjudication
+
+- `GLM_5_3.md` +26 lines: CURRENT PHASE entry + §M8-C7 record. Record claims cross-checked: notebook blob/md5 exact; "4 anchored patches, all inside the §10 span" exact; "2× registry pin / 2× explicit /tmp missing / zero derived missing" exact; §7.5 5/5 and m002 0-site re-proven.
+- Disclosures **(i)–(v) all ACCEPTABLE**: (i) key-name (`fallback_path` vs the directive's "jp_fallback") — the fixtures read the real key; line cite L566 exact; (ii) Owner-ambient provenance unobservable from the sandbox — honest boundary; the behavioral class (Config F) is proven and my Arm B independently reproduces it; (iii) minimal-fix spec (Test 10 real arm + Test 11 canvas_a stay ambient) — matches the pushed code and is the correct reading of the directive; on a broken ambient they fail loudly (my Arm D), never silently; (iv) Phase C verify suite superseded on the branch — reasonable; the Phase C instrument left byte-identical as the historical record; (v) main-font side env-owned by design — correct (routing must be verified against the production main font).
+- RF-9: build driver + 4-patch manifest + verify suite + precommit committed **in** the RF-10 commit (AST-clean). Non-blocking: the forensic repro script (`m008_rf10_forensic.py`) remains workspace-external — same class as prior observations; the behavioral claim is independently re-proven here (Arm B), so it does not affect the verdict.
+
+## Constraints
+
+"No source changes (test fixtures only)" proven mechanically (R1.2 + R2.4). The 6 hard constraints transfer: render-relevant surfaces byte-identical to `b848c75` (R1.1), whose bytes carry my Phase D E1–E9 approval — conjunct shaping, danda fix, V-3 vertical layout, M004-B1 calibration, reading order, Batch-1 darkness all unaffected. No amend: `b848c75` and `33d5183` both remain citable and byte-unchanged.
+
+## VERDICT
+
+**RF-10 CLOSED.** 42 checks + 2 simulator runs ALL PASS across R1–R4; zero required fixes. The fixture defect is proven (exact forensic reproduction, Arm B), the fix is proven effective and ambient-independent (Arms C/D), and no non-fixture surface changed (R1/R2). The Phase D approval of `b848c75` remains valid for every non-fixture surface.
+
+**Merge gate (Owner live acceptance, unchanged in substance):** Colab download of the `9b232f0` notebook → Run All → expect cell 4 10/10 (JP sha ✅ line), cell 10 **12/12**, cells 11/12 **5/5**, zero ❌ → render S007 R1+R2 and visually confirm no tofu (danda `।` + the R2 quote `"`). Green ⇒ merge authorization.
+
+*Report-only NEW commit on `mangabd-008-b1` (parent `9b232f0`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_rf10_flash_e1.py` (19), `m008_rf10_flash_e2.py` (12), `m008_rf10_flash_e3.py` (11), `m002_sim_v2.py` (reused; both refs). Env: py3.12, PIL 11.3.0+raqm, fontTools 4.62.1; main fonts = notofonts hinted release extracts from the Phase D harness; JP font = the exact pushed vendored blob (sha-verified); no source files modified.*
+
+---
+
+# MANGABD-008 — RF-11 DELTA CHECK (GLM-5.3-Flash, independent reviewer, 2026-10-26)
+
+**Scope:** commit `bb3b1df` on `mangabd-008-b1` (RF-11: graceful skip + auto-download for the vendored font), parent `b627686` (my RF-10 delta report — docs-only, its notebook == `9b232f0`'s). Pushed bytes only; no source changes by me; no amend/merge; report-only NEW commit on the branch. Method: independent instruments (repo-external), all claims adjudicated on the pushed bytes.
+
+**Topology (FACT):** `bb3b1df^` == `b627686` == merge-base (single fresh commit, no lineage caveat); `origin/main` unchanged @ `73ca565`. Delta exactly 6 files: notebook M (+236/−37), `agents/GLM_5_3.md` M (+25/−0), 4 NEW instruments (`m008_b1_rf11_build.py` 604 L, `m008_b1_rf11_patches.json` 6 entries, `m008_b1_rf11_precommit.py` 243 L, `m008_b1_rf11_verify.py` 662 L). `agents/GLM_5_3_FLASH.md` untouched by RF-11; prior Phase C/RF-10 instruments untouched (not in the diff). Notebook blob claims consistent (base nb sha `ec2c7e4b…` == `9b232f0`'s; tip `e70061fe…`).
+
+## R1 — Scope & structure (23/23 PASS; scripts/m008_rf11_flash_r1.py)
+
+- **R1.1** Changed cells exactly **{4, 10}**; both deltas confined to the `source` key; other **25 cells byte-identical** to the RF-10-approved state.
+- **R1.2 Cell-10 fixtures-only proof (mechanical):** 11 diff hunks classified into exactly the declared regions — 1 helper insert (`tests_skipped = 0` + `run_test_skip` def, right after `run_test`, inside §10), 4 Test-9 hunks, 3 Test-12 hunks, 2 final-summary hunks; **sections 1–9 byte-identical**; **Tests 10/11 blocks byte-identical**; the raise-gate line + EOF tail byte-identical; `all_tests_passed = all(tests)` unchanged (skips never fail the gate).
+- **R1.3 Final-summary changes = exactly the 2 declared hunks:** the inserted `⚠️ Nটি test skipped` line inside the SUCCESS branch, and `tests_total=len(tests) + tests_skipped, tests_skipped=tests_skipped` log_event extras.
+- **R1.4 Cell-4 loader-only proof:** diff confined to the §8.5 span (banner → config-set line; 2 hunks); pre-§8.5 span byte-identical; trailing 240 lines byte-identical; the `MANGABD_ASSETS` registry block byte-identical (737 B) — registry contract intact.
+- **R1.5** AST 27/27 (warnings-as-errors) both refs; only create-mode-100644 summaries (4 new files); exactly 6 files; secret scan clean (1,808 added lines, credential-shape patterns); vendored font untouched (9,589,900 B, sha `c2f3b4d4…50fc68f`).
+
+## R2 — Manifest re-derivation + pattern census (22/22 PASS; scripts/m008_rf11_flash_r2.py)
+
+- **R2.1** The 6 `{cell,name,old,new}` entries each match **exactly once** (2× cell 4, 4× cell 10); `base + exactly these patches` == tip cell-4 AND cell-10 **byte-exact**.
+- **R2.2 Download discipline:** exactly 2 JP URLs (`FONT_FALLBACK_URLS`), both https google/fonts family (github raw + jsdelivr mirror), both carrying the `notosansjp%5Bwght%5D` variable path; `.partial` staged → `_sha256_of_file(_partial) == FONT_FALLBACK_SHA256` → `os.replace` (verify strictly BEFORE replace, textual order proven); sha-mismatch print + `.partial.unlink()` cleanup (≥2 sites); no direct urlopen-to-target write (only `.partial` writes).
+- **R2.3 Never-raises shape:** `_download_vendored_font` contains no raise; `_ensure_vendored_font`'s raise sites all inside try/except; total-failure path = loud Bengali diagnostic + `log_event("JP fallback font self-heal failed…", WARN)` + `return None`.
+- **R2.4 Skip discipline:** `run_test_skip` does NOT touch the `tests` ledger; prints `⚪ SKIP` (no ❌); shared flag read once before Test 9 with ONE loud Bengali diagnostic (`Tests 9/12 skipped।` ×1); `if not _vendored_jp_present:` ×3 = 1 flag-diagnostic block + 2 skip arms (Tests 9/12 only — Tests 10/11 untouched); unexpected exceptions in 9/12 still FAIL loudly (run_test-False except arms preserved).
+- **R2.5 Imports resolve:** `urllib`/`os`/`shutil` imported pre-§8.5 (unchanged span); `hashlib` imported inside §8.5 before `_sha256_of_file`. `FONT_FALLBACK_SHA256` == the vendored blob sha.
+
+## R3 — Runtime matrix (24/24 PASS; scripts/m008_rf11_flash_r3.py)
+
+Span-exec of tip §8.5 + verbatim cell-10 exec per arm:
+
+| Arm | Setup | Result |
+|---|---|---|
+| A | CWD=repo (font present) | §8.5 no-op resolve (no self-heal); registry = real vendored file; cell-10 **12/12, 0 skipped, SUCCESS**; log_event extras `tests_total=12, tests_skipped=0` |
+| B | **Owner-env class POST-fix**: CWD outside repo, offline, ambient = loadable-but-wrong Drive-style bytes | §8.5 self-heal fires → download fails LOUD (both URLs) → WARN + registry keeps relative path, **never raises**; cell-10: Tests 9/12 **⚪ SKIP** + Tests 10/11 pass = **10 passed + 2 skipped = 12 total, SUCCESS, ZERO ❌, no gate raise**; ONE Bengali diagnostic; log_event extras `tests_passed=10, tests_total=12, tests_skipped=2` |
+| C | **BASE (`9b232f0`) cell-10 under B's exact namespace** | Tests 9/12 **❌❌** (the RF-10 `Vendored font missing` asserts fire ×2) = 10/12 + gate RuntimeError — **the delta proof, exact** |
+| D | REAL download in-suite: empty fonts dir, live network | primary URL fires → `.partial` → sha256-verify == pin → `os.replace`; `.partial` cleaned; registry resolves the healed copy; cell-10 post-download **12/12** |
+| E | wrong-bytes target pre-seeded (Bengali bytes @ fonts-dir `NotoSansJP.ttf`) + live network | healed **in place** (final sha == pin, 9,589,900 B) + the `replace হলো` info message |
+| F | wrong-bytes DOWNLOAD (urllib stub serves Bengali bytes) | both URLs sha-**REJECTED** (×2 `sha256 মেলে না`), `.partial` cleaned, final path **NEVER created**, loud + WARN + never raises |
+| G | strict fresh Run-All, everything missing + offline (ambient == registry == missing) | Tests 9/12 SKIP but Tests 10/11 **FAIL LOUD** (D-4 + D-3 named ❌s) → `NEEDS FIX` + gate raise — **skip ≠ silence preserved** |
+| H | happy chains | cells 10+11 and 10+12: cell-10 12/12 + **§7.5 5/5 in both mirrors** (warnings-as-errors) |
+
+- **R3.1 LIVE URL PROOF (TEST RESULT):** both `FONT_FALLBACK_URLS` live-fetched OUTSIDE the suite before the matrix: github-primary AND jsdelivr each serve **9,589,900 B, sha256 `c2f3b4d4…50fc68f`** — the exact vendored pin. Arm D exercised the primary URL end-to-end in-suite.
+- **R3.2** The directive's verification targets are all met: font present → 12/12 (A/D); font missing + no network → 10 passed + 2 skipped, zero ❌ (B); BASE under the same env still reproduces ❌❌ 10/12 (C).
+
+## R4 — m002_sim_v2 (TEST RESULT)
+
+0 abort-class sites on **both** `bb3b1df` (27 cells, call map 2402) and `b627686` (2396); +6 delta == the new test/loader code growth.
+
+## R5 — Docs & disclosures adjudication
+
+- `GLM_5_3.md` +25 lines: CURRENT PHASE entry + §M8-C8 record. Record claims cross-checked: 6-patch scope {4,10} exact; fixtures-only + loader-only byte proofs reproduced; URL set + `.partial` discipline + never-raises reproduced; battery matrix signatures reproduced (12/12; 10+2 skip SUCCESS zero ❌; BASE ❌❌ 10/12; all-missing NEEDS FIX); §7.5 5/5; m002 0/0.
+- Disclosures **(i)–(vii) all ACCEPTABLE**: (i) bounded repo search (CWD + parents[:3] + 2 Colab probes) — download branch covers the rest (my arm D proves it); (ii) in-place overwrite — my arm E proves the heal; (iii) the env-class boundary (ambient loadable vs missing) — my arms B/G prove both sides; (iv) bounded search + same-dir `os.replace` — code-verified; (v) timeout=90 socket-level honesty + `.partial` staging — verified (see observation O2 for the no-total-size-cap note); (vi) skip visibility via log_event extras — my B.7 proves it; (vii) prior suites superseded, instruments byte-identical — consistent with the 6-file diff.
+- RF-9: build + 6-patch manifest + verify + precommit committed **in** the RF-11 commit (AST-clean).
+
+## Constraints
+
+"Test fixtures + cell-4 loader only" proven mechanically (R1.2/R1.4 + R2.1). The 6 hard constraints transfer: cell-10 render code (sections 1–9) and cell-4's non-§8.5 surface (incl. the registry) are byte-identical to the Phase D-approved `b848c75` bytes (via the `9b232f0`/`b627686` notebook-blob equality chain). No amend: `b848c75`, `33d5183`, `9b232f0`, `b627686` all byte-unchanged.
+
+## Non-blocking observations
+
+- **O1:** "10 passed + 2 skipped = 12 total" is the fold semantics (log_event extras `tests_passed/tests_total/tests_skipped` + the Bengali ⚠️ skip line), not a literal printed string — substantively equivalent; the ledger math is exactly as prescribed.
+- **O2:** the download loop trusts the HTTP response to EOF and has no total-size cap (`urlopen(timeout=90)` is socket-level, disclosed (v)); a pathological never-EOF server would grow `.partial` unboundedly within one attempt. Risk surface: one-shot 9.6 MB fetch at cell-4 init from two pinned trusted origins; the sha gate keeps the final path safe. A `st_size > FONT_FALLBACK_SIZE + margin → abort attempt` guard would close it; not required for this verdict.
+- **O3 (harness note, mine):** span-exec of §8.5 requires the `urllib` name in the exec namespace — the committed full-cell suite is not exposed to this; my first matrix run degraded loudly (never raised) exactly as the loader is designed to, which is itself corroborating evidence for the failure path.
+
+## VERDICT
+
+**RF-11 CLOSED.** 69 checks + 2 simulator runs + live dual-URL sha probes ALL PASS; zero required fixes. The delta is exactly the prescribed fixtures + loader change; the graceful-skip contract, the self-heal (repo-copy → sha-pinned download with `.partial` discipline), the in-place heal, the rejection path, and the skip≠silence boundary are all runtime-proven on the pushed bytes; the delta proof (BASE reproducing the Owner's ❌❌ 10/12 under the post-fix env) is exact.
+
+**Merge gate (Owner live acceptance):** download the `bb3b1df` notebook → Colab Run All → cell 4 battery 10/10 with the JP sha ✅ line (auto-download visible when the font was absent) → cell 10 **12/12** (or 10 passed + 2 ⚪ skipped with the Bengali fix note, zero ❌, only if the download is impossible) → cells 11/12 **5/5** → render S007 R1+R2 and visually confirm no tofu (danda `।` + ASCII `"`). Green ⇒ merge authorization.
+
+*Report-only NEW commit on `mangabd-008-b1` (parent `bb3b1df`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_rf11_flash_r1.py` (23), `m008_rf11_flash_r2.py` (22), `m008_rf11_flash_r3.py` (24), `m002_sim_v2.py` (reused; both refs). Env: py3.12, PIL 11.3.0+raqm, fontTools 4.62.1; live network verified both google/fonts URLs; no source files modified.*
+
+---
+
+# MANGABD-008 — RF-12 DELTA CHECK (independent reviewer: GLM-5.3-Flash)
+
+**Scope.** Branch `mangabd-008-b1` @ `5a84994`, parent `48efb5c` (my RF-11 DELTA CHECK report). Verified on pushed bytes only; no source changes; no amend/merge. FACT: `5a84994^ == 48efb5c == merge-base` (single fresh commit); origin/main unchanged @ `73ca565`. Topology note verified: `48efb5c`'s notebook blob == `bb3b1df`'s (`c0181633`) — the RF-11 report is docs-only, so the re-parent is byte-safe and every `bb3b1df`-based proof carries. Tip notebook blob `4a695200`, 1,127,951 B (+1,625 vs base). Delta exactly 6 files: notebook M (+25/−4), `GLM_5_3.md` M (+26), 4 NEW RF-12 instruments (build 321 L / patches 3 entries / precommit 291 L / verify 589 L). `GLM_5_3_FLASH.md` and the RF-10/RF-11 instruments untouched by the delta.
+
+## R1 — Scope & structure (30/30 PASS, `m008_rf12_flash_r1.py`)
+
+- Changed cells exactly **{10}**; other 26 byte-identical; cell-10 delta confined to the `source` key; top-level notebook fields identical.
+- Cell-10 diff = exactly **6 hunks classified into the declared regions**: Test9-body ×3, post-T10-clear ×1 (pure insert: blank + 2 Bengali comment lines + `_FB_CACHE.clear()  # Clear pollution from D-4 test`, nothing deleted), Test12-body ×2. Prefix before the first hunk (§1–§9 + Tests 1–8 + Test 9 head incl. the skip-flag gating), Test 9 tail + **Test 10's entire block**, Test 11 block + Test 12 head, and the suffix after the last hunk (Test 12 tail + final-status + raise-gate + EOF) all **byte-identical**. `all_tests_passed = all(tests)` and the log_event extras (`tests_total=len(tests)+tests_skipped`) unchanged.
+- `_FB_CACHE.clear()` battery count **9 → 10**; RF-11 skip machinery counts unchanged (`run_test_skip` def + 2 arms + shared fixture + `⚪ SKIP`); AST **27/27 both refs** warnings-as-errors; RF-12 instruments AST-clean (RF-9 lesson); summary files create-mode 100644 only; secret scan clean (1,272 added lines, credential-shape regexes); vendored font untouched (9,589,900 B, sha `c2f3b4d4…50fc68f`).
+- Manifest re-derivation: 3 entries, all cell 10, each `old` unique in the evolving base, **base + 3 patches == tip cell-10 BYTE-EXACT** (46,783 → 47,825 B).
+
+## R2 — Static pattern verification (21/21 PASS, `m008_rf12_flash_r2.py`)
+
+- **Test 9 body**: order clear → registry re-pin (`MANGABD_CONFIG["rendering"]["font_fallback"] = str(real_jp_path)`, where `real_jp_path = _vendored_jp = MANGABD_ASSETS["fonts"]["fallback_path"]`) → **DIRECT** `_m9_probe = ImageFont.truetype(<pinned config>, 24)`; only the pin statement sits between the clear and the probe; probe folded into the ok-chain as first conjunct (`_m9_probe is not None and _main_font_ok("ক") is True and …`); `finally` restore + clear preserved.
+- **Test 12 body**: same pattern (`_m12_probe`), `fb_solid = (_m12_probe is not None and _m8_hollow(get_font_fb(48), "H") is False)` — the `get_font_fb(48)` wght-600 hollow probe kept; `main_hollow` + finally + verdict unchanged.
+- **Post-T10 clear**: exactly one, module level, between Test 10's except and Test 11's header, RF-12 comment above.
+- **Skip-first discipline**: `if not _vendored_jp_present:` precedes `else:` → load in BOTH tests; the fixture derives from the RF-10 registry pin; loud-failure naming unchanged (`str(exc)[:160]` ×13 == base ×13, incl. both Tests 9/12 except-arms); RF-10 `MISSING-test-font.ttf` fixtures ×2 unchanged; `ImageFont.truetype(` delta == **+2** (only the two probes); `get_font_fb` def (cached-None arm) byte-identical.
+
+## R3 — Runtime matrix (26/26 PASS, `m008_rf12_flash_r3.py`; cell-10 verbatim/segmented exec per arm, Run-All namespace)
+
+- **A happy**: 12/12, 0 skip, SUCCESS, extras 12/0.
+- **B pre-pollution immunity**: seg-exec through the Test 9 header → inject `None` at ALL 5 discovered `get_font_fb` keys {(24,F),(31,F),(34,F),(38,F),(48,F)} → Tests 9–12 still **12/12** (the loads no longer trust pre-existing cache state). Observation: BASE under the same injection also 12/12 (its own finally-clears handle the sequential model — exactly as disclosed).
+- **C post-T10 injection**: injection right after Test 10's block → tip's next line (the RF-12 clear) wipes it → **12/12, final cache provably None-free**; BASE seg2 (starts at Test 11, no clear) → Test 11 ❌ + gate raise (`…TTFT`); **tip with only that one line removed → same failure** — the clear line is **load-bearing** against non-sequential/stale-session states, not decorative.
+- **D RF-11 Owner-env class preserved**: registry = missing-relative + ambient = wrong-bytes-loadable → Tests 9/12 ⚪ SKIP + 10/11 pass = **10 passed + 2 skipped = 12, SUCCESS, ZERO ❌**, both SKIP lines + exactly ONE Bengali diagnostic, extras 10/12/2.
+- **E both-missing regression**: 9/12 skip + 10/11 FAIL LOUD → NEEDS FIX + gate raise (skip ≠ silence, ledger 8/10).
+- **F garbage-at-vendored** (registry = garbage bytes, ambient = real loadable): **TIP: Tests 9/12 FAIL LOUD with the exception named in the ❌ details** (PIL `OSError: unknown file format`, probed; sig `…FTTF`; zero silent passes; gate raises); **BASE: OBSERVED 12/12 FALSE-PASS** — SUCCESS + zero ❌ while the cmap-coverage WARN names the garbage path (Test 9 via optimistic routing after fontTools rejects the garbage; Test 12 via the failed-`get_font_fb` → PIL-default-font hollow quirk) — the false-pass defect RF-12 removes, reproduced in-suite.
+- **H pollution-cannot-cause-false-pass**: tip with REAL font objects pre-cached at all discovered keys + garbage at the registry path → Tests 9/12 **still FAIL LOUD** (the direct probes ignore the cache); BASE same setup → 12/12 FALSE-PASS via the polluted cache. The fix kills both pollution directions.
+- **G chains**: cells 10+11 and 10+12 → 12/12 + §7.5 glyph-coverage **5/5 both mirrors**; cells 11/12 sources byte-identical to base.
+
+## R4 — Simulator
+
+`m002_sim_v2` = **0 abort-class sites on both** `5a84994` (27 cells, call map 2405) and `48efb5c` (2402); Δ+3 == the three new statements.
+
+## R5 — Docs & disclosures adjudication
+
+- `GLM_5_3.md` +26 lines: CURRENT PHASE entry + §M8-C9 record (+ the mid-flight Gate-update paragraph quoting my RF-11 verdict — checked accurate, incl. R1 23/23 / R2 22/22 / R3 24/24 / R4 0/0 and observations O1–O3).
+- Disclosures **(i)–(vi) all ACCEPTABLE**: (i) "inside functions" → inside the Tests 9/12 else-branch bodies — matches the pushed bytes and the load-bearing reading; (ii) the Owner's exact pollution transmission path not reproducible from the sandbox, proven properties = immunity + loud-failure conversion — my B2 arm independently corroborates (BASE sequential pre-pollution also survives via the pre-existing finally-clears) and my C2/C5 arms go further, demonstrating the post-T10 clear's real value beyond the text-book sequential model; (iii) garbage-at-vendored fails LOUD rather than skipping — aligned with the directive's own false-pass requirement (skip stays exists()-gated; Owner may re-rule later); (iv) probes at 24 while Test 12 keeps `get_font_fb(48)` — verdict semantics byte-preserved (verified); (v) post-T10 clear as belt-and-braces — honest, and behaviorally demonstrated by my contrast arms; (vi) prior suites superseded, instruments byte-identical — consistent with the 6-file diff.
+- Record claims cross-checked: 3-patch scope {10} exact; fixtures-only + block-level byte proofs reproduced; pattern checks reproduced; battery matrix signatures reproduced (A–G incl. the BASE 12/12 FALSE-PASS); §7.5 5/5; m002 0/0. The Owner live-test narrative (@ `bb3b1df`, 10/12 with healthy-env diagnostics) is Owner-reported — UNKNOWABLE from this sandbox, but its testable consequences (pollution immunity + false-pass closure) are proven here.
+
+## Constraints
+
+"Cell 10 ONLY" proven mechanically (R1). All 6 hard constraints transfer: the render code paths (cell-10 §1–§9; cells 11/12 whole) are byte-identical to the Phase D-approved `b848c75` bytes via the blob-equality chain (`9b232f0`→`b627686`→`bb3b1df`→`48efb5c`→`5a84994` non-fixture spans). No amend: `b848c75`, `33d5183`, `9b232f0`, `b627686`, `bb3b1df`, `48efb5c` all citable and byte-unchanged.
+
+## Non-blocking observations
+
+- **O1:** Test 11's D-3 verdict can still be satisfied by a *cached good object* when the vendored path itself is broken (my H arm: with real objects pre-cached, Test 11 passes on tip while Tests 9/12 fail loudly) — Test 11 was not in this directive's scope, and in a fresh Run-All the cache is empty at that point; noted for any future fixture-hardening pass.
+- **O2:** the discovered `get_font_fb` key set within Tests 9–12 is {(24,F),(31,F),(34,F),(38,F),(48,F)} — `(48,F)` is set by no battery test other than Test 12's own explicit probe (consistent with the §M8-C9 diagnosis note); recorded as measured context.
+- **O3 (harness note, mine):** segmented-exec arms must capture the gate-raise output explicitly; my first matrix run discarded the buffered ❌ lines on abort (instrument-side only; no bearing on the notebook).
+
+## VERDICT
+
+**RF-12 CLOSED.** 77 checks + 2 simulator runs ALL PASS; zero required fixes. The delta is exactly the prescribed 3-patch fixture change; the cache-immunity (pre-pollution and post-T10 injection), the loud-failure conversion (garbage-at-vendored now a named failure, with the BASE false-pass reproduced in-suite as the honest delta), the RF-11 skip protocol preservation, and the §7.5 invariants are all runtime-proven on the pushed bytes.
+
+**Merge gate (Owner live acceptance):** download the `5a84994` notebook → Colab Run All → cell 4 auto-download/sha line as applicable → cell 10 **12/12, zero ❌** → cells 11/12 **5/5** → render S007 R1+R2 and visually confirm no tofu (danda `।` + ASCII `"`). Green ⇒ merge authorization.
+
+*Report-only NEW commit on `mangabd-008-b1` (parent `48efb5c`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_rf12_flash_r1.py` (30), `m008_rf12_flash_r2.py` (21), `m008_rf12_flash_r3.py` (26), `m002_sim_v2.py` (reused; both refs). Env: py3.12, PIL 11.3.0+raqm, fontTools 4.62.1; no source files modified.*
+
+---
+
+# MANGABD-008 — INDEPENDENT ROOT-CAUSE REPRO (CELL 10) — GLM-5.3-Flash, Owner-directed
+
+**Directive:** do NOT trust GLM's RF-12 theory; Owner log proves Test 9 fails BEFORE Test 10 runs → T10 cache pollution impossible as stated. Execute cell 10 verbatim in an Owner-like env; at the first failing T9 assertion capture config `font_fallback`, `_FONT_COVERAGE_CACHE`, `_FONT_ROUTE_WARNED`, `_FB_CACHE`, `get_font_fb` return; identify the true polluter chronologically; rule on hard-blocking diagnostics.
+
+**Method (TEST RESULT):** `5a84994` cell 10 executed **verbatim** (byte-faithful `git show`) in a fresh kernel namespace after verbatim exec of cells 1–4 (config/logger/hotfix/session/fonts+registry = the full font-state establishment; documented deviations: cell 0's heavy ML pip stack and torch-dependent cells 5–9 not exec'd — identifier-map proves they touch no font state; cell 4's torch-only ML import self-test gate raise tolerated AFTER its font/config/registry contract completed; `/content`→sandbox remap + PIL/cv2 C-layer path shims as Colab-layout emulation). Ambient-instrument arms: H fresh / RS re-run / B0 all-caches-max-poisoned / G2 non-Latin main font.
+
+**The Owner's exact live signature reproduces in arm H with ZERO mutations (TEST RESULT):** 10/12 — Test 9 (D-1/D-2) ❌ + Test 12 (D-2) ❌, T1–8/T10/T11 ✅, gate raise. Captured at the first T9 fail: `font_fallback` = registry path (correct); `_FONT_COVERAGE_CACHE` = {Bengali main: cov[444], vendored JP: cov[16732]}; `_FONT_ROUTE_WARNED` = {}; **`_FB_CACHE` = {} (EMPTY)**; `get_font_fb(24)` = FreeTypeFont (JP side healthy). Trace chronology: `CALL _main_font_ok('a') from L1465` → cmap hit → `RET True` → `is False` → FAIL. First failing conjunct: **`_main_font_ok("a") is False`** (ক/। returned True before it). T12 fails at `main_hollow`: "H" renders SOLID from the main font.
+
+**True polluter (chronologically first — FACT):** **cell 4 §8's own font download**, long before cell 10: it writes a modern Noto Sans Bengali build into `font_regular` whose cmap **covers basic Latin**. Verified by fontTools on the served bytes: notofonts/bengali hinted static = n=444, google/fonts variable `[wdth,wght]` = n=444, both with `a`/`"`/`—`/`H`/`g` present, `こ` absent. The D-2 fixture assumption ("Bengali main font does NOT cover ASCII → ASCII must route to the JP fallback") is **false for every build cell 4 can provision** — so T9 can never pass in a cell-4-provisioned env, and T12's `main_hollow` ("H" must be a hollow .notdef box) can never pass either. The routing itself is CORRECT (drawing a covered ASCII glyph with the main font is not tofu) — **the fixtures, not the pipeline, are wrong.**
+
+**The "JP fallback font unavailable" line in the Owner's output is a red herring (TEST RESULT):** it is Test 10's D-4 **by-design** degradation emission — the `print` is stdout-captured by the test, but its `log_event(..., ERROR)` goes through a `logging.StreamHandler` bound to **stderr**, which `redirect_stdout` cannot capture — visible in **every** run including healthy ones (proven: stderr-leak=True, stdout-has-it=False in all 6 arms). It is not evidence of fallback unavailability.
+
+**RF-12 theory verdict (FACT, mechanically + empirically):** refuted for Test 9. Cell 10 rebinds `_FB_CACHE`/`_FONT_COVERAGE_CACHE`/`_FONT_ROUTE_WARNED` at module level on every execution (L176/224/225/308) — cross-run survival is impossible; same-run, T10 executes after T9; and TIP T9's ok-chain never reads `_FB_CACHE` at all. Arm RS (re-run) and arm B0 (all caches pre-seeded with poison) both reproduce the identical 10/12 with `_FB_CACHE={}` at fail. Arm G2 (main font → non-Latin n=134 build) → **12/12 SUCCESS on identical bytes** — causality proven in both directions. **Self-correction:** my prior gates' happy arms passed 12/12 only because my harnesses provisioned `font_regular` themselves with a non-Latin build (m008_out/NB-Regular.ttf, n=134) instead of running cell 4 verbatim — masking the ambient dependency; c072dc5's delta-level proofs stand (the 3-patch change is what it claims; immunity/loud-failure properties real), but the root-cause premise is disproven and the live failure persists post-RF-12 → **RF-12 fix is real but ineffective for the Owner's failure; FIX REQUIRED at fixture level.**
+
+**Ruling — should a diagnostic self-test hard-block the pipeline?** **No** for env-fixture diagnostics (FACT-grounded recommendation): cell 10's `raise` (L1653–54) blocked cells 11+ — including the entire production render path — on an ambient fixture mismatch while the pipeline itself rendered correctly (T1–8/T10/T11 all pass). Hard-block is justified only for data-integrity invariants (the m002 abort class: corruption/resume hazards), not for meta-tests whose verdict depends on ambient font builds. Recommend: loud report by default (ledger + NEEDS FIX + log_event ERROR), raise only behind an explicit strict flag (e.g., `MANGABD_SELFTEST_STRICT=1`) for gate/CI contexts; and fix the D-4 stderr leak regardless — it actively misdiagnosed this incident. Fix levers for T9/T12 (Owner's choice): (1, recommended) assert routing-consistency + non-tofu rendering instead of "must route to fallback", choosing T12's hollow probe from a codepoint cmap-provably absent from BOTH fonts at runtime; (2) skip-with-diagnostic when the main font covers ASCII (D-2 vacuous there); (3) pin non-Latin builds in cell 4 (fragile — not recommended). The RF-12 hardening may stay as harmless belt-and-braces.
+
+*Report-only NEW commit; `agents/GLM_5_3_FLASH.md` only; no source/sample changes; no amend/merge. Instruments repo-external: `scripts/m008_rf12_repro_extract.py`, `scripts/m008_rf12_flash_repro.py` (arms H/RS/B0/G1/G2), artifacts under `rf12_repro/<arm>/` (report.json, trace.log, cell10_stdout/stderr). Env: py3.12, PIL 11.3.0+raqm, fontTools 4.62.1; no source files modified.*
+
+---
+
+# MANGABD-008 — RF-13 DELTA CHECK — GLM-5.3-Flash (independent reviewer)
+
+**Directive:** verify GLM-5.3's RF-13 (tofu-vs-shape re-scope + gate decoupling) on pushed bytes @ `a77f187`, parent `c072dc5` (my RF-12 DELTA CHECK report). Changed cells {4,10,11,12} (0-based; 10 anchored patches); other 23 byte-identical. No source changes by me; no amend/merge; NEW report-only commit on the branch. Discipline: every conclusion tagged FACT / HYPOTHESIS / ASSUMPTION / TEST RESULT / UNKNOWN.
+
+**Topology (FACT):** `a77f187^ == c072dc5 == merge-base` — single fresh commit, fast-forward over my RF-12 report; origin/main untouched. **Disclosure (FACT):** my Owner-directed ROOT-CAUSE REPRO report (commit `d651344`, GLM_5_3_FLASH.md-only, local-only) was **never pushed** and is a **sibling** of `a77f187`, not an ancestor — the fetch line `c072dc5..a77f187` proves origin was at `c072dc5`. Per the no-merge/no-force discipline, that repro section is **re-included in this commit's FLASH.md** (content below the RF-12 report), so the pushed branch carries it; `d651344` itself stays an unpushed local object.
+
+**R1 static scope — 17/17 PASS** (`scripts/m008_rf13_flash_r1.py`): notebook blob `f3915472`→`451c7cc3` (1,127,951→1,142,513 B); changed cells exactly {4,10,11,12} (0-based — the directive's convention, corroborated by cell-10 old size == RF-12 tip's 47,825 B); 23 byte-identical; per-changed-cell non-source fields + top-level notebook fields identical; AST 27/27 both refs warnings-as-errors; secret scan clean on credential shapes (6 regex hits = prose + the precommit scanner's own definitions, manual-reviewed); vendored font untouched (9,589,900 B, sha `c2f3b4d4..50fc68f`); 8 new files all 100644, no deletes/renames/mode changes; FLASH.md untouched by RF-13.
+
+**R2 anchored-patch re-derivation + static semantics — 42/42 PASS** (`scripts/m008_rf13_flash_r2.py`): manifest = exactly 10 patches, distribution {4:2, 10:6, 11:1, 12:1}; every old-string unique in its base cell; **base+patches == tip BYTE-EXACT for all four cells; full 27-cell rebuilt list == tip**. Semantics proven on the pushed bytes: `tests_diagnosed` counter + `run_test_diag` helper never touch the ledger (7 usage sites = init/helper/2 calls/summary/log_event); **gate = `if not all_tests_passed: raise RuntimeError(...)` — ledger-only, `tests_diagnosed` absent from the raise condition**; Test 9 HARD verdict `ok = _m9_probe is not None and not _m9_tofu` with tofu = "missing from BOTH cmaps" over the 6 samples (ক । a " — こ) and fail details naming `U+0995, U+0964`; Test 12 HARD verdict = `fb_solid` alone (solid pixel-probe on **H AND こ**; `main_hollow` removed from the verdict) with the main-side .notdef calibration demoted to 3-outcome DIAG; RF-12 clear/pin/DIRECT-probe patterns byte-preserved in both bodies; RF-11 skip machinery + RF-10 MISSING fixtures intact (2 fixtures + 1 new hygiene pop); hygiene tail pops `_FONT_COVERAGE_CACHE["/tmp/MISSING-test-font.ttf"]` + `_FONT_ROUTE_WARNED["fb_load"]`; cells 11/12 §7.5 D-2 re-scoped byte-identically (`_m8_cov_has`: glyph in ≥1 font; degraded-cmap → optimistic True) with the old "route fallback" assertion gone; cell 4 §8.6 never-raises (outer except), requires ক/। in cmap, warns on Latin coverage, registry gains `regular_sane`.
+
+**R4 runtime matrix — 8 arms, all PASS** (`scripts/m008_rf13_flash_r4.py`; verbatim cell exec in an Owner-like env: cells 1–4 exec'd (documented deviations: cell 0 pip stack seeded as `MANGABD_ENV`, cell 4's torch-gate raise tolerated post-font-contract, /content remap + PIL/cv2 path shims, zyddnys pre-seed); ambient-only mutations, notebook code untouched):
+
+| arm | env | result |
+|---|---|---|
+| A | Owner-like healthy: cell 4 §8 downloads the **Latin-covering** google/fonts Bengali build (= my RF-12 repro's root-cause env); §8.6 prints `⚠️ font_regular-এ basic Latin আছে`, registry `regular_sane=True` | **12/12 HARD pass, 2 🔶 DIAG (T9 shape + T12 Latin-main), NO gate raise; final 🔶 summary line; chains cells 11/12 = 5/5 + `ℹ️ basic Latin` INFO note, no raise** — the directive's decouple claim PROVEN (TEST RESULT) |
+| B | garbage bytes pre-placed at `font_regular` before cell 4 | §8.6 `❌ Bengali main font load failed` + `regular_sane=False`; cell 10: **Test 1 fails LOUD** (PIL exception), 11/12, gate raises — **no false-pass** (the degraded-cmap T9 pass-with-DIAG cannot mask: Test 1 is load-bearing for a broken main) |
+| C | ambient main → DejaVuSans (no Bengali, no kana) | **T9 HARD FAIL with tofu NAMED** (`দুই font-এই glyph নেই: U+0995, U+0964`), T1 passes (font loads), 11/12, gate raises — the HARD tofu check genuinely fires on real tofu (no false-pass in the render-broken direction) |
+| D | **BASE `c072dc5` cell 10 verbatim, identical env to A** | **the Owner's EXACT live signature**: 10/12 — T9 ❌ D-1/D-2 + T12 ❌ tofu D-2, gate raise, `tests_diagnosed` attribute absent; §7.5 mirrors ❌ `kana + ASCII route fallback (D-2)` — the honest delta: RF-13 fixes the live failure (TEST RESULT) |
+| E | vendored deleted + main pre-seeded + offline (= RF-11 arm-G all-missing class) | 9/12 SKIP via registry check; T10 ✅ (loadable ambient fb), T11 ❌ D-3 (`ink=6507, differ=False` — D-3 needs the fb to cover a glyph main lacks; identical-font ambient is degenerate), 8 passed+2 skipped+2 LOUD fails → NEEDS FIX — **skip ≠ silence preserved** (matches RF-11 R3 arm-G recorded semantics) |
+| E2 | vendored deleted + offline + ambient fb = loadable JP build (= RF-11 arm-B Owner class) | **10 passed + 2 skipped = 12, SUCCESS, ZERO fails, NO gate raise** — RF-11 Owner-class preserved post-RF-13 (TEST RESULT) |
+| F | Latin-less Bengali build (n=134) pre-seeded at `font_regular` before cell 4 | §8.6 `✅ Bengali main font sanity OK (Latin-less…)` + `regular_sane=True`; 12/12 HARD, **0 diagnostics** — the steady-state branch + the no-diag symmetry |
+| G | garbage bytes at the **vendored JP path** post-cell-4 (RF-12 false-pass scenario) | T9 ❌ + T12 ❌ with the PIL exception **named** (`unknown file format`), 8/12, gate raises — **no false-pass on garbage font, RF-12's fix property preserved** |
+
+**R5 simulator:** `m002_sim_v2.py` = **0 abort sites on BOTH `a77f187` and `c072dc5`** (FACT).
+
+**R6 instruments, evidence, docs:**
+- **GLM verify (`m008_b1_rf13_verify.py`) = 34/35 in my shadow workspace** (reproduced GLM's build state: worktree HEAD `c072dc5` + the 10 RF-13 files overlaid uncommitted; probe font Latin-less; sim shimmed to the no-arg cells-extracts convention with an honest output-format translation of the same measurement). The single FAIL = **V1a's `branch --show-current == mangabd-008-b1` precondition** — a build-workflow state assertion that is unsatisfiable in a detached linked worktree (satisfying it would require moving the real branch ref backwards); every substance check passes: V1b scope drift exactly {4,10,11,12}, V1c re-derivation, V1p 0 abort sites, V2 runtime matrix (incl. R-G owner class, garbage-at-vendored, skip class, `_FB_CACHE` pre-pollution), V3 §8.6 harness 5/5, V4 §7.5 mirrors, V5 mutation trace (8 writes = 4 pin/finally-restore pairs; first /tmp/MISSING write is Test 10's fixture AFTER Test 9; post-battery residue popped). GLM's "35/35" is consistent with its build-time state (FACT: the assertion set is state-dependent, not byte-dependent). At the committed tip my own independent R1/R2 re-prove every byte claim (FACT).
+- **GLM precommit (`m008_b1_rf13_precommit.py`) = 17/18 in shadow** (staged set exactly the 10 files): only P0a (branch-name formality, same class as V1a) fails; P0b HEAD==c072dc5, P0c staged set, P1a drift {4,10,11,12}, P2 vendored sha + samples/models/S007/FLASH untouched, P3 docs anchors, P4 secrets, P5 sim-0 — all PASS.
+- **Evidence dump (`m008_b1_rf13_evidence.md`) + repro/dump instruments reviewed**: the 5-env signature matrix (R-G = ONLY class reproducing the Owner's live output), the assert-moment dump (pinned config correct, `_FB_CACHE` {}, both cmaps present, first failing conjunct `_main_font_ok("a") is False → actual True`), the 8-write mutation trace, and the stderr-leak explanation of the "JP fallback font unavailable" line — **all independently corroborated by my prior repro (d651344 content, below) and my R4 arms** (FACT: consistent; the two investigations converged with no contradictions). Class-representative note: GLM's in-sandbox main was FreeSerif (disclosed); my arms used the actual cell-4-downloaded Bengali build and DejaVu — same class verdicts.
+- **GLM_5_3.md +20 reviewed**; CURRENT-PHASE RF-13 entry accurate against the pushed bytes; the mid-flight re-parent onto `c072dc5` disclosed and consistent with the RF-11/RF-12 precedent (and with the topology FACTs above); the quote of my RF-12 verdict checked accurate. Disclosures adjudicated: (i) Owner-font identity unobservable → R-G class handling = correct engineering (ACCEPTABLE); (ii) FreeSerif solid-notdef → T12 substitute-branch DIAG (ACCEPTABLE — all three calibration outcomes handled, proven by my arms A/C); (iii) §7.5 D-5 vertical-fit clip with blank-notdef mains = real but SEPARATE production limitation, print-only, no gate, disclosed out-of-scope (ACCEPTABLE — see O1); (iv) stderr-interleaving explanation derived from the trace (ACCEPTABLE — my repro independently proved the stderr channel); (v) prior suites superseded, instruments byte-identical (ACCEPTABLE).
+
+**Directive-claim adjudication:** 1. Test 9/12 re-scope HARD=tofu/DIAG=shape with tofu chars named — PROVEN (R2 static + R4 A/C/G). 2. Gate blocks ONLY on real render breakage; healthy Latin-main → 12/12 HARD, no raise — PROVEN (R2 gate condition + R4 A vs B/C/G/D). 3. Cell 4 §8.6 names font_regular coverage at startup — PROVEN (R4 A/F/B: three branches observed live). 4. Cells 11/12 §7.5 D-2 tofu-semantics, byte-identical mirrors — PROVEN (R2 + R4 A chains). 5. 35/35 + 18/18 + sim 0 + no garbage false-pass — SUBSTANCE CONFIRMED (shadow 34/35 + 17/18 with the two state formalities analyzed; sim 0/0 my own run; garbage false-pass excluded by R4 B/G + GLM V2-F).
+
+**Non-blocking observations:** **O1** — the D-5 fit artifact GLM disclosed (blank-notdef main: measured drawn=37 vs ref=44 at fit=45) did NOT reproduce with the real Bengali-build main (my arm A: D-5 ✅) — it is class-dependent (blank-notdef mains only), print-only, no gate; if the Owner's Drive font ever lands in that subclass the §7.5 D-5 check will print a ❌ with no gate effect; tracked as a possible future bounded RF. **O2** — T9's degraded-cmap path (fontTools unreadable → `_m9_tofu=None` → HARD pass + degraded DIAG) is a documented design choice whose garbage-main safety rests on Test 1's loud load check — sound as composed (proven arm B), but the coupling is implicit; a one-line comment naming Test 1 as the garbage-main catcher would make the invariant explicit. **O3** — V1a/P0a assert the pre-commit build state (HEAD==c072dc5 + uncommitted files); post-commit they can never pass as written — same supersession pattern as RF-10/11/12; the committed tip is what my R1/R2 byte-prove. **O4** — arm E's T11 ❌ under an identical-font ambient is D-3's own degradation semantics (differ needs a glyph main lacks), not a defect.
+
+**VERDICT: RF-13 CLOSED** — 17/17 + 42/42 + 8/8 runtime arms + 0/0 sim + instrument-substance confirmations; **zero required fixes**; 4 non-blocking observations (O1–O4). The RF-13 re-scope correctly implements the root cause both investigators converged on: the fixtures asserted the default font set's charset SHAPE while rendering was tofu-free; HARD now means render integrity, DIAG (ledger-free, loud) means font-set shape, and the gate can no longer hard-block a correct pipeline while still failing loudly on garbage/tofu.
+
+**Merge gate (Owner live, `a77f187` notebook):** Colab Run All → cell 4 shows the §8.6 line (⚠️ Latin note if their Drive font_regular covers ASCII — likely, per the repro) → cell 10 = 12/12 HARD + 🔶 shape diagnostic lines, NO gate block → cells 11/12 = 5/5 (glyph-coverage, + INFO note) → render S007 R1+R2 → visually confirm no tofu (danda `।` + ASCII `"`) → green ⇒ merge authorization.
+
+*Report-only NEW commit; `agents/GLM_5_3_FLASH.md` only (this RF-13 report + the re-included repro section from local-only `d651344`); no source/sample changes; no amend/merge/force. Reviewer instruments repo-external: `scripts/m008_rf13_flash_{r1,r2,r4}.py` + `m002_sim_v2.py` (reused) + shadow-workspace shim `scripts/fresh_run_sim2.py` (restored after use); artifacts under `scripts/m008_out/rf13_cells/`, `rf13_r4/<arm>/`.*
