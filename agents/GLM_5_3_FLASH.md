@@ -2587,3 +2587,73 @@ Cell-10 executed verbatim from pushed bytes per arm (namespace = Run-All contrac
 **Merge gate (Owner live acceptance, unchanged in substance):** Colab download of the `9b232f0` notebook → Run All → expect cell 4 10/10 (JP sha ✅ line), cell 10 **12/12**, cells 11/12 **5/5**, zero ❌ → render S007 R1+R2 and visually confirm no tofu (danda `।` + the R2 quote `"`). Green ⇒ merge authorization.
 
 *Report-only NEW commit on `mangabd-008-b1` (parent `9b232f0`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_rf10_flash_e1.py` (19), `m008_rf10_flash_e2.py` (12), `m008_rf10_flash_e3.py` (11), `m002_sim_v2.py` (reused; both refs). Env: py3.12, PIL 11.3.0+raqm, fontTools 4.62.1; main fonts = notofonts hinted release extracts from the Phase D harness; JP font = the exact pushed vendored blob (sha-verified); no source files modified.*
+
+---
+
+# MANGABD-008 — RF-11 DELTA CHECK (GLM-5.3-Flash, independent reviewer, 2026-10-26)
+
+**Scope:** commit `bb3b1df` on `mangabd-008-b1` (RF-11: graceful skip + auto-download for the vendored font), parent `b627686` (my RF-10 delta report — docs-only, its notebook == `9b232f0`'s). Pushed bytes only; no source changes by me; no amend/merge; report-only NEW commit on the branch. Method: independent instruments (repo-external), all claims adjudicated on the pushed bytes.
+
+**Topology (FACT):** `bb3b1df^` == `b627686` == merge-base (single fresh commit, no lineage caveat); `origin/main` unchanged @ `73ca565`. Delta exactly 6 files: notebook M (+236/−37), `agents/GLM_5_3.md` M (+25/−0), 4 NEW instruments (`m008_b1_rf11_build.py` 604 L, `m008_b1_rf11_patches.json` 6 entries, `m008_b1_rf11_precommit.py` 243 L, `m008_b1_rf11_verify.py` 662 L). `agents/GLM_5_3_FLASH.md` untouched by RF-11; prior Phase C/RF-10 instruments untouched (not in the diff). Notebook blob claims consistent (base nb sha `ec2c7e4b…` == `9b232f0`'s; tip `e70061fe…`).
+
+## R1 — Scope & structure (23/23 PASS; scripts/m008_rf11_flash_r1.py)
+
+- **R1.1** Changed cells exactly **{4, 10}**; both deltas confined to the `source` key; other **25 cells byte-identical** to the RF-10-approved state.
+- **R1.2 Cell-10 fixtures-only proof (mechanical):** 11 diff hunks classified into exactly the declared regions — 1 helper insert (`tests_skipped = 0` + `run_test_skip` def, right after `run_test`, inside §10), 4 Test-9 hunks, 3 Test-12 hunks, 2 final-summary hunks; **sections 1–9 byte-identical**; **Tests 10/11 blocks byte-identical**; the raise-gate line + EOF tail byte-identical; `all_tests_passed = all(tests)` unchanged (skips never fail the gate).
+- **R1.3 Final-summary changes = exactly the 2 declared hunks:** the inserted `⚠️ Nটি test skipped` line inside the SUCCESS branch, and `tests_total=len(tests) + tests_skipped, tests_skipped=tests_skipped` log_event extras.
+- **R1.4 Cell-4 loader-only proof:** diff confined to the §8.5 span (banner → config-set line; 2 hunks); pre-§8.5 span byte-identical; trailing 240 lines byte-identical; the `MANGABD_ASSETS` registry block byte-identical (737 B) — registry contract intact.
+- **R1.5** AST 27/27 (warnings-as-errors) both refs; only create-mode-100644 summaries (4 new files); exactly 6 files; secret scan clean (1,808 added lines, credential-shape patterns); vendored font untouched (9,589,900 B, sha `c2f3b4d4…50fc68f`).
+
+## R2 — Manifest re-derivation + pattern census (22/22 PASS; scripts/m008_rf11_flash_r2.py)
+
+- **R2.1** The 6 `{cell,name,old,new}` entries each match **exactly once** (2× cell 4, 4× cell 10); `base + exactly these patches` == tip cell-4 AND cell-10 **byte-exact**.
+- **R2.2 Download discipline:** exactly 2 JP URLs (`FONT_FALLBACK_URLS`), both https google/fonts family (github raw + jsdelivr mirror), both carrying the `notosansjp%5Bwght%5D` variable path; `.partial` staged → `_sha256_of_file(_partial) == FONT_FALLBACK_SHA256` → `os.replace` (verify strictly BEFORE replace, textual order proven); sha-mismatch print + `.partial.unlink()` cleanup (≥2 sites); no direct urlopen-to-target write (only `.partial` writes).
+- **R2.3 Never-raises shape:** `_download_vendored_font` contains no raise; `_ensure_vendored_font`'s raise sites all inside try/except; total-failure path = loud Bengali diagnostic + `log_event("JP fallback font self-heal failed…", WARN)` + `return None`.
+- **R2.4 Skip discipline:** `run_test_skip` does NOT touch the `tests` ledger; prints `⚪ SKIP` (no ❌); shared flag read once before Test 9 with ONE loud Bengali diagnostic (`Tests 9/12 skipped।` ×1); `if not _vendored_jp_present:` ×3 = 1 flag-diagnostic block + 2 skip arms (Tests 9/12 only — Tests 10/11 untouched); unexpected exceptions in 9/12 still FAIL loudly (run_test-False except arms preserved).
+- **R2.5 Imports resolve:** `urllib`/`os`/`shutil` imported pre-§8.5 (unchanged span); `hashlib` imported inside §8.5 before `_sha256_of_file`. `FONT_FALLBACK_SHA256` == the vendored blob sha.
+
+## R3 — Runtime matrix (24/24 PASS; scripts/m008_rf11_flash_r3.py)
+
+Span-exec of tip §8.5 + verbatim cell-10 exec per arm:
+
+| Arm | Setup | Result |
+|---|---|---|
+| A | CWD=repo (font present) | §8.5 no-op resolve (no self-heal); registry = real vendored file; cell-10 **12/12, 0 skipped, SUCCESS**; log_event extras `tests_total=12, tests_skipped=0` |
+| B | **Owner-env class POST-fix**: CWD outside repo, offline, ambient = loadable-but-wrong Drive-style bytes | §8.5 self-heal fires → download fails LOUD (both URLs) → WARN + registry keeps relative path, **never raises**; cell-10: Tests 9/12 **⚪ SKIP** + Tests 10/11 pass = **10 passed + 2 skipped = 12 total, SUCCESS, ZERO ❌, no gate raise**; ONE Bengali diagnostic; log_event extras `tests_passed=10, tests_total=12, tests_skipped=2` |
+| C | **BASE (`9b232f0`) cell-10 under B's exact namespace** | Tests 9/12 **❌❌** (the RF-10 `Vendored font missing` asserts fire ×2) = 10/12 + gate RuntimeError — **the delta proof, exact** |
+| D | REAL download in-suite: empty fonts dir, live network | primary URL fires → `.partial` → sha256-verify == pin → `os.replace`; `.partial` cleaned; registry resolves the healed copy; cell-10 post-download **12/12** |
+| E | wrong-bytes target pre-seeded (Bengali bytes @ fonts-dir `NotoSansJP.ttf`) + live network | healed **in place** (final sha == pin, 9,589,900 B) + the `replace হলো` info message |
+| F | wrong-bytes DOWNLOAD (urllib stub serves Bengali bytes) | both URLs sha-**REJECTED** (×2 `sha256 মেলে না`), `.partial` cleaned, final path **NEVER created**, loud + WARN + never raises |
+| G | strict fresh Run-All, everything missing + offline (ambient == registry == missing) | Tests 9/12 SKIP but Tests 10/11 **FAIL LOUD** (D-4 + D-3 named ❌s) → `NEEDS FIX` + gate raise — **skip ≠ silence preserved** |
+| H | happy chains | cells 10+11 and 10+12: cell-10 12/12 + **§7.5 5/5 in both mirrors** (warnings-as-errors) |
+
+- **R3.1 LIVE URL PROOF (TEST RESULT):** both `FONT_FALLBACK_URLS` live-fetched OUTSIDE the suite before the matrix: github-primary AND jsdelivr each serve **9,589,900 B, sha256 `c2f3b4d4…50fc68f`** — the exact vendored pin. Arm D exercised the primary URL end-to-end in-suite.
+- **R3.2** The directive's verification targets are all met: font present → 12/12 (A/D); font missing + no network → 10 passed + 2 skipped, zero ❌ (B); BASE under the same env still reproduces ❌❌ 10/12 (C).
+
+## R4 — m002_sim_v2 (TEST RESULT)
+
+0 abort-class sites on **both** `bb3b1df` (27 cells, call map 2402) and `b627686` (2396); +6 delta == the new test/loader code growth.
+
+## R5 — Docs & disclosures adjudication
+
+- `GLM_5_3.md` +25 lines: CURRENT PHASE entry + §M8-C8 record. Record claims cross-checked: 6-patch scope {4,10} exact; fixtures-only + loader-only byte proofs reproduced; URL set + `.partial` discipline + never-raises reproduced; battery matrix signatures reproduced (12/12; 10+2 skip SUCCESS zero ❌; BASE ❌❌ 10/12; all-missing NEEDS FIX); §7.5 5/5; m002 0/0.
+- Disclosures **(i)–(vii) all ACCEPTABLE**: (i) bounded repo search (CWD + parents[:3] + 2 Colab probes) — download branch covers the rest (my arm D proves it); (ii) in-place overwrite — my arm E proves the heal; (iii) the env-class boundary (ambient loadable vs missing) — my arms B/G prove both sides; (iv) bounded search + same-dir `os.replace` — code-verified; (v) timeout=90 socket-level honesty + `.partial` staging — verified (see observation O2 for the no-total-size-cap note); (vi) skip visibility via log_event extras — my B.7 proves it; (vii) prior suites superseded, instruments byte-identical — consistent with the 6-file diff.
+- RF-9: build + 6-patch manifest + verify + precommit committed **in** the RF-11 commit (AST-clean).
+
+## Constraints
+
+"Test fixtures + cell-4 loader only" proven mechanically (R1.2/R1.4 + R2.1). The 6 hard constraints transfer: cell-10 render code (sections 1–9) and cell-4's non-§8.5 surface (incl. the registry) are byte-identical to the Phase D-approved `b848c75` bytes (via the `9b232f0`/`b627686` notebook-blob equality chain). No amend: `b848c75`, `33d5183`, `9b232f0`, `b627686` all byte-unchanged.
+
+## Non-blocking observations
+
+- **O1:** "10 passed + 2 skipped = 12 total" is the fold semantics (log_event extras `tests_passed/tests_total/tests_skipped` + the Bengali ⚠️ skip line), not a literal printed string — substantively equivalent; the ledger math is exactly as prescribed.
+- **O2:** the download loop trusts the HTTP response to EOF and has no total-size cap (`urlopen(timeout=90)` is socket-level, disclosed (v)); a pathological never-EOF server would grow `.partial` unboundedly within one attempt. Risk surface: one-shot 9.6 MB fetch at cell-4 init from two pinned trusted origins; the sha gate keeps the final path safe. A `st_size > FONT_FALLBACK_SIZE + margin → abort attempt` guard would close it; not required for this verdict.
+- **O3 (harness note, mine):** span-exec of §8.5 requires the `urllib` name in the exec namespace — the committed full-cell suite is not exposed to this; my first matrix run degraded loudly (never raised) exactly as the loader is designed to, which is itself corroborating evidence for the failure path.
+
+## VERDICT
+
+**RF-11 CLOSED.** 69 checks + 2 simulator runs + live dual-URL sha probes ALL PASS; zero required fixes. The delta is exactly the prescribed fixtures + loader change; the graceful-skip contract, the self-heal (repo-copy → sha-pinned download with `.partial` discipline), the in-place heal, the rejection path, and the skip≠silence boundary are all runtime-proven on the pushed bytes; the delta proof (BASE reproducing the Owner's ❌❌ 10/12 under the post-fix env) is exact.
+
+**Merge gate (Owner live acceptance):** download the `bb3b1df` notebook → Colab Run All → cell 4 battery 10/10 with the JP sha ✅ line (auto-download visible when the font was absent) → cell 10 **12/12** (or 10 passed + 2 ⚪ skipped with the Bengali fix note, zero ❌, only if the download is impossible) → cells 11/12 **5/5** → render S007 R1+R2 and visually confirm no tofu (danda `।` + ASCII `"`). Green ⇒ merge authorization.
+
+*Report-only NEW commit on `mangabd-008-b1` (parent `bb3b1df`); only `agents/GLM_5_3_FLASH.md` touched; no source/sample changes; no amend/merge. Reviewer instruments repo-external: `scripts/m008_rf11_flash_r1.py` (23), `m008_rf11_flash_r2.py` (22), `m008_rf11_flash_r3.py` (24), `m002_sim_v2.py` (reused; both refs). Env: py3.12, PIL 11.3.0+raqm, fontTools 4.62.1; live network verified both google/fonts URLs; no source files modified.*
