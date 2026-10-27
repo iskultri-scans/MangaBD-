@@ -1,0 +1,716 @@
+{
+ "instrument": "scripts/m009_fill_ratio.py",
+ "notebook_md5_at_design": "9deaa3a622048d4b763c93839335220d",
+ "font": {
+  "path": "/home/z/.cache/mangabd_m009/NotoSansBengali-Regular.ttf",
+  "sha256": "dcd42978094e584a849c84a51450eeac40c8826057d566ea6d4b9627a403a05a",
+  "source": "https://github.com/google/fonts/raw/main/ofl/notosansbengali/NotoSansBengali%5Bwdth%2Cwght%5D.ttf"
+ },
+ "config": {
+  "target": 0.85,
+  "trigger": 0.6,
+  "caps": [
+   48,
+   64,
+   72,
+   96
+  ],
+  "prod_cfg": {
+   "font_size_min": 8,
+   "font_size_max": 48,
+   "font_size_default": 24,
+   "line_spacing_factor": 1.18,
+   "padding_ratio": 0.08
+  }
+ },
+ "regions": [
+  {
+   "sample": "S003",
+   "region_id": 2,
+   "bbox": [
+    218,
+    110,
+    87,
+    156
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 35,
+   "bubble_area": 15484,
+   "usable_area": 13305,
+   "margin_px": 3,
+   "artist_extent_fill": 0.6324,
+   "final_extent_fill": 0.564,
+   "per_cap": {
+    "48": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.7407,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.7407,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.7407,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.7407,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.7407,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.7407,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.7407,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.7407,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S003",
+   "region_id": 3,
+   "bbox": [
+    403,
+    340,
+    204,
+    216
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 28,
+   "bubble_area": 39210,
+   "usable_area": 26614,
+   "margin_px": 6,
+   "artist_extent_fill": 0.8588,
+   "final_extent_fill": 0.8169,
+   "per_cap": {
+    "48": {
+     "current_size": 38,
+     "current_lines": 3,
+     "current_fill": 1.143,
+     "new_size": 38,
+     "new_lines": 3,
+     "new_fill": 1.143,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 38,
+     "current_lines": 3,
+     "current_fill": 1.143,
+     "new_size": 38,
+     "new_lines": 3,
+     "new_fill": 1.143,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 38,
+     "current_lines": 3,
+     "current_fill": 1.143,
+     "new_size": 38,
+     "new_lines": 3,
+     "new_fill": 1.143,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 38,
+     "current_lines": 3,
+     "current_fill": 1.143,
+     "new_size": 38,
+     "new_lines": 3,
+     "new_fill": 1.143,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S003",
+   "region_id": 4,
+   "bbox": [
+    76,
+    361,
+    103,
+    109
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 15,
+   "bubble_area": 12226,
+   "usable_area": 10391,
+   "margin_px": 3,
+   "artist_extent_fill": 0.6997,
+   "final_extent_fill": 0.3734,
+   "per_cap": {
+    "48": {
+     "current_size": 22,
+     "current_lines": 2,
+     "current_fill": 0.5726,
+     "new_size": 22,
+     "new_lines": 2,
+     "new_fill": 0.5726,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": true,
+     "regression": false
+    },
+    "64": {
+     "current_size": 22,
+     "current_lines": 2,
+     "current_fill": 0.5726,
+     "new_size": 22,
+     "new_lines": 2,
+     "new_fill": 0.5726,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": true,
+     "regression": false
+    },
+    "72": {
+     "current_size": 22,
+     "current_lines": 2,
+     "current_fill": 0.5726,
+     "new_size": 22,
+     "new_lines": 2,
+     "new_fill": 0.5726,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": true,
+     "regression": false
+    },
+    "96": {
+     "current_size": 22,
+     "current_lines": 2,
+     "current_fill": 0.5726,
+     "new_size": 22,
+     "new_lines": 2,
+     "new_fill": 0.5726,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": true,
+     "regression": false
+    }
+   }
+  },
+  {
+   "sample": "S003",
+   "region_id": 5,
+   "bbox": [
+    197,
+    672,
+    128,
+    140
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 56,
+   "bubble_area": 18521,
+   "usable_area": 13785,
+   "margin_px": 4,
+   "artist_extent_fill": 0.7837,
+   "final_extent_fill": 0.5559,
+   "per_cap": {
+    "48": {
+     "current_size": 15,
+     "current_lines": 4,
+     "current_fill": 0.7243,
+     "new_size": 15,
+     "new_lines": 4,
+     "new_fill": 0.7243,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 15,
+     "current_lines": 4,
+     "current_fill": 0.7243,
+     "new_size": 15,
+     "new_lines": 4,
+     "new_fill": 0.7243,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 15,
+     "current_lines": 4,
+     "current_fill": 0.7243,
+     "new_size": 15,
+     "new_lines": 4,
+     "new_fill": 0.7243,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 15,
+     "current_lines": 4,
+     "current_fill": 0.7243,
+     "new_size": 15,
+     "new_lines": 4,
+     "new_fill": 0.7243,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S003",
+   "region_id": 6,
+   "bbox": [
+    101,
+    880,
+    131,
+    204
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 146,
+   "bubble_area": 30403,
+   "usable_area": 26143,
+   "margin_px": 4,
+   "artist_extent_fill": 0.7476,
+   "final_extent_fill": 0.5404,
+   "per_cap": {
+    "48": {
+     "current_size": 12,
+     "current_lines": 9,
+     "current_fill": 0.6692,
+     "new_size": 12,
+     "new_lines": 9,
+     "new_fill": 0.6692,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 12,
+     "current_lines": 9,
+     "current_fill": 0.6692,
+     "new_size": 12,
+     "new_lines": 9,
+     "new_fill": 0.6692,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 12,
+     "current_lines": 9,
+     "current_fill": 0.6692,
+     "new_size": 12,
+     "new_lines": 9,
+     "new_fill": 0.6692,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 12,
+     "current_lines": 9,
+     "current_fill": 0.6692,
+     "new_size": 12,
+     "new_lines": 9,
+     "new_fill": 0.6692,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S007",
+   "region_id": 2,
+   "bbox": [
+    218,
+    110,
+    87,
+    156
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 36,
+   "bubble_area": 15484,
+   "usable_area": 13305,
+   "margin_px": 3,
+   "artist_extent_fill": 0.6324,
+   "final_extent_fill": 0.5243,
+   "per_cap": {
+    "48": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.69,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.69,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.69,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.69,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.69,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.69,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 17,
+     "current_lines": 5,
+     "current_fill": 0.69,
+     "new_size": 17,
+     "new_lines": 5,
+     "new_fill": 0.69,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S007",
+   "region_id": 3,
+   "bbox": [
+    403,
+    340,
+    204,
+    216
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 31,
+   "bubble_area": 39210,
+   "usable_area": 26614,
+   "margin_px": 6,
+   "artist_extent_fill": 0.8588,
+   "final_extent_fill": 0.7539,
+   "per_cap": {
+    "48": {
+     "current_size": 34,
+     "current_lines": 3,
+     "current_fill": 1.0226,
+     "new_size": 34,
+     "new_lines": 3,
+     "new_fill": 1.0226,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 34,
+     "current_lines": 3,
+     "current_fill": 1.0226,
+     "new_size": 34,
+     "new_lines": 3,
+     "new_fill": 1.0226,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 34,
+     "current_lines": 3,
+     "current_fill": 1.0226,
+     "new_size": 34,
+     "new_lines": 3,
+     "new_fill": 1.0226,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 34,
+     "current_lines": 3,
+     "current_fill": 1.0226,
+     "new_size": 34,
+     "new_lines": 3,
+     "new_fill": 1.0226,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S007",
+   "region_id": 4,
+   "bbox": [
+    76,
+    361,
+    103,
+    109
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 18,
+   "bubble_area": 12226,
+   "usable_area": 10391,
+   "margin_px": 3,
+   "artist_extent_fill": 0.6997,
+   "final_extent_fill": 0.6172,
+   "per_cap": {
+    "48": {
+     "current_size": 19,
+     "current_lines": 3,
+     "current_fill": 0.7535,
+     "new_size": 19,
+     "new_lines": 3,
+     "new_fill": 0.7535,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 19,
+     "current_lines": 3,
+     "current_fill": 0.7535,
+     "new_size": 19,
+     "new_lines": 3,
+     "new_fill": 0.7535,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 19,
+     "current_lines": 3,
+     "current_fill": 0.7535,
+     "new_size": 19,
+     "new_lines": 3,
+     "new_fill": 0.7535,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 19,
+     "current_lines": 3,
+     "current_fill": 0.7535,
+     "new_size": 19,
+     "new_lines": 3,
+     "new_fill": 0.7535,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S007",
+   "region_id": 5,
+   "bbox": [
+    197,
+    672,
+    128,
+    140
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 51,
+   "bubble_area": 18521,
+   "usable_area": 13785,
+   "margin_px": 4,
+   "artist_extent_fill": 0.7837,
+   "final_extent_fill": 0.5642,
+   "per_cap": {
+    "48": {
+     "current_size": 15,
+     "current_lines": 5,
+     "current_fill": 0.8357,
+     "new_size": 15,
+     "new_lines": 5,
+     "new_fill": 0.8357,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 15,
+     "current_lines": 5,
+     "current_fill": 0.8357,
+     "new_size": 15,
+     "new_lines": 5,
+     "new_fill": 0.8357,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 15,
+     "current_lines": 5,
+     "current_fill": 0.8357,
+     "new_size": 15,
+     "new_lines": 5,
+     "new_fill": 0.8357,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 15,
+     "current_lines": 5,
+     "current_fill": 0.8357,
+     "new_size": 15,
+     "new_lines": 5,
+     "new_fill": 0.8357,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "S007",
+   "region_id": 6,
+   "bbox": [
+    101,
+    880,
+    131,
+    204
+   ],
+   "region_type": "bubble",
+   "text_len_chars": 154,
+   "bubble_area": 30403,
+   "usable_area": 26143,
+   "margin_px": 4,
+   "artist_extent_fill": 0.7476,
+   "final_extent_fill": 0.5536,
+   "per_cap": {
+    "48": {
+     "current_size": 12,
+     "current_lines": 10,
+     "current_fill": 0.7023,
+     "new_size": 12,
+     "new_lines": 10,
+     "new_fill": 0.7023,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "64": {
+     "current_size": 12,
+     "current_lines": 10,
+     "current_fill": 0.7023,
+     "new_size": 12,
+     "new_lines": 10,
+     "new_fill": 0.7023,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "72": {
+     "current_size": 12,
+     "current_lines": 10,
+     "current_fill": 0.7023,
+     "new_size": 12,
+     "new_lines": 10,
+     "new_fill": 0.7023,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    },
+    "96": {
+     "current_size": 12,
+     "current_lines": 10,
+     "current_fill": 0.7023,
+     "new_size": 12,
+     "new_lines": 10,
+     "new_fill": 0.7023,
+     "activated": false,
+     "cap_bound": false,
+     "kept_current": false
+    }
+   }
+  },
+  {
+   "sample": "SYNTHETIC",
+   "label": "short text, large bubble",
+   "bbox": [
+    0,
+    0,
+    380,
+    320
+   ],
+   "text": "কী হয়েছে?",
+   "per_cap": {},
+   "fills": [
+    0.1859,
+    0.3286,
+    0.4175,
+    0.4634
+   ]
+  },
+  {
+   "sample": "SYNTHETIC",
+   "label": "medium text, large bubble",
+   "bbox": [
+    0,
+    0,
+    380,
+    320
+   ],
+   "text": "আমি জানি না, তুমি কী বলতে চাও?",
+   "per_cap": {},
+   "fills": [
+    0.731,
+    0.731,
+    0.731,
+    0.731
+   ]
+  },
+  {
+   "sample": "SYNTHETIC",
+   "label": "long text, large bubble",
+   "bbox": [
+    0,
+    0,
+    380,
+    320
+   ],
+   "text": "আমি ভেবেছিলাম সে আর কখনো ফিরে আসবে না, কিন্তু আজ সে এখানে দাঁড়িয়ে আছে।",
+   "per_cap": {},
+   "fills": [
+    0.8316,
+    0.8316,
+    0.8316,
+    0.8316
+   ]
+  }
+ ]
+}
