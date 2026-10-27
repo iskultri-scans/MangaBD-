@@ -1,0 +1,60 @@
+MANGABD-009 B2 RF-14: zero-text render regression — root cause + fix (cell 10 only; stale BLANK render-cache guard + battery Test 19)
+
+Owner live @ fd8d625: inpaint OK, 8/9 translations applied, step_4_make_final()
+renders ZERO text on multiple AI-gen test pages (tilted + horizontal + vertical);
+B1 rendered the Owner's full chapter correctly.
+
+REPRODUCED (scripts/m009_b2_rf14_repro.py — Owner-like harness, cells
+01-07+10+23 verbatim on synthetic AI-gen-like pages): the B2 Phase D gate's
+own PRE-TRANSLATION EYEBALL RENDER marks every page's render stage done with
+rendered=0 + a blank final.jpg; after the Owner applies translations, step_4
+(run_render_all, resume-aware force=False) cache-hits the poisoned blanks —
+3x "Render cached", total ink 0 on ALL 12 regions, zero warnings. The 5fe8804
+PRE-B1 control reproduces the SAME 12/12: the cache defect is version-agnostic
+and LATENT (B1's live flow never rendered before applying); B2's gate
+procedure is the trigger. FIRST FAILING DECISION: render_page's cache check
+(L1496-1501 @ fd8d625) returning the stale blank final. Suspects (a)-(e)
+dispositioned with evidence (quad key/type ruled out; PCA horizontal-tilt
+leak CONFIRMED but renders ink — open as O-RF14-1/2, not the zero-text cause;
+fit collapse ruled out — fit_font_size never returns empty lines; text color
+ruled out; df schema ruled out — the applied Bengali IS in the df the
+renderer reads).
+
+FIX — cell 10 only (allowed {6,10}; cell 6 needs no change), 3 anchored
+patches (scripts/m009_b2_rf14_patches.json), notebook sha256 08225748 ->
+a06085c3:
+  P1  _b2_blank_cache_stale(page_id): cached meta rendered_regions == 0 AND
+      >= 1 now-renderable Bengali row (global df, CSV fallback, fail-closed)
+  P2  render_page cache check: stale blank -> loud bypass + WARN +
+      reset_page(from_stage="render"); healthy pages byte-exact PRE behavior
+  P3  battery Test 19 (the RF-14 regression guard): arms the trap, asserts
+      the bypass + visible ink >= 50px for horizontal AND tilted AND vertical
+      regions on a full synthetic page, asserts healthy-cache byte-stability,
+      cleans its fixture (cell-3 discipline). Battery 18/18 -> 19/19 HARD.
+
+VERIFIED 30/30 (scripts/m009_b2_rf14_verify.py): V1 static — scope exactly
+{10}; cells 6/7/11/12/24 + 13/15/23 byte-identical (Phase C 45/45 transfers
+by cell-6 + Tests 16-18 byte-identity); AST 27/27; re-derivation; rotate/paste
++ mirror byte-untouched; secret scan 0. V2 dynamic — owner-session @ fd8d625
+REPRODUCED (committed bug evidence), @ fix GONE (inks 21,865-29,976 px/page,
+0 zero-ink, 7 bypass WARNs); happy path all regions >= 50 ink; battery 19/19
+(Test 19 arms + bypasses the trap in-run). V3 — S003+S007 fresh renders
+byte-IDENTICAL base-vs-fix + meta parity + helper False on healthy pages
+(0/36 archive class untouched). V4 — m002_sim_v2 fresh-kernel: 0 abort
+sites. Kill-switch rollback untouched (force=True path + mirror + Test 17
+byte-identical; Phase C V6c/V6d transfer).
+
+Disclosures + open observations (O-RF14-1/2 estimator tilt-leak on
+horizontal bubbles — quality, needs an Owner ruling; O-RF14-3 silent
+rendered=0 mark-time hint) + harness env stubs: full record
+"# MANGABD-009 — B2 RF-14" in agents/GLM_5_3.md.
+
+On top of Flash's 2a37127 (Owner-directed zero-ink repro whose sandbox
+INDEPENDENTLY converged on this root cause + the no-revert/no-re-gate
+fix-in-place ruling; disjoint file sets, clean rebase; fd8d625's Phase D
+APPROVED + 2a37127 both citable and untouched — new commit, no amend).
+Mechanics delta vs Flash's sketched candidate (never-save-blank) disclosed
+in the record (RF-14 keeps blank-save, kills the poisoned-cache RETURN;
+Test 19 machine-guards; Owner's manual reset_page restore now optional).
+Next: Flash re-verification of exactly this commit, then the Owner live
+merge gate (cell 10 now 19/19).

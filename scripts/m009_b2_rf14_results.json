@@ -1,0 +1,239 @@
+{
+  "rf14": "MANGABD-009 B2 RF-14 — zero-text render regression",
+  "facts_owner_relay": {
+    "branch": "mangabd-009-b2 @ fd8d625",
+    "symptom": "Inpaint OK, 8/9 translations applied, step_4_make_final() renders ZERO text on multiple AI-gen test pages (tilted + horizontal + vertical bubbles)",
+    "pre_b2_control": "B1 rendered the Owner's full chapter correctly"
+  },
+  "harness": {
+    "script": "scripts/m009_b2_rf14_repro.py",
+    "cells_exec_verbatim": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10,
+      23
+    ],
+    "cells_omitted": "cell_00 (Colab pip env doctor — runtime side effects seeded instead), cell_08 (translation service), cell_09 (inpaint — synthetic clean pages; Owner's facts: inpaint OK)",
+    "env_stubs": [
+      "inert torch stub (no CUDA)",
+      "pathlib /content+/root -> harness root remap",
+      "ground-truth rtdetr_detect boxes",
+      "stubbed run_ocr_engine (JP text per region)",
+      "model_manager.ensure_ocr_engine no-op",
+      "synthetic inpainted artifacts + stage marks"
+    ],
+    "pages": [
+      "p1_horizontal_only.jpg (3 horizontal bubbles)",
+      "p2_tilted.jpg (2 tilted + 1 horizontal)",
+      "p3_multi_region.jpg (horizontal + tilted -18deg + V-3 tall vertical + wide vertical + SFX)"
+    ]
+  },
+  "repro": {
+    "owner_session_gate_sequence": [
+      "upload AI-gen-like pages -> detect (real region build incl. B2 estimator wiring)",
+      "OCR (real chain + row builder, stubbed engines)",
+      "PRE-TRANSLATION EYEBALL RENDER (the Phase D gate step: diagonal page eyeball) — rendered=0, silent",
+      "apply 12 Bengali translations (Owner's 8/9-apply equivalent)",
+      "step_4 = sync_translate_stage() + render_all_pages(force=False, require_translation=True)"
+    ],
+    "at_fd8d625_post": {
+      "verdict": true,
+      "pages": {
+        "p1_horizontal_only.jpg": {
+          "total_ink": 0,
+          "zero_regions": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        "p2_tilted.jpg": {
+          "total_ink": 0,
+          "zero_regions": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        "p3_multi_region.jpg": {
+          "total_ink": 0,
+          "zero_regions": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              6,
+              0
+            ]
+          ]
+        }
+      }
+    },
+    "at_5fe8804_pre_b1": {
+      "verdict": true,
+      "pages": {
+        "p1_horizontal_only.jpg": {
+          "total_ink": 0,
+          "zero_regions": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        "p2_tilted.jpg": {
+          "total_ink": 0,
+          "zero_regions": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        "p3_multi_region.jpg": {
+          "total_ink": 0,
+          "zero_regions": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              6,
+              0
+            ]
+          ]
+        }
+      },
+      "note": "same trap — version-agnostic latent cache defect"
+    },
+    "at_fix_work": {
+      "verdict": false,
+      "pages": {
+        "p1_horizontal_only.jpg": {
+          "total_ink": 23198,
+          "zero_regions": []
+        },
+        "p2_tilted.jpg": {
+          "total_ink": 21865,
+          "zero_regions": []
+        },
+        "p3_multi_region.jpg": {
+          "total_ink": 29976,
+          "zero_regions": []
+        }
+      },
+      "bypass_warns": 7
+    }
+  },
+  "first_failing_decision": {
+    "site": "cell-10 render_page cache check (@ fd8d625 L1496-1501): `if is_stage_done(page_id, 'render') and not force: cached = load_image_artifact(page_id, 'final'); if cached is not None: return cached`",
+    "mechanism": "the pre-translation eyeball render (B2 Phase D gate step) marks the render stage done with rendered=0 and saves a blank final.jpg; after translations are applied, step_4 (run_render_all, resume-aware force=False) cache-hits the poisoned blank final for EVERY page and returns it — zero text on every region class with zero warnings",
+    "evidence": "harness log: 3x '✅ Render cached' + total ink 0 on all 12 regions; the df at render time held the applied Bengali (control arm: force=True on the same df renders 2.3K-3.0K ink px per page)"
+  },
+  "suspects": {
+    "a_quad_key_type": "RULED OUT — int-keyed both sides; guarded load; miss -> fit dims None -> PRE rotated behavior (renders)",
+    "b_pca_horizontal_tilt_leak": "CONFIRMED REAL but NOT zero-ink — a horizontal bubble inherited +5.26 deg on the synthetic page (ring+text+art mixture); render still inks (7560 px). Disclosed as O-RF14-1 (estimator quality, separate bounded RF candidate)",
+    "c_degenerate_quad_font_collapse": "RULED OUT — fit_font_size never returns empty lines (min_size + split fallback >= 1 line); quad extents < 5 -> None -> bbox dims",
+    "d_text_color_white_on_white": "RULED OUT — choose_text_color brightness-driven, B2-untouched; rotated path draws text_color+(255,) same as B1-era; Owner's own battery Test 17 asserts ink>0 on their Colab",
+    "e_df_artifact_schema": "RULED OUT as cause — build_ocr_row carries angle (float) through the CSV roundtrip; quads load by int id; the applied Bengali IS in the df the renderer reads (proven by the force=True control). The zero-text is the CACHE decision, not schema"
+  },
+  "fix": {
+    "scope": "cell 10 ONLY (directive allowed {6,10}; cell 6 needs no change — estimator stores are not the zero-ink cause)",
+    "patches": [
+      "P1 helper _b2_blank_cache_stale(page_id): cached meta rendered_regions == 0 AND >= 1 now-renderable Bengali row (global df, else CSV fallback; fail-closed False)",
+      "P2 render_page cache check: bypass + loud print + WARN log_event + reset_page(from_stage='render') when stale; healthy pages (rendered>0) byte-identical cache behavior",
+      "P3 battery Test 19: arms the trap (pre-translation render), applies Bengali, asserts the bypass + visible ink >= 50px for horizontal AND tilted AND vertical regions, asserts healthy-cache byte-stable 2nd/3rd calls, cleans its fixture (cell-3 discipline)"
+    ],
+    "manifest": "scripts/m009_b2_rf14_patches.json"
+  },
+  "verification": {
+    "rf14_verify": "MangaBD/scripts/m009_b2_rf14_verify.py — 30/30 PASS",
+    "v1_static": "scope drift exactly {10}; cells 6/7/11/12/24/13/15/23 byte-identical (Phase C 45/45 transfers by byte-identity of cell 6 + Tests 16-18); AST 27/27 warnings-as-errors; manifest re-derivation; rotate/paste + _b2_render_angle + Tests 16-18 byte-untouched; secret scan 0",
+    "v2_dynamic": "owner-session @ fd8d625 REPRODUCED (12/12 zero-ink); @ fix GONE (inks 21865-29976/page, 0 zero-ink, 7 bypass WARNs); pipeline happy path all regions >= 50 ink; battery 19/19 HARD incl. Test 19 (trap armed + bypassed in-run)",
+    "v3_archives": "S003+S007 fresh render byte-IDENTICAL base-vs-fix + meta parity + helper False on healthy pages (trap cannot fire; archives byte-parity preserved)",
+    "v4_simulator": "m002_sim_v2 fresh-kernel on the fixed cells — 0 abort sites",
+    "kill_switch": "untouched by the fix (force=True path + knob mirror byte-identical); Phase C V6c/V6d rollback proofs transfer; Test 17 re-asserts mirror ON/OFF/ABSENT every battery run"
+  },
+  "observations_open": {
+    "O-RF14-1": "estimator tilt-leak on horizontal-class bubbles: bubble-ring + text + context art mixture measured +5.26 deg on a horizontal bubble (stored, dev > 5 deg snap). Render still inks (7560 px) — quality issue, NOT zero-ink. Candidate bounded RF (gate tightening, e.g. ring-aware ink exclusion), needs an Owner ruling — B2 scope discipline",
+    "O-RF14-2": "tilted-class measurement quality: a true -18 deg tilted bubble stored -6.72 deg (ellipse-ring mass pulls PCA toward 0). Same O-RF14-1 family.",
+    "O-RF14-3": "pre-translation eyeball renders mark render stage done with rendered=0 silently (no WARN at THAT moment — the rows are legitimately untranslated). The fix catches the trap at re-render time; an alternative future hardening could print a loud 'rendered 0 regions' hint at mark time."
+  },
+  "custody": {
+    "bug_evidence_reports": "rf14_reports/rf14_repro_owner-session{,-pre,-fix}.json",
+    "fix_notebook_sha256": "a06085c39583c16f26de8064790414bdb490a1920d15703979f34e7f83a27636",
+    "base_notebook_sha256": "082257483b81f5939dab6d3249a48f17dc02e29169d3a2b66f43ccd48115863f (@ fd8d625)"
+  }
+}
