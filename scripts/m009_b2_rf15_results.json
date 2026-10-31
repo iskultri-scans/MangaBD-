@@ -1,0 +1,91 @@
+{
+ "rf": "MANGABD-009 B2 RF-15 — V-3 wrapper kwarg mismatch (integration seam)",
+ "date": "2026-10-31",
+ "base_ref": "84aa238",
+ "base_notebook_blob": "fab45a904580fa4f5d17320971a6ea1f4e97b049",
+ "fixed_notebook_sha256": "ed51ddc370cbc6993b1421217bb6e0d9935684479127121998cbf91e8bc09731",
+ "owner_live_facts": {
+  "flow": "Run All, first full-chain 10->11->12->15 in one kernel",
+  "symptom": "every region: render_bengali_text() got an unexpected keyword argument 'fit_w' -> rendered=0, warnings=8, blank final"
+ },
+ "root_cause": {
+  "call_site": "cell 10 render_page L1783-1798 — fit_w=/fit_h= passed UNCONDITIONALLY (RB2-5 quad-extents; None for non-tilted, kwarg always sent)",
+  "reject_site": "cells 11/12 V-3 wrapper signatures end at fit_result=None",
+  "failure_mode": "TypeError at CALL time for every region class -> per-row except (L1810) swallows as WARN -> rendered=0, blank final",
+  "why_invisible": "cell-10 battery runs before the wrapper exists; chain tests called the wrapper directly; no instrument ran render_page after cells 11/12 in one namespace",
+  "latency": "wrapper bytes identical B1 main <-> RF-15 base (V1m) — seam latent since MANGABD-003 V-3, armed by B2's fit_w kwarg"
+ },
+ "repro": {
+  "harness": "scripts/m009_b2_rf15_repro.py — cells [1,2,3,4,5,6,7,10,11,12,15,23] verbatim, ONE namespace, Run-All order",
+  "post_84aa238": {
+   "verdict": "RF-15 LIVE FAILURE REPRODUCED",
+   "regions": 12,
+   "zero_ink": 12,
+   "rendered_df": 0,
+   "typeerror_events": 12,
+   "kwarg_names": [
+    "fit_w"
+   ],
+   "sample_event": "Render failed [p1_horizontal_only.jpg:1]: render_bengali_text() got an unexpected keyword argument 'fit_w'"
+  },
+  "work_fix": {
+   "verdict": "RF-15 FIXED (battery pass + full ink)",
+   "regions": 12,
+   "zero_ink": 0,
+   "rendered_df": 12,
+   "typeerror_events": 0,
+   "per_region_ink_px": [
+    8036,
+    6985,
+    8177,
+    6971,
+    6968,
+    7926,
+    6261,
+    7568,
+    2710,
+    5606,
+    6987,
+    726
+   ],
+   "battery_line": "✅ B2 RF-15: full-chain render integration (wrapper kwarg seam)",
+   "battery_raise": false
+  },
+  "mutant_fail_on_current_bytes": {
+   "construction": "work cells minus exactly the 2 wrapper patches (battery kept)",
+   "verdict": "BATTERY FAILS ON CURRENT BYTES (as required)",
+   "battery_raise": true,
+   "typeerror_events": 12,
+   "rendered_df": 0
+  }
+ },
+ "fix": {
+  "scope_cells": [
+   11,
+   12
+  ],
+  "cells_6_10": "byte-UNTOUCHED (V1c HARD)",
+  "patches": [
+   "P1 cell-11 wrapper: signature +fit_w/+fit_h; fallback arm forwards (forward-only)",
+   "P2 cell-12 wrapper: same (outermost binding after Run All 11->12)",
+   "P3 cell-12 tail battery Test 20: exec-order integration — render_page on quad-carrying page in the SAME namespace after wrapper rebind; asserts rendered=3/3 + h/t/v ink>=50 + 0 'unexpected keyword argument' events; hard-raises on failure"
+  ],
+  "vertical_arm": "untouched; cannot receive non-None fit dims by construction (predicate |angle|<=1.0 vs fit dims computed only for |angle|>1.0) — disclosed in the patch comment"
+ },
+ "verification": {
+  "instrument": "scripts/m009_b2_rf15_verify.py",
+  "result": "31/31 PASS",
+  "v1_static": "scope {11,12} exact; cells 6/10 HARD untouched; {7,13,15,23,24} identical; AST 27/27; re-derivation; wiring probes; V-3 predicate byte-untouched; secret scan clean; base wrapper == B1",
+  "v2_dynamic": "post REPRODUCED / work FIXED (12/12 rendered, ink 726-8177 px, 0 TypeError) / mutant battery-fails-as-required / cell-10 battery SUCCESS (19/19 incl. Test 19) + cell-15 SUCCESS",
+  "v3_equivalence_archives": "work-chain == base-direct (fit_w/fit_h forwarded, horizontal + tilted quad-fit); old-signature call old == work; V-3 vertical arm old == work; S003 + S007 full-chain render byte-IDENTICAL B1 main vs work; kill-switch OFF ink 4521 px TypeError-free",
+  "v4_simulator": "m002_sim_v2 on fixed cells: 0 abort sites"
+ },
+ "disclosures": [
+  "env stubs = the RF-14 disclosed set (torch stub, pathlib remap, cell-00 side effects, stubbed detector/OCR, synthetic inpaints, model_manager no-op) — cell bytes verbatim",
+  "cell-04 zyddnys torch-import RuntimeError tolerated (CTD/LaMa inpaint deps, out of render path) — RF-14 legacy disclosure",
+  "V3 archive mini-ns execs cells 11/12 spans cut before the RF-15 battery marker (battery fixture needs real storage; its proof is V2's full harness)",
+  "harness df-status probe re-reads ns['translation_df'] (save_translation_df rebinds the global — column re-selection)",
+  "Owner warnings=8 vs harness 12: Owner applied 8/9 translations (8 renderable rows); harness applies all 12 for clean accounting — same defect, same per-row WARN path",
+  "O-RF14-1/2 estimator tilt-leak remains OPEN (cell 6 untouched), awaiting an Owner ruling"
+ ]
+}
