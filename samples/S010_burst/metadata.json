@@ -1,0 +1,382 @@
+{
+ "sample_id": "S010_burst",
+ "captured_at": "2026-11-02",
+ "branch": "mangabd-009-b2",
+ "notebook_blob_sha": "01b502c472a9324c88d14b38338d55f1e31d4491",
+ "notebook_sha256": "0cbc8531208103c3fc7beec4dd0aaaed66d76c8f9920b0b36c754c56a8f17743",
+ "pipeline_variant": "MANGABD-009 B2 RF-17 regression fixture — synthesized owner-style burst/art-tight page, full chain (detect -> ocr -> inpaint -> translate -> render) on the RF-17-fixed bytes",
+ "translation_engine": "synthetic (RF-17 fixture)",
+ "source_page": "synthesized by scripts/m009_b2_rf17_page.py (rng_seed 20261102) — NOT an Owner Colab upload",
+ "provenance": "RF-17 directive: archive an owner-class page with burst + ellipse + vertical. The Owner's live page bytes never left their Colab session, so this archive pins the CLASS: 3 burst bubbles (spiky rings, spike-inflated bboxes — the D1 surface), 3 art-tight ellipses + E3 = small bubble over a hatched dark panel with white halo (bbox mean < 160 on the inpainted page — the D2 white-on-white surface), 2 horizontals + 1 V-3 vertical (stability controls). Ground truth = construction beta (PIL rotate law, cell-10 Test 16) cross-checked per region by PCA on this archive's own text_mask.png bytes (measured_ink_pil_deg).",
+ "disclosures": [
+  "SYNTHESIZED fixture (not Owner-produced art); its job is to pin the D1/D2/D3 defect classes, not to imitate art.",
+  "Sandbox has no onnxruntime/torch GPU: RT-DETR is stubbed to the TRUE dark-ink bboxes of the drawn bubbles (detector stand-in); the region build, RF-16/RF-17 estimator, quads, angles, reading-order sort and every render byte after the boxes are the REAL production path.",
+  "OCR is stubbed to the drawn JP text; translations are the builder's Bengali strings; inpainted.png is the synthesized clean page (rings + art stay, text removed).",
+  "text_mask.png is the TRUE synthesized text ink (ground-truth surface for the hand-tool measurement), not the pipeline detect-stage box mask.",
+  "The Owner's live burst/diagonal page remains the final visual gate for the B2 merge (Owner re-accept on the same test page)."
+ ],
+ "acceptance_rule": "RF-17 hard criteria on S010: A1 rendered == applied (10/10); A2 zero rendered ink outside the bubble interior per tilted/burst region; A3 tilted/burst keep multi-line layout (>=2 lines whenever base B1 had >=2); A4 stored angle within +/-3 deg of GT for ellipse AND burst rings (0.0 straight fallback allowed when a spiky ring is not isolatable); A5 horizontals 0, vertical V-3; A6 per-region parity table printed by scripts/m009_b2_rf17_verify.py V5.",
+ "ground_truth": [
+  {
+   "id": 1,
+   "tag": "BU1",
+   "class": "burst",
+   "box": {
+    "x": 116,
+    "y": 63,
+    "width": 404,
+    "height": 374
+   },
+   "ground_truth_beta_deg": -12.0,
+   "measured_ink_pil_deg": -11.27,
+   "stored_angle_deg": -11.48,
+   "stored_quad": [
+    [
+     244,
+     199
+    ],
+    [
+     401,
+     231
+    ],
+    [
+     387,
+     300
+    ],
+    [
+     230,
+     268
+    ]
+   ],
+   "true_text_ink_px": 829,
+   "acceptance": "|stored - beta| <= 3.0 (RF-17 A4; burst falls back to 0.0 straight when the spiky ring is not isolatable)",
+   "pass": true
+  },
+  {
+   "id": 2,
+   "tag": "BU2",
+   "class": "burst",
+   "box": {
+    "x": 749,
+    "y": 104,
+    "width": 406,
+    "height": 310
+   },
+   "ground_truth_beta_deg": 16.0,
+   "measured_ink_pil_deg": 17.17,
+   "stored_angle_deg": 16.77,
+   "stored_quad": [
+    [
+     845,
+     176
+    ],
+    [
+     1003,
+     128
+    ],
+    [
+     1043,
+     262
+    ],
+    [
+     885,
+     309
+    ]
+   ],
+   "true_text_ink_px": 744,
+   "acceptance": "|stored - beta| <= 3.0 (RF-17 A4; burst falls back to 0.0 straight when the spiky ring is not isolatable)",
+   "pass": true
+  },
+  {
+   "id": 3,
+   "tag": "BU3",
+   "class": "burst",
+   "box": {
+    "x": 118,
+    "y": 458,
+    "width": 404,
+    "height": 340
+   },
+   "ground_truth_beta_deg": -20.0,
+   "measured_ink_pil_deg": -18.58,
+   "stored_angle_deg": -17.78,
+   "stored_quad": [
+    [
+     247,
+     576
+    ],
+    [
+     410,
+     629
+    ],
+    [
+     387,
+     699
+    ],
+    [
+     224,
+     647
+    ]
+   ],
+   "true_text_ink_px": 776,
+   "acceptance": "|stored - beta| <= 3.0 (RF-17 A4; burst falls back to 0.0 straight when the spiky ring is not isolatable)",
+   "pass": true
+  },
+  {
+   "id": 4,
+   "tag": "E1",
+   "class": "tilted",
+   "box": {
+    "x": 760,
+    "y": 490,
+    "width": 381,
+    "height": 301
+   },
+   "ground_truth_beta_deg": -15.0,
+   "measured_ink_pil_deg": -14.94,
+   "stored_angle_deg": -14.59,
+   "stored_quad": [
+    [
+     831,
+     571
+    ],
+    [
+     1075,
+     635
+    ],
+    [
+     1056,
+     706
+    ],
+    [
+     813,
+     642
+    ]
+   ],
+   "true_text_ink_px": 1462,
+   "acceptance": "|stored - beta| <= 3.0 (RF-17 A4; burst falls back to 0.0 straight when the spiky ring is not isolatable)",
+   "pass": true
+  },
+  {
+   "id": 5,
+   "tag": "E3",
+   "class": "tilted",
+   "box": {
+    "x": 723,
+    "y": 829,
+    "width": 454,
+    "height": 361
+   },
+   "ground_truth_beta_deg": -22.0,
+   "measured_ink_pil_deg": -22.52,
+   "stored_angle_deg": -20.77,
+   "stored_quad": [
+    [
+     895,
+     963
+    ],
+    [
+     1020,
+     1011
+    ],
+    [
+     994,
+     1079
+    ],
+    [
+     869,
+     1032
+    ]
+   ],
+   "true_text_ink_px": 634,
+   "acceptance": "|stored - beta| <= 3.0 (RF-17 A4; burst falls back to 0.0 straight when the spiky ring is not isolatable)",
+   "pass": true
+  },
+  {
+   "id": 6,
+   "tag": "E2",
+   "class": "tilted",
+   "box": {
+    "x": 93,
+    "y": 875,
+    "width": 428,
+    "height": 271
+   },
+   "ground_truth_beta_deg": 10.0,
+   "measured_ink_pil_deg": 10.08,
+   "stored_angle_deg": 10.4,
+   "stored_quad": [
+    [
+     170,
+     1008
+    ],
+    [
+     435,
+     960
+    ],
+    [
+     446,
+     1016
+    ],
+    [
+     181,
+     1065
+    ]
+   ],
+   "true_text_ink_px": 828,
+   "acceptance": "|stored - beta| <= 3.0 (RF-17 A4; burst falls back to 0.0 straight when the spiky ring is not isolatable)",
+   "pass": true
+  },
+  {
+   "id": 7,
+   "tag": "E4",
+   "class": "tilted",
+   "box": {
+    "x": 267,
+    "y": 1225,
+    "width": 439,
+    "height": 311
+   },
+   "ground_truth_beta_deg": 18.0,
+   "measured_ink_pil_deg": 17.58,
+   "stored_angle_deg": 17.48,
+   "stored_quad": [
+    [
+     376,
+     1382
+    ],
+    [
+     590,
+     1314
+    ],
+    [
+     612,
+     1384
+    ],
+    [
+     398,
+     1451
+    ]
+   ],
+   "true_text_ink_px": 1249,
+   "acceptance": "|stored - beta| <= 3.0 (RF-17 A4; burst falls back to 0.0 straight when the spiky ring is not isolatable)",
+   "pass": true
+  },
+  {
+   "id": 8,
+   "tag": "H1",
+   "class": "horizontal",
+   "box": {
+    "x": 755,
+    "y": 1250,
+    "width": 391,
+    "height": 261
+   },
+   "ground_truth_beta_deg": 0.0,
+   "measured_ink_pil_deg": -0.92,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     755,
+     1250
+    ],
+    [
+     1146,
+     1250
+    ],
+    [
+     1146,
+     1511
+    ],
+    [
+     755,
+     1511
+    ]
+   ],
+   "true_text_ink_px": 1143,
+   "acceptance": "stored == 0.0",
+   "pass": true
+  },
+  {
+   "id": 9,
+   "tag": "V1",
+   "class": "vertical",
+   "box": {
+    "x": 1098,
+    "y": 1530,
+    "width": 65,
+    "height": 421
+   },
+   "ground_truth_beta_deg": 0.0,
+   "measured_ink_pil_deg": 0.23,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     1098,
+     1530
+    ],
+    [
+     1163,
+     1530
+    ],
+    [
+     1163,
+     1951
+    ],
+    [
+     1098,
+     1951
+    ]
+   ],
+   "true_text_ink_px": 1045,
+   "acceptance": "stored == 0.0 (V-3 vertical class by shape)",
+   "pass": true
+  },
+  {
+   "id": 10,
+   "tag": "H2",
+   "class": "horizontal",
+   "box": {
+    "x": 262,
+    "y": 1600,
+    "width": 449,
+    "height": 308
+   },
+   "ground_truth_beta_deg": 0.0,
+   "measured_ink_pil_deg": -20.06,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     262,
+     1600
+    ],
+    [
+     711,
+     1600
+    ],
+    [
+     711,
+     1908
+    ],
+    [
+     262,
+     1908
+    ]
+   ],
+   "true_text_ink_px": 1159,
+   "acceptance": "stored == 0.0",
+   "pass": true
+  }
+ ],
+ "owner_notes": "RF-17 fix evidence: the REJECT-state bytes (57ac480, margin-6 estimator + quad-fit render) store 0.00 on ALL 7 tilted/burst regions here (repro: scripts/m009_b2_rf17_repro.py post) — burst spikes + art cores contaminate the enclosed ink; the E3 dark panel picks white-on-white text (D2); the spike-inflated burst bboxes overflow the interior (D1). The RF-17 bytes store 7/7 within +/-3 deg and render interior-fit multi-line black text with zero outside ink.",
+ "rf18_refresh": {
+  "date": "2026-11-04",
+  "what": "RF-18 original-ink orientation GT: detections.json tilted rows now store the mask-GT angle (+-0.25 deg of construction beta on this fixture, vs the RF-17 estimator values) + b2_gt_lines/spacing/cx/cy render-parity params; final.jpg re-rendered with the GT-mirrored tilted layout (lines/spacing mirror the original text ink, paste at the ink centroid, quad-mask color sampling).",
+  "unchanged": [
+   "original.jpg / inpainted.png / text_mask.png (byte-identical — deterministic fixture)",
+   "ocr.json (semantically identical) / translation.json",
+   "the horizontal + vertical rows of detections.json (byte-identical) and their renders (0 changed px)"
+  ],
+  "evidence": "scripts/m009_b2_rf18_verify.py V3/V4"
+ }
+}

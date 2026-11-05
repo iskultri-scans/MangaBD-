@@ -1,0 +1,92 @@
+[
+ {
+  "id": 1,
+  "region_type": "bubble",
+  "original_text": "うわああ！！\nうわああ！！",
+  "translated_text": "এই কী হয়েছে বলো তো? আমি কিছুই বুঝতে পারছি না!",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 2,
+  "region_type": "bubble",
+  "original_text": "逃げろー！！\n逃げろー！！",
+  "translated_text": "সবাই পালাও! তাড়াতাড়ি এদিকে আয়!",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 3,
+  "region_type": "bubble",
+  "original_text": "何だこれ！？\n何だこれ！？",
+  "translated_text": "বিকট শব্দ করে বিস্ফোরণ হলো দেখে সবাই জমে গেল!",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 4,
+  "region_type": "bubble",
+  "original_text": "待って、話が違う！\n待って、話が違う！",
+  "translated_text": "থামো তো, কথাটা তো আগে বলিনি এমন লাগছে!",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 5,
+  "region_type": "bubble",
+  "original_text": "来てくれ！\n来てくれ！",
+  "translated_text": "জলদি এদিকে এসো, একা থেকো না যেন!",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 6,
+  "region_type": "bubble",
+  "original_text": "そういうことだったのか…\nそういうことだったのか…",
+  "translated_text": "আচ্ছা, তাহলে ব্যাপারটা এমন ছিল কি…",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 7,
+  "region_type": "bubble",
+  "original_text": "絶対におかしい！\n絶対におかしい！",
+  "translated_text": "মাপ করো কিন্তু, এতে একটা গরমিল আছে!",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 8,
+  "region_type": "bubble",
+  "original_text": "おはよう、元気だった？\nその通りだ、間違いない",
+  "translated_text": "সকাল হলো, ভালো ঘুম হয়েছে তো?",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 9,
+  "region_type": "overlay",
+  "original_text": "縦書きのテストです",
+  "translated_text": "এটি লম্বালম্বি লেখার পরীক্ষা",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 10,
+  "region_type": "bubble",
+  "original_text": "間違いない！\nそう思う！\nよし、行こう！",
+  "translated_text": "ঠিক ধরেছ, এতে কোনো সন্দেহ নেই",
+  "translator_engine": "synthetic (RF-17 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ }
+]

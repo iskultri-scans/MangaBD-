@@ -1,0 +1,392 @@
+{
+ "sample_id": "S009_diagonal",
+ "captured_at": "2026-11-02",
+ "branch": "mangabd-009-b2",
+ "notebook_blob_sha": "a77f228194427ba7ac01ecfa550c8cc1160a176b",
+ "notebook_sha256": "a9f869af2baa57de0dd73f6ce9030311ef09820dd09bbc8b39cb130ff3b33cbf",
+ "pipeline_variant": "MANGABD-009 B2 RF-16 regression fixture — synthesized Owner-class diagonal page, full chain (detect -> ocr -> inpaint -> translate -> render) on the RF-16-fixed bytes",
+ "translation_engine": "synthetic (RF-16 fixture)",
+ "source_page": "synthesized by scripts/m009_b2_rf16_page.py (rng_seed 20261031) — NOT an Owner Colab upload",
+ "provenance": "RF-16 directive #2: commit the Owner's diagonal test page so the tilted-bubble class is permanently in the corpus. The Owner's live page bytes never left their Colab session, so this archive pins the CLASS: 7 tilted dialogue bubbles (text tilt beta in [-25, +20]) inside near-upright ellipse rings (tilt +/-3 deg, 4px stroke, aspect 1.2-1.5) over screentone + art strokes that leak inside the axis-aligned region boxes — the exact dilution surface of the dc612d5 LIVE REJECT (7 tilted bubbles, 1/7 inherited, df angles 0.00). Ground truth = construction beta (PIL rotate law, cell-10 Test 16) cross-checked per region by PCA on this archive's own text_mask.png bytes (measured_ink_pil_deg).",
+ "disclosures": [
+  "SYNTHESIZED fixture (not Owner-produced art); its job is to pin the estimator class, not to imitate art.",
+  "Sandbox has no onnxruntime/torch GPU: RT-DETR is stubbed to the TRUE dark-ink bboxes of the drawn bubbles (detector stand-in); the region build, RF-16 estimator, quads, angles, reading-order sort and every render byte after the boxes are the REAL production path.",
+  "OCR is stubbed to the drawn JP text; translations are the builder's Bengali strings; inpainted.png is the synthesized clean page (rings stay, text removed).",
+  "text_mask.png is the TRUE synthesized text ink (ground-truth surface for the hand-tool measurement), not the pipeline detect-stage box mask.",
+  "The Owner's live diagonal page remains the final visual gate for the B2 merge (Owner re-accept on the same test page)."
+ ],
+ "acceptance_rule": "RF-16 directive #3: on S009, >= 6 of 7 tilted regions store |angle| within +/-3 deg of ground truth AND rendered ink orientation matches; horizontal regions stay 0; verticals stay V-3.",
+ "ground_truth": [
+  {
+   "id": 1,
+   "tag": "T1",
+   "class": "tilted",
+   "box": {
+    "x": 100,
+    "y": 90,
+    "width": 401,
+    "height": 308
+   },
+   "ground_truth_beta_deg": -15.0,
+   "measured_ink_pil_deg": -14.8,
+   "stored_angle_deg": -14.47,
+   "stored_quad": [
+    [
+     175,
+     145
+    ],
+    [
+     439,
+     213
+    ],
+    [
+     414,
+     313
+    ],
+    [
+     150,
+     245
+    ]
+   ],
+   "true_text_ink_px": 1728,
+   "acceptance": "|stored - beta| <= 3.0 (and quad present)",
+   "pass": true
+  },
+  {
+   "id": 2,
+   "tag": "T2",
+   "class": "tilted",
+   "box": {
+    "x": 760,
+    "y": 100,
+    "width": 408,
+    "height": 288
+   },
+   "ground_truth_beta_deg": 12.0,
+   "measured_ink_pil_deg": 12.04,
+   "stored_angle_deg": 12.07,
+   "stored_quad": [
+    [
+     818,
+     227
+    ],
+    [
+     1056,
+     176
+    ],
+    [
+     1070,
+     238
+    ],
+    [
+     832,
+     288
+    ]
+   ],
+   "true_text_ink_px": 1188,
+   "acceptance": "|stored - beta| <= 3.0 (and quad present)",
+   "pass": true
+  },
+  {
+   "id": 3,
+   "tag": "T3",
+   "class": "tilted",
+   "box": {
+    "x": 62,
+    "y": 445,
+    "width": 449,
+    "height": 291
+   },
+   "ground_truth_beta_deg": -9.0,
+   "measured_ink_pil_deg": -9.28,
+   "stored_angle_deg": -9.06,
+   "stored_quad": [
+    [
+     174,
+     520
+    ],
+    [
+     446,
+     564
+    ],
+    [
+     430,
+     663
+    ],
+    [
+     158,
+     619
+    ]
+   ],
+   "true_text_ink_px": 1467,
+   "acceptance": "|stored - beta| <= 3.0 (and quad present)",
+   "pass": true
+  },
+  {
+   "id": 4,
+   "tag": "T4",
+   "class": "tilted",
+   "box": {
+    "x": 765,
+    "y": 437,
+    "width": 371,
+    "height": 279
+   },
+   "ground_truth_beta_deg": 20.0,
+   "measured_ink_pil_deg": 19.79,
+   "stored_angle_deg": 19.48,
+   "stored_quad": [
+    [
+     820,
+     604
+    ],
+    [
+     1050,
+     523
+    ],
+    [
+     1071,
+     582
+    ],
+    [
+     841,
+     664
+    ]
+   ],
+   "true_text_ink_px": 1016,
+   "acceptance": "|stored - beta| <= 3.0 (and quad present)",
+   "pass": true
+  },
+  {
+   "id": 5,
+   "tag": "T5",
+   "class": "tilted",
+   "box": {
+    "x": 100,
+    "y": 810,
+    "width": 401,
+    "height": 308
+   },
+   "ground_truth_beta_deg": -18.0,
+   "measured_ink_pil_deg": -18.02,
+   "stored_angle_deg": -18.63,
+   "stored_quad": [
+    [
+     182,
+     858
+    ],
+    [
+     439,
+     944
+    ],
+    [
+     407,
+     1042
+    ],
+    [
+     149,
+     955
+    ]
+   ],
+   "true_text_ink_px": 1970,
+   "acceptance": "|stored - beta| <= 3.0 (and quad present)",
+   "pass": true
+  },
+  {
+   "id": 6,
+   "tag": "T6",
+   "class": "tilted",
+   "box": {
+    "x": 735,
+    "y": 805,
+    "width": 431,
+    "height": 318
+   },
+   "ground_truth_beta_deg": 8.0,
+   "measured_ink_pil_deg": 8.26,
+   "stored_angle_deg": 7.9,
+   "stored_quad": [
+    [
+     816,
+     918
+    ],
+    [
+     1067,
+     883
+    ],
+    [
+     1081,
+     984
+    ],
+    [
+     830,
+     1019
+    ]
+   ],
+   "true_text_ink_px": 1705,
+   "acceptance": "|stored - beta| <= 3.0 (and quad present)",
+   "pass": true
+  },
+  {
+   "id": 7,
+   "tag": "H1",
+   "class": "horizontal",
+   "box": {
+    "x": 750,
+    "y": 1147,
+    "width": 401,
+    "height": 299
+   },
+   "ground_truth_beta_deg": 0.0,
+   "measured_ink_pil_deg": 0.45,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     750,
+     1147
+    ],
+    [
+     1151,
+     1147
+    ],
+    [
+     1151,
+     1446
+    ],
+    [
+     750,
+     1446
+    ]
+   ],
+   "true_text_ink_px": 1038,
+   "acceptance": "stored == 0.0",
+   "pass": true
+  },
+  {
+   "id": 8,
+   "tag": "T7",
+   "class": "tilted",
+   "box": {
+    "x": 105,
+    "y": 1152,
+    "width": 391,
+    "height": 316
+   },
+   "ground_truth_beta_deg": -25.0,
+   "measured_ink_pil_deg": -24.87,
+   "stored_angle_deg": -24.91,
+   "stored_quad": [
+    [
+     187,
+     1225
+    ],
+    [
+     437,
+     1342
+    ],
+    [
+     411,
+     1398
+    ],
+    [
+     161,
+     1282
+    ]
+   ],
+   "true_text_ink_px": 1290,
+   "acceptance": "|stored - beta| <= 3.0 (and quad present)",
+   "pass": true
+  },
+  {
+   "id": 9,
+   "tag": "V1",
+   "class": "vertical",
+   "box": {
+    "x": 1118,
+    "y": 1460,
+    "width": 84,
+    "height": 421
+   },
+   "ground_truth_beta_deg": 0.0,
+   "measured_ink_pil_deg": 0.23,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     1118,
+     1460
+    ],
+    [
+     1202,
+     1460
+    ],
+    [
+     1202,
+     1881
+    ],
+    [
+     1118,
+     1881
+    ]
+   ],
+   "true_text_ink_px": 1045,
+   "acceptance": "stored == 0.0 (V-3 vertical class by shape)",
+   "pass": true
+  },
+  {
+   "id": 10,
+   "tag": "H2",
+   "class": "horizontal",
+   "box": {
+    "x": 273,
+    "y": 1502,
+    "width": 443,
+    "height": 336
+   },
+   "ground_truth_beta_deg": 0.0,
+   "measured_ink_pil_deg": -0.44,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     273,
+     1502
+    ],
+    [
+     716,
+     1502
+    ],
+    [
+     716,
+     1838
+    ],
+    [
+     273,
+     1838
+    ]
+   ],
+   "true_text_ink_px": 2067,
+   "acceptance": "stored == 0.0",
+   "pass": true
+  }
+ ],
+ "owner_notes": "RF-16 LIVE REJECT fix evidence: base bytes dc612d5 store 0.00 on all 7 tilted regions here (repro: scripts/m009_b2_rf16_repro.py post); RF-16 bytes store 7/7 within +/-3 deg.",
+ "rf17_refresh": {
+  "date": "2026-11-02",
+  "what": "final.jpg re-rendered with the RF-17 layout-parity fix: the 7 tilted regions now render multi-line interior-fit text (bigger font, chord-profile-safe box, interior-centroid paste, interior-mean color) instead of the RF-16 quad-fit small-font blocks (the Owner's D1/D3 REJECT).",
+  "unchanged": [
+   "detections.json (byte-identical — RF-16 angles + quads + boxes proven stable at _B2_RING_MARGIN 16)",
+   "ocr.json / translation.json (byte-identical)",
+   "the horizontal + vertical regions' renders (0 changed pixels)"
+  ],
+  "evidence": "scripts/m009_b2_rf17_verify.py V4"
+ },
+ "rf18_refresh": {
+  "date": "2026-11-04",
+  "what": "RF-18 original-ink orientation GT: detections.json tilted rows now store the mask-GT angle (+-0.25 deg of construction beta on this fixture, vs the RF-17 estimator values) + b2_gt_lines/spacing/cx/cy render-parity params; final.jpg re-rendered with the GT-mirrored tilted layout (lines/spacing mirror the original text ink, paste at the ink centroid, quad-mask color sampling).",
+  "unchanged": [
+   "original.jpg / inpainted.png / text_mask.png (byte-identical — deterministic fixture)",
+   "ocr.json (semantically identical) / translation.json",
+   "the horizontal + vertical rows of detections.json (byte-identical) and their renders (0 changed px)"
+  ],
+  "evidence": "scripts/m009_b2_rf18_verify.py V3/V4"
+ }
+}

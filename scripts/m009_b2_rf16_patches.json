@@ -1,0 +1,20 @@
+[
+ {
+  "cell": 6,
+  "name": "P1: _B2_RING_MARGIN constant (RF-16)",
+  "old": "MANGABD_CONFIG[\"detection\"].setdefault(\"b2_orientation_enable\", True)\n\n\ndef _estimate_region_angle(image_bgr, x, y, w, h):\n",
+  "new": "MANGABD_CONFIG[\"detection\"].setdefault(\"b2_orientation_enable\", True)\n\n# RF-16: ring-margin (px) — bubble-এর ring-stroke + তার AA fringe বাদ\n# দিতে border-reachable \"outside\" light-mask এত px dilate করা হয়\n# (আসল manga ring stroke ~3-8px, S009-class fixture 4px)।\n_B2_RING_MARGIN = 6\n\n\ndef _estimate_region_angle(image_bgr, x, y, w, h):\n"
+ },
+ {
+  "cell": 6,
+  "name": "P2: estimator docstring — text-ink-only law + fallback (RF-16)",
+  "old": "    \"\"\"MANGABD-009 B2 (RB2-1..RB2-4): pixel-PCA orientation inheritance।\n\n    Region crop-এর dark-ink pixel-গুলোর PCA principal axis থেকে θcw\n",
+  "new": "    \"\"\"MANGABD-009 B2 (RB2-1..RB2-4): pixel-PCA orientation inheritance।\n\n    RF-16: PCA এখন TEXT INK-এর উপরেই চলে — আগে পুরো dark-ink cloud\n    (near-upright bubble ring + background art) ঢুকে যেত, তাই সত্যি\n    tilted text-ও মাপা পড়ত ±2-6° (ring-এর দিকে টেনে) → 5° snap →\n    0.00 (dc612d5 LIVE REJECT: 7 tilted-এর 6টাই সরল রেন্ডার)। এখন\n    border-reachable light flood + ring-margin dilate করে শুধু\n    bubble-এর ভেতরের enclosed text-ink-ই PCA দেখে; ring না পেলে\n    fallback = আগের full-ink mask (হুবহু পুরনো আচরণ)।\n\n    Region crop-এর dark-ink pixel-গুলোর PCA principal axis থেকে θcw\n"
+ },
+ {
+  "cell": 6,
+  "name": "P3: enclosed-ink isolation before PCA (RF-16 fix)",
+  "old": "        if int(_keep.sum() // 255) >= 30:\n            ink = _keep\n\n    ys, xs = np.nonzero(ink)\n",
+  "new": "        if int(_keep.sum() // 255) >= 30:\n            ink = _keep\n\n    # RF-16: TEXT-INK-ONLY PCA — মাপার আগেই enclosed ink আলাদা করা।\n    # crop-এর border থেকে light-pixel flood-fill (_outside) বাইরের\n    # সব light-এ ছড়ায়; bubble ring-stroke + background art-এর কালি\n    # সব _outside-এর ঠিক পাশে-পাশে। _outside-কে _B2_RING_MARGIN px\n    # dilate করে বাদ দিলে থাকে শুধু bubble-এর ভেতরের text ink\n    # (ring-aware mask erosion — RF-16 directive #1)। Enclosed ink\n    # 100px-এর কম উঠলে (ring নেই / SFX / ভাঙা ring / plain text\n    # strip) আগের full-ink mask-ই থাকে — সেই ক্ষেত্রে নিচের সব\n    # PCA/gate/quad ঠিক আগের bytes-এর মতোই চলে (corpus 0/36 +\n    # cell-10 battery fixture-গুলো অটুট)।\n    _light = (ink == 0)\n    _ff = np.pad(_light, 1, constant_values=True).astype(np.uint8)\n    _ffmask = np.zeros((_ff.shape[0] + 2, _ff.shape[1] + 2), np.uint8)\n    cv2.floodFill(_ff, _ffmask, (0, 0), 2)\n    _outside = (_ff == 2)[1:-1, 1:-1]\n    _kern = cv2.getStructuringElement(\n        cv2.MORPH_ELLIPSE,\n        (2 * _B2_RING_MARGIN + 1, 2 * _B2_RING_MARGIN + 1))\n    _enclosed = (ink > 0) & (cv2.dilate(\n        _outside.astype(np.uint8), _kern) == 0)\n    if int(_enclosed.sum()) >= 100:\n        ink = _enclosed.astype(np.uint8) * 255\n\n    ys, xs = np.nonzero(ink)\n"
+ }
+]

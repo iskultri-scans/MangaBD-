@@ -1,0 +1,612 @@
+[
+  {
+    "region": {
+      "id": 1,
+      "page_id": "s010_burst.jpg",
+      "x": 116,
+      "y": 63,
+      "width": 404,
+      "height": 374,
+      "quad": [
+        [
+          244,
+          199
+        ],
+        [
+          401,
+          231
+        ],
+        [
+          387,
+          300
+        ],
+        [
+          230,
+          268
+        ]
+      ],
+      "angle": -11.48,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 5
+    },
+    "ocr": {
+      "text": "うわああ！！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এই কী হয়েছে বলো তো? আমি কিছুই বুঝতে পারছি না!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 0
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 2,
+      "page_id": "s010_burst.jpg",
+      "x": 749,
+      "y": 104,
+      "width": 406,
+      "height": 310,
+      "quad": [
+        [
+          845,
+          176
+        ],
+        [
+          1003,
+          128
+        ],
+        [
+          1043,
+          262
+        ],
+        [
+          885,
+          309
+        ]
+      ],
+      "angle": 16.77,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 0
+    },
+    "ocr": {
+      "text": "逃げろー！！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "সবাই পালাও! তাড়াতাড়ি এদিকে আয়!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 39
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 3,
+      "page_id": "s010_burst.jpg",
+      "x": 118,
+      "y": 458,
+      "width": 404,
+      "height": 340,
+      "quad": [
+        [
+          247,
+          576
+        ],
+        [
+          410,
+          629
+        ],
+        [
+          387,
+          699
+        ],
+        [
+          224,
+          647
+        ]
+      ],
+      "angle": -17.78,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 6
+    },
+    "ocr": {
+      "text": "何だこれ！？",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "বিকট শব্দ করে বিস্ফোরণ হলো দেখে সবাই জমে গেল!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 25
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 4,
+      "page_id": "s010_burst.jpg",
+      "x": 760,
+      "y": 490,
+      "width": 381,
+      "height": 301,
+      "quad": [
+        [
+          831,
+          571
+        ],
+        [
+          1075,
+          635
+        ],
+        [
+          1056,
+          706
+        ],
+        [
+          813,
+          642
+        ]
+      ],
+      "angle": -14.59,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 1
+    },
+    "ocr": {
+      "text": "待って、話が違う！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "থামো তো, কথাটা তো আগে বলিনি এমন লাগছে!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 24
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 5,
+      "page_id": "s010_burst.jpg",
+      "x": 723,
+      "y": 829,
+      "width": 454,
+      "height": 361,
+      "quad": [
+        [
+          895,
+          963
+        ],
+        [
+          1020,
+          1011
+        ],
+        [
+          994,
+          1079
+        ],
+        [
+          869,
+          1032
+        ]
+      ],
+      "angle": -20.77,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 2
+    },
+    "ocr": {
+      "text": "来てくれ！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "জলদি এদিকে এসো, একা থেকো না যেন!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 25
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 6,
+      "page_id": "s010_burst.jpg",
+      "x": 93,
+      "y": 875,
+      "width": 428,
+      "height": 271,
+      "quad": [
+        [
+          170,
+          1008
+        ],
+        [
+          435,
+          960
+        ],
+        [
+          446,
+          1016
+        ],
+        [
+          181,
+          1065
+        ]
+      ],
+      "angle": 10.4,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 7
+    },
+    "ocr": {
+      "text": "そういうことだったのか…",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "আচ্ছা, তাহলে ব্যাপারটা এমন ছিল কি…",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 24
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 7,
+      "page_id": "s010_burst.jpg",
+      "x": 267,
+      "y": 1225,
+      "width": 439,
+      "height": 311,
+      "quad": [
+        [
+          376,
+          1382
+        ],
+        [
+          590,
+          1314
+        ],
+        [
+          612,
+          1384
+        ],
+        [
+          398,
+          1451
+        ]
+      ],
+      "angle": 17.48,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 8
+    },
+    "ocr": {
+      "text": "絶対におかしい！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "মাপ করো কিন্তু, এতে একটা গরমিল আছে!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 24
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 8,
+      "page_id": "s010_burst.jpg",
+      "x": 755,
+      "y": 1250,
+      "width": 391,
+      "height": 261,
+      "quad": [
+        [
+          755,
+          1250
+        ],
+        [
+          1146,
+          1250
+        ],
+        [
+          1146,
+          1511
+        ],
+        [
+          755,
+          1511
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 3
+    },
+    "ocr": {
+      "text": "おはよう、元気だった？",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "সকাল হলো, ভালো ঘুম হয়েছে তো?",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 26
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 9,
+      "page_id": "s010_burst.jpg",
+      "x": 1098,
+      "y": 1530,
+      "width": 65,
+      "height": 421,
+      "quad": [
+        [
+          1098,
+          1530
+        ],
+        [
+          1163,
+          1530
+        ],
+        [
+          1163,
+          1951
+        ],
+        [
+          1098,
+          1951
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "overlay",
+      "detector_class": "text_free",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 4
+    },
+    "ocr": {
+      "text": "縦書きのテストです",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এটি লম্বালম্বি লেখার পরীক্ষা",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 24
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 10,
+      "page_id": "s010_burst.jpg",
+      "x": 262,
+      "y": 1600,
+      "width": 449,
+      "height": 308,
+      "quad": [
+        [
+          262,
+          1600
+        ],
+        [
+          711,
+          1600
+        ],
+        [
+          711,
+          1908
+        ],
+        [
+          262,
+          1908
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 9
+    },
+    "ocr": {
+      "text": "間違いない！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "ঠিক ধরেছ, এতে কোনো সন্দেহ নেই",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 25
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,74 @@
+MANGABD-009 B2 RF-15: V-3 wrapper kwarg mismatch — root cause + fix (cells {11,12} only; wrappers accept+forward fit_w/fit_h + battery Test 20)
+
+Owner live (2026-10-31, Run All, first full-chain 10->11->12->15 in one
+kernel): every region "render_bengali_text() got an unexpected keyword
+argument 'fit_w'" -> rendered=0, warnings=8, blank final.
+
+ROOT CAUSE (bytes, reproduced): cell-10 render_page passes fit_w=/fit_h=
+UNCONDITIONALLY (RB2-5 quad-extents fit dims — quad extents when tilted,
+None otherwise, kwarg always sent at L1783-1798); the cells 11/12 V-3
+wrapper that rebinds the global render_bengali_text in Run All stops its
+signature at fit_result=None -> TypeError at CALL time for EVERY region
+class -> render_page's per-row except swallows each as a WARN ->
+rendered=0, blank final. Invisible to every existing instrument: the
+cell-10 battery runs inside cell 10 (wrapper not yet defined); chain
+tests called the wrapper directly; no instrument ever ran render_page
+AFTER cells 11/12 in one namespace. The wrapper bytes are IDENTICAL
+between B1 main and the RF-15 base (verify V1m) — the seam is latent
+since MANGABD-003 V-3; B2's fit_w kwarg armed it.
+
+REPRO (scripts/m009_b2_rf15_repro.py — cells [1,2,3,4,5,6,7,10,11,12,
+15,23] VERBATIM in ONE namespace, Run-All order; RF-14's disclosed env
+stubs): post @ 84aa238 = 12/12 regions ZERO-INK, 12 TypeError events
+(exact Owner error text), rendered(df)=0. work @ fix = 12/12 VISIBLE
+(ink 726-8,177 px/region), rendered=12, 0 TypeErrors, battery Test 20
+pass. mutant (work minus exactly the 2 wrapper patches, battery kept) =
+battery RAISES + live failure reproduces -> the fail-on-current-bytes
+contract is machine-proven.
+
+FIX (3 anchored patches, scope {11,12} ONLY — cells 6/10 byte-untouched
+per the directive, HARD-checked):
+- P1/P2: both V-3 wrappers accept fit_w/fit_h (+fit_result) and forward
+  them to the wrapped function in the fallback arm (forward-only). The
+  vertical arm is untouched and cannot receive non-None fit dims by
+  construction (predicate |angle|<=1.0; render_page computes fit dims
+  only for |angle|>1.0) — disclosed in the patch comment.
+- P3: battery Test 20 (cell 12 tail) — exec-order integration: after the
+  wrappers rebind, render_page on a quad-carrying synthetic page
+  (horizontal + tilted -12deg true-quad + vertical V-3) in the SAME
+  namespace; asserts rendered=3/3, h/t/v ink >= 50 px each, and zero
+  "unexpected keyword argument" events; hard-raises on failure so this
+  seam class can never silently blank a Run All again.
+
+VERIFY 31/31 (scripts/m009_b2_rf15_verify.py):
+V1 static — scope drift exactly {11,12}; cells {6,10} HARD byte-untouched
+(RF-14 fix + B2 engine unmoved); {7,13,15,23,24} identical; AST 27/27
+warnings-as-errors; manifest re-derivation; signature/forward wiring
+probes; V-3 predicate + divert byte-untouched; secret scan clean; base
+wrapper == B1 main.
+V2 dynamic — post LIVE FAILURE REPRODUCED; work SEAM FIXED (12/12
+rendered, 0 TypeError, battery pass, no raise); mutant BATTERY FAILS ON
+CURRENT BYTES; cell-10 battery SUCCESS 19/19 incl. RF-14 Test 19 +
+cell-15 SUCCESS.
+V3 equivalence + archives — work-chain == base-direct with fit_w/fit_h
+forwarded (horizontal AND tilted quad-fit); old-signature call (no fit
+kwargs) old-chain == work-chain; V-3 vertical arm old == work; S003 +
+S007 full-chain render byte-IDENTICAL B1 main vs work (RF-15 restores
+the B1 render through the wrapper chain); kill-switch OFF renders
+axis-aligned ink, TypeError-free.
+V4 — m002_sim_v2 on the fixed cells: 0 abort sites.
+
+Notebook sha256 fab45a90... -> ed51ddc3... (full:
+ed51ddc370cbc6993b1421217bb6e0d9935684479127121998cbf91e8bc09731).
+Cell sizes: cell 11 18,602->19,308 chars; cell 12 15,951->22,076 chars.
+
+Committed instruments (RF-9 discipline): build + content + patches.json
++ verify + precommit + repro (the FULL-CHAIN harness — the pattern the
+Owner directed Flash to add to the standard gate) + results.json + this
+commit message; docs sync in agents/GLM_5_3.md (CURRENT PHASE head +
+RF-14 status-tail closure + the full M9-B2-RF15 record).
+
+Branch mangabd-009-b2: 84aa238 (RF-14 CLOSED re-verify, untouched) ->
+this RF-15 commit; NO amend. NEXT: Flash re-verification with a
+FULL-CHAIN harness (10->11->12->render_page) on exactly this commit,
+then the Owner live merge gate.

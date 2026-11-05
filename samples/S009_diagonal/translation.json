@@ -1,0 +1,92 @@
+[
+ {
+  "id": 1,
+  "region_type": "bubble",
+  "original_text": "危ない！早く逃げろ！！\n危ない！早く逃げろ！！\n危ない！早く逃げろ！！",
+  "translated_text": "চুপ করে শোনো, কী বলছি!",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 2,
+  "region_type": "bubble",
+  "original_text": "待って、話を聞いて！\n待って、話を聞いて！",
+  "translated_text": "এটা কী সব হচ্ছে বলো তো?",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 3,
+  "region_type": "bubble",
+  "original_text": "そういうことだったのか\nそういうことだったのか\nそういうことだったのか",
+  "translated_text": "আমি বুঝতে পারছি না কিছুই!",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 4,
+  "region_type": "bubble",
+  "original_text": "冗談じゃないだろ？！\n冗談じゃないだろ？！",
+  "translated_text": "দাঁড়াও! পিছিয়ে যেও না!",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 5,
+  "region_type": "bubble",
+  "original_text": "急いで！時間がない！！\n急いで！時間がない！！\n急いで！時間がない！！",
+  "translated_text": "সবাই সরে যাও এখনই!",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 6,
+  "region_type": "bubble",
+  "original_text": "大丈夫、私がいるから\n大丈夫、私がいるから\n大丈夫、私がいるから",
+  "translated_text": "কী সাংঘাতিক ব্যাপার এটা!",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 7,
+  "region_type": "bubble",
+  "original_text": "おはよう、元気だった？\nおはよう、元気だった？",
+  "translated_text": "শুভ সকাল! আজ খুব ভালো লাগছে।",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 8,
+  "region_type": "bubble",
+  "original_text": "まさか、そんな馬鹿な…\nまさか、そんな馬鹿な…",
+  "translated_text": "আর এক মিনিট দাঁড়াও না!",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 9,
+  "region_type": "overlay",
+  "original_text": "縦書きのテストです",
+  "translated_text": "এটা একটা লম্বা উল্লেখ।",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 10,
+  "region_type": "bubble",
+  "original_text": "その通りだ、間違いない\nその通りだ、間違いない\nその通りだ、間違いない",
+  "translated_text": "ঠিক তাই, আমিও তা ভাবছিলাম।",
+  "translator_engine": "synthetic (RF-16 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ }
+]

@@ -1,0 +1,612 @@
+[
+  {
+    "region": {
+      "id": 1,
+      "page_id": "s009_diagonal.jpg",
+      "x": 100,
+      "y": 90,
+      "width": 401,
+      "height": 308,
+      "quad": [
+        [
+          175,
+          145
+        ],
+        [
+          439,
+          213
+        ],
+        [
+          414,
+          313
+        ],
+        [
+          150,
+          245
+        ]
+      ],
+      "angle": -14.47,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 5
+    },
+    "ocr": {
+      "text": "危ない！早く逃げろ！！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "চুপ করে শোনো, কী বলছি!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 280
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 2,
+      "page_id": "s009_diagonal.jpg",
+      "x": 760,
+      "y": 100,
+      "width": 408,
+      "height": 288,
+      "quad": [
+        [
+          818,
+          227
+        ],
+        [
+          1056,
+          176
+        ],
+        [
+          1070,
+          238
+        ],
+        [
+          832,
+          288
+        ]
+      ],
+      "angle": 12.07,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 0
+    },
+    "ocr": {
+      "text": "待って、話を聞いて！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এটা কী সব হচ্ছে বলো তো?",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 66
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 3,
+      "page_id": "s009_diagonal.jpg",
+      "x": 62,
+      "y": 445,
+      "width": 449,
+      "height": 291,
+      "quad": [
+        [
+          174,
+          520
+        ],
+        [
+          446,
+          564
+        ],
+        [
+          430,
+          663
+        ],
+        [
+          158,
+          619
+        ]
+      ],
+      "angle": -9.06,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 6
+    },
+    "ocr": {
+      "text": "そういうことだったのか",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "আমি বুঝতে পারছি না কিছুই!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 54
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 4,
+      "page_id": "s009_diagonal.jpg",
+      "x": 765,
+      "y": 437,
+      "width": 371,
+      "height": 279,
+      "quad": [
+        [
+          820,
+          604
+        ],
+        [
+          1050,
+          523
+        ],
+        [
+          1071,
+          582
+        ],
+        [
+          841,
+          664
+        ]
+      ],
+      "angle": 19.48,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 1
+    },
+    "ocr": {
+      "text": "冗談じゃないだろ？！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "দাঁড়াও! পিছিয়ে যেও না!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 55
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 5,
+      "page_id": "s009_diagonal.jpg",
+      "x": 100,
+      "y": 810,
+      "width": 401,
+      "height": 308,
+      "quad": [
+        [
+          182,
+          858
+        ],
+        [
+          439,
+          944
+        ],
+        [
+          407,
+          1042
+        ],
+        [
+          149,
+          955
+        ]
+      ],
+      "angle": -18.63,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 7
+    },
+    "ocr": {
+      "text": "急いで！時間がない！！",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "সবাই সরে যাও এখনই!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 57
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 6,
+      "page_id": "s009_diagonal.jpg",
+      "x": 735,
+      "y": 805,
+      "width": 431,
+      "height": 318,
+      "quad": [
+        [
+          816,
+          918
+        ],
+        [
+          1067,
+          883
+        ],
+        [
+          1081,
+          984
+        ],
+        [
+          830,
+          1019
+        ]
+      ],
+      "angle": 7.9,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 2
+    },
+    "ocr": {
+      "text": "大丈夫、私がいるから",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "কী সাংঘাতিক ব্যাপার এটা!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 57
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 7,
+      "page_id": "s009_diagonal.jpg",
+      "x": 750,
+      "y": 1147,
+      "width": 401,
+      "height": 299,
+      "quad": [
+        [
+          750,
+          1147
+        ],
+        [
+          1151,
+          1147
+        ],
+        [
+          1151,
+          1446
+        ],
+        [
+          750,
+          1446
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 3
+    },
+    "ocr": {
+      "text": "おはよう、元気だった？",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "শুভ সকাল! আজ খুব ভালো লাগছে।",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 55
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 8,
+      "page_id": "s009_diagonal.jpg",
+      "x": 105,
+      "y": 1152,
+      "width": 391,
+      "height": 316,
+      "quad": [
+        [
+          187,
+          1225
+        ],
+        [
+          437,
+          1342
+        ],
+        [
+          411,
+          1398
+        ],
+        [
+          161,
+          1282
+        ]
+      ],
+      "angle": -24.91,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 8
+    },
+    "ocr": {
+      "text": "まさか、そんな馬鹿な…",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "আর এক মিনিট দাঁড়াও না!",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 55
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 9,
+      "page_id": "s009_diagonal.jpg",
+      "x": 1118,
+      "y": 1460,
+      "width": 84,
+      "height": 421,
+      "quad": [
+        [
+          1118,
+          1460
+        ],
+        [
+          1202,
+          1460
+        ],
+        [
+          1202,
+          1881
+        ],
+        [
+          1118,
+          1881
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "overlay",
+      "detector_class": "text_free",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 4
+    },
+    "ocr": {
+      "text": "縦書きのテストです",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এটা একটা লম্বা উল্লেখ।",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 55
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 10,
+      "page_id": "s009_diagonal.jpg",
+      "x": 273,
+      "y": 1502,
+      "width": 443,
+      "height": 336,
+      "quad": [
+        [
+          273,
+          1502
+        ],
+        [
+          716,
+          1502
+        ],
+        [
+          716,
+          1838
+        ],
+        [
+          273,
+          1838
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 9
+    },
+    "ocr": {
+      "text": "その通りだ、間違いない",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "ঠিক তাই, আমিও তা ভাবছিলাম।",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 56
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  }
+]

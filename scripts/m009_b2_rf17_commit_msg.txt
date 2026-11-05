@@ -1,0 +1,120 @@
+MANGABD-009 B2 RF-17: layout parity on tilted bubbles — root cause + fix (cells {6,10}; interior-fit render + margin-16 estimator + S010 owner-class archive + 28-gate verify)
+
+OWNER VISUAL REJECT on 57ac480 (tilt inherits BUT layout broke):
+  D1 burst bubble  — multi-line original renders as ONE line, steep
+     angle, text clipped at the bubble edge (ink outside the bubble);
+  D2 one tilted bubble renders COMPLETELY EMPTY (text lost);
+  D3 tilted bubbles' line-break pattern / lean magnitude does not
+     visually match the original ("অনেক তফাৎ").
+MERGE STAYS ON HOLD. Owner's eyes remain the only gate.
+
+CHECK FIRST outcome (the directive's prime suspect, verified against
+the bytes): fit_w/fit_h passed to render_bengali_text were ALREADY
+the quad's side lengths (cell-10 render_page L1672-1679, edge norms),
+and the cell-6 quad was already a true rotated rect — the stated
+"corner extents" defect does not exist as such. The real defects,
+each reproduced and fixed:
+
+  (a) ESTIMATOR (D1-adjacent): the RF-16 enclosed-ink isolation at
+      _B2_RING_MARGIN=6 leaves burst-spike cores (spikes 10-24px
+      thick + ring 7px junction blobs ~28-31px) and art-tight stroke
+      cores (18-22px) inside the "text" ink -> contaminated PCA ->
+      5deg snap -> 0.00. On the new owner-class S010 fixture the
+      REJECT bytes store 0/7 tilted+burst angles (repro: post arm).
+  (b) RENDER FIT DIMS (D1): the tilted fit box came from the QUAD
+      side lengths — either spike-inflated (contaminated quad) or the
+      original text-ink PCA rect. Both are NOT the bubble interior:
+      the burst renders overflowed the true interior by 2505-3295px
+      (measured), and the S009-class renders under-sized into
+      ~17px multi-touch-line blocks (the Owner's D3).
+  (c) COLOR (D2): choose_text_color samples the BBOX mean — a
+      dark-art/hatch-filled bbox picks WHITE text on the WHITE bubble
+      interior -> invisible (E3 on S010: 63 visible px in a 454x361
+      box with interior mean 251.8).
+  (d) PASTE CENTER (D2-adjacent): art-pulled asymmetric bboxes shift
+      the bbox center off the bubble (E3: 15.5px) -> the block pokes
+      past the ring on one side.
+
+FIX (7 hunks, cells {6,10} ONLY — cells 11/12 HARD-untouched, all
+other cells byte-untouched; patches.json manifest + build driver +
+regen-verified round-trip: base 57ac480 + patches == working tree):
+  cell 6  hunk1   _B2_RING_MARGIN 6 -> 16: swallow <= 32px structures
+          (burst spikes, art strokes, spike-ring junctions). PROVEN
+          no-op on S009: stored angles+quads byte-identical at
+          margins 6/14/16/17/18 (10/10; S009 text sits >= 25px from
+          the outside — big headroom).
+  cell 10 hunk1   new _b2_interior_fit(): render-time bubble-interior
+          fit box from the INPAINTED crop (border light flood ->
+          outside; light-inside-ring = interior cloud; quad (u,v)
+          projection extents; ELLIPSE-AWARE chord-profile shrink so
+          the avail box's corners stay inside the cloud). Returns
+          (fit_w, fit_h, interior_mean_gray, centroid_x, centroid_y).
+  cell 10 hunk2   render_page: the interior box OVERRIDES the quad
+          side lengths; the quad path survives as the exact fallback
+          (leaky ring / SFX / degenerate) — old behavior preserved.
+  cell 10 hunk3   interior-path text color from the INTERIOR mean
+          (choose_text_color's thresholds mirrored, knob-respecting):
+          dark-art bboxes no longer pick white-on-white.
+  cell 10 hunk4-5 interior-path padding = 8% of the interior box (not
+          the bbox) + paste centered on the interior CLOUD CENTROID
+          (x/y shifted, render_bengali_text's signature UNTOUCHED —
+          the RF-15 wrapper seam stays safe; verticals never reach
+          the interior path: |angle|>1 gate).
+  cell 10 hunk6   battery Test 21 — the D1+D2 render trap: a
+          spike-inflated quad over a ringed canvas overflows pre-fix,
+          a dark-hatched box renders white-on-white pre-fix; asserts
+          visible ink + zero-overflow + multi-line on the fixed bytes.
+
+ARCHIVES:
+  NEW samples/S010_burst/ — the owner-class page the directive asked
+  for: 3 burst bubbles (spiky rings, spike-inflated bboxes) + 3
+  art-tight ellipses + E3 = small bubble over a hatched dark panel
+  with white halo (bbox mean 126.8 < 160 on the inpainted page) + 2
+  horizontals + 1 V-3 vertical. Full production chain on the fixed
+  bytes; 7/7 tilted+burst stored within +/-3deg of construction beta
+  (cross-checked by PCA on the archived text_mask.png).
+  REFRESHED samples/S009_diagonal/final.jpg — the RF-16 capture held
+  the Owner-rejected tilted layout; re-rendered with the fix under
+  hard gates: detections.json byte-identical, ocr/translation rows
+  identical, H/V regions' renders 0 changed pixels, ONLY the 7 tilted
+  regions changed (by design; disclosure appended to metadata.json).
+
+VERIFY (scripts/m009_b2_rf17_verify.py, 28/28 PASS):
+  V1 static: scope drift exactly {6,10}; cells 11/12 byte-untouched;
+     AST 27/27; manifest 7 hunks; no secret-shaped tokens.
+  V2 full-chain battery: cell-10 SUCCESS with Test 21 green; cell-12
+     Test 20 (RF-15 seam) green.
+  V3 estimator parity: S009 AND S010 archives reproduce their stored
+     angles+quads 10/10 byte-identically on the fixed estimator.
+  V4 S009: fresh render JPEG byte-identical to the archived (refreshed)
+     final.jpg; A2 7/7 tilted zero-ink-outside; A3 lines_post>=2
+     whenever base>=2; A4 within +/-3deg; A5 H/V stored 0.
+  V5 S010: fresh render byte-identical to the archive; A1 rendered ==
+     applied 10/10; A2 7/7 tilted+burst zero-ink-outside-interior;
+     A3 lines parity (base vs post: 4/4, 3/3, 4/4, 3/3, 3/4, 3/3, 3/3);
+     A4 7/7 within +/-3deg (bursts included — no fallback needed);
+     A5 horizontals 0, vertical V-3.
+  V6 S003/S007: full-chain renders byte-IDENTICAL B1-vs-RF17 (the
+     A5 stability gate; the m006-era archived finals differ only by
+     the era's font build — reported, not gated).
+  V7 kill-switch: W-OFF == B1@angle0 byte-IDENTICAL; W-ON differs
+     (RB2-7 ruled semantics intact).
+  V8 m002_sim_v2: 0 abort sites on the fixed cells.
+  A6 parity tables printed for Owner review (S009 + S010): GT |
+     stored | lines(base) | lines(post) | ink-outside-px per region.
+
+RULINGS (documented for the Owner):
+  - A2's "bubble mask" = the true text-allowed interior (builder
+    ground-truth masks; horizontals keep their B1 baseline grazing —
+    0-84px, reported in the tables, byte-locked by the S003/S007
+    stability gate).
+  - A5's "S009 byte-stable" = detection side byte-stable + H/V
+    renders stable + the tilted final.jpg REFRESHED by design (the
+    archived one was the rejected layout; this is the corpus
+    convention — the archive always shows the current pipeline).
+  - The interior path never runs for |angle|<=1: horizontals,
+    verticals, S003/S007 and the kill-switch path are untouched by
+    construction (verified by V6/V7 byte-identity).
+
+Next: Flash re-verify (GLM-5.3-Flash, Owner-directed), then the
+Owner's visual gate on their live page. MERGE REMAINS ON HOLD.

@@ -1,0 +1,83 @@
+[
+ {
+  "id": 1,
+  "region_type": "bubble",
+  "original_text": "スキル発動！\nスキル発動！",
+  "translated_text": "দক্ষ ছড়িয়ে পড়ল!",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 2,
+  "region_type": "bubble",
+  "original_text": "システム警告：敵接近\nシステム警告：敵接近\nシステム警告：敵接近",
+  "translated_text": "সিস্টেম সতর্কতা: শত্রু কাছে এসে গেছে, সবাই প্রস্তুত হও!",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 3,
+  "region_type": "bubble",
+  "original_text": "クエスト更新：到達\nクエスト更新：到達",
+  "translated_text": "অভিযান হালনাগাদ: গন্তব্যে পৌঁছে গেছি",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 4,
+  "region_type": "bubble",
+  "original_text": "レベルアップ！魔力上昇\nレベルアップ！魔力上昇\nレベルアップ！魔力上昇",
+  "translated_text": "স্তর বেড়েছে! জাদুর শক্তি বেড়েছে",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 5,
+  "region_type": "bubble",
+  "original_text": "警告！\n緊急事態発生！！全員撤退せよ！！",
+  "translated_text": "সাবধান! জরুরি পরিস্থিতি, সবাই সরে যাও!",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 6,
+  "region_type": "bubble",
+  "original_text": "システム：接続断絶\nシステム：接続断絶\nシステム：接続断絶",
+  "translated_text": "সিস্টেম বার্তা: সংযোগ বিচ্ছিন্ন হয়েছে",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 7,
+  "region_type": "bubble",
+  "original_text": "おはよう、元気だった？\nその通りだ、間違いない",
+  "translated_text": "সকাল হলো, ভালো ঘুম হয়েছে তো?",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 8,
+  "region_type": "overlay",
+  "original_text": "縦書きのテストです",
+  "translated_text": "এটি লম্বালম্বি লেখার পরীক্ষা",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 9,
+  "region_type": "bubble",
+  "original_text": "間違いない！\nそう思う！\nよし、行こう！",
+  "translated_text": "ঠিক ধরেছ, এতে কোনো সন্দেহ নেই",
+  "translator_engine": "synthetic (RF-18 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ }
+]

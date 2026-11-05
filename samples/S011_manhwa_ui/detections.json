@@ -1,0 +1,314 @@
+[
+  {
+    "id": 1,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 760,
+    "y": 78,
+    "width": 442,
+    "height": 344,
+    "quad": [
+      [
+        868,
+        233
+      ],
+      [
+        1027,
+        199
+      ],
+      [
+        1042,
+        270
+      ],
+      [
+        883,
+        304
+      ]
+    ],
+    "angle": 12.01,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 45.76,
+    "b2_gt_cx": 970.92,
+    "b2_gt_cy": 247.94,
+    "reading_order": 0
+  },
+  {
+    "id": 2,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 73,
+    "y": 110,
+    "width": 514,
+    "height": 342,
+    "quad": [
+      [
+        194,
+        181
+      ],
+      [
+        484,
+        222
+      ],
+      [
+        467,
+        340
+      ],
+      [
+        177,
+        298
+      ]
+    ],
+    "angle": -8.05,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 3,
+    "b2_gt_spacing": 45.84,
+    "b2_gt_cx": 365.62,
+    "b2_gt_cy": 265.53,
+    "reading_order": 4
+  },
+  {
+    "id": 3,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 78,
+    "y": 478,
+    "width": 504,
+    "height": 364,
+    "quad": [
+      [
+        216,
+        585
+      ],
+      [
+        466,
+        667
+      ],
+      [
+        444,
+        736
+      ],
+      [
+        194,
+        654
+      ]
+    ],
+    "angle": -18.07,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 45.6,
+    "b2_gt_cx": 373.49,
+    "b2_gt_cy": 674.77,
+    "reading_order": 5
+  },
+  {
+    "id": 4,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 740,
+    "y": 458,
+    "width": 441,
+    "height": 343,
+    "quad": [
+      [
+        808,
+        610
+      ],
+      [
+        1105,
+        579
+      ],
+      [
+        1116,
+        689
+      ],
+      [
+        819,
+        720
+      ]
+    ],
+    "angle": 5.86,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 3,
+    "b2_gt_spacing": 42.84,
+    "b2_gt_cx": 991.9,
+    "b2_gt_cy": 646.05,
+    "reading_order": 1
+  },
+  {
+    "id": 5,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 115,
+    "y": 910,
+    "width": 434,
+    "height": 342,
+    "quad": [
+      [
+        202,
+        977
+      ],
+      [
+        468,
+        1101
+      ],
+      [
+        449,
+        1141
+      ],
+      [
+        184,
+        1018
+      ]
+    ],
+    "angle": -24.99,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 32.8,
+    "b2_gt_cx": 304.17,
+    "b2_gt_cy": 1061.84,
+    "reading_order": 6
+  },
+  {
+    "id": 6,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 761,
+    "y": 911,
+    "width": 399,
+    "height": 279,
+    "quad": [
+      [
+        847,
+        961
+      ],
+      [
+        1103,
+        1025
+      ],
+      [
+        1074,
+        1140
+      ],
+      [
+        819,
+        1077
+      ]
+    ],
+    "angle": -13.9,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 3,
+    "b2_gt_spacing": 45.88,
+    "b2_gt_cx": 1009.27,
+    "b2_gt_cy": 1062.79,
+    "reading_order": 2
+  },
+  {
+    "id": 7,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 285,
+    "y": 1252,
+    "width": 431,
+    "height": 336,
+    "quad": [
+      [
+        285,
+        1252
+      ],
+      [
+        716,
+        1252
+      ],
+      [
+        716,
+        1588
+      ],
+      [
+        285,
+        1588
+      ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "reading_order": 7
+  },
+  {
+    "id": 8,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 148,
+    "y": 1550,
+    "width": 65,
+    "height": 421,
+    "quad": [
+      [
+        148,
+        1550
+      ],
+      [
+        213,
+        1550
+      ],
+      [
+        213,
+        1971
+      ],
+      [
+        148,
+        1971
+      ]
+    ],
+    "angle": 0.0,
+    "region_type": "overlay",
+    "detector_class": "text_free",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "reading_order": 8
+  },
+  {
+    "id": 9,
+    "page_id": "s011_manhwa_ui.jpg",
+    "x": 740,
+    "y": 1592,
+    "width": 421,
+    "height": 336,
+    "quad": [
+      [
+        740,
+        1592
+      ],
+      [
+        1161,
+        1592
+      ],
+      [
+        1161,
+        1928
+      ],
+      [
+        740,
+        1928
+      ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "reading_order": 3
+  }
+]

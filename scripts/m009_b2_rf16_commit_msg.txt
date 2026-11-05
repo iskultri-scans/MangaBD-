@@ -1,0 +1,82 @@
+MANGABD-009 B2 RF-16: tilt estimator must see TEXT INK ONLY — root cause + fix (cell 6 only; ring-aware enclosed-ink isolation + S009 diagonal regression archive + 32-check verify)
+
+Owner LIVE REJECT on dc612d5: of 7 tilted bubbles on the test page only
+1 inherited tilt; df proof angles 0.00 on truly tilted regions; MERGE ON
+HOLD. Reproduced, fixed, gated.
+
+ROOT CAUSE (reproduced on dc612d5 bytes, scripts/m009_b2_rf16_repro.py
+post): _estimate_region_angle ran pixel-PCA over ALL dark ink of the
+region crop — bubble ring + background art + text. The near-upright
+ring/art mass dilutes true text tilt far below the 5 deg snap: on the
+S009-class fixture T1 GT -15.0 measures raw all-ink +4.60 (sign-flipped
+toward the ring axis), T7 GT -25.0 -> +6.13, T6 GT +8.0 -> +0.66; ALL 7
+tilted diluted to <60% of GT -> stored 0.00 + no quad -> straight render
+(0/7 inherited; Owner saw 1/7 live). Archive corpus had ZERO diagonal
+pages, so this class was never gated.
+
+FIX (3 patches, cell 6 ONLY, manifest scripts/m009_b2_rf16_patches.json,
+build driver m009_b2_rf16_build.py + content module per RF-9 discipline;
+forward-only — everything from "ys, xs = np.nonzero(ink)" down is
+byte-identical):
+  P1  _B2_RING_MARGIN = 6 constant (ring stroke + AA fringe margin)
+  P2  estimator docstring: the RF-16 text-ink-only law + fallback
+  P3  enclosed-ink isolation before the pixel harvest — light
+      flood-fill from the crop border marks the border-reachable
+      "outside"; dilate(outside, _B2_RING_MARGIN) swallows the bubble
+      ring stroke + AA fringe + edge art; enclosed ink = ink AND NOT
+      dilated-outside = the TEXT ink inside the bubble (ring-aware mask
+      erosion, RF-16 directive #1); <100 px enclosed (no ring / SFX /
+      broken ring / plain strip) -> keep the previous full-ink mask =
+      EXACT old behavior downstream (corpus + cell-10 battery fixtures
+      ride unchanged)
+
+S009 REGRESSION ARCHIVE (directive #2, samples/S009_diagonal/): the
+Owner's diagonal test-page CLASS permanently in the corpus. SYNTHESIZED
+fixture (the Owner's live page bytes never left their Colab session —
+disclosed in metadata.json): 7 tilted dialogue bubbles (text tilt beta
+in [-25, +20]) inside near-upright ellipse rings (+-3 deg, 4px stroke,
+aspect 1.2-1.5) over screentone + art strokes leaking inside the
+axis-aligned region boxes — the exact dilution surface of the LIVE
+REJECT — plus 2 horizontal bubbles + 1 vertical V-3 note. Contents:
+original.jpg / inpainted.png / text_mask.png / detections.json /
+ocr.json / translation.json / final.jpg / metadata.json with per-region
+ground truth (construction beta per the PIL-rotate/Test-16 law,
+cross-checked by PCA on the archived text_mask bytes). Builder:
+scripts/m009_b2_rf16_s009_build.py (asserts >=6/7 at build time);
+README row added.
+
+VERIFY (scripts/m009_b2_rf16_verify.py, 32/32 PASS, recorded in
+scripts/m009_b2_rf16_results.json; re-runnable gate):
+  V1  static: scope drift exactly {6} vs dc612d5; HARD cells {10,11,12}
+      byte-untouched (RF-14 Test 19 + RF-15 Test 20 + B2 render engine +
+      wrappers ride unchanged); reading-order cells {7,13,15,23,24}
+      byte-identical; AST 27/27 warnings-as-errors; work == dc612d5 +
+      exactly the 3-patch manifest; isolation-block wiring probes;
+      downstream PCA/gates/quad byte-identical (forward-only); V-3
+      predicate + kill-switch call + all gates byte-untouched; secret
+      scan on the delta clean
+  V2  dynamic repro: post @ dc612d5 -> LIVE REJECT symptom REPRODUCED
+      (0/7 inherited, raw all-ink diluted <60% of GT on all 7) / fix ->
+      7/7 within +-3 deg (Owner gate >=6/7), horizontals 0, vertical
+      0/V-3
+  V3  archive estimator parity: production estimator base == work on
+      ALL 36 archived regions of S001/S002/S003/S005_manual/
+      S005_openrouter/S007 — all (0.0, None) -> detections.json
+      byte-identity by construction
+  V4  S009 full chain (verbatim cells 1-7,10,11,12,15,23 in ONE
+      namespace, RF-14/15 harness env): cell-10 battery 19/19 incl.
+      RF-14 Test 19; cell-12 RF-15 Test 20 PASS (no regression);
+      7/7 tilted rows store |angle-beta| <= 3 (max err 0.63) + quad;
+      horizontals stay 0; vertical stays V-3; 10/10 rendered, TypeError
+      0, render-fail 0, WARN 0; rendered-ink orientation round-trip
+      7/7 within +-3 deg
+  V5  kill-switch (RB2-7) intact: knob OFF before detect -> S009 rows
+      all angle 0.0 + bbox quads; render inked (70817 px) TypeError-free;
+      render-side mirror law OFF-zeroes / ON-passthrough
+  V6  archive render parity: S003 + S007 full-chain renders
+      byte-IDENTICAL (B1 main f218b35 vs work)
+  V7  m002_sim_v2 on the fixed cells: 0 abort sites
+
+Merge stays ON HOLD until the Owner re-accepts visually on the same
+diagonal test page; Flash to re-verify INCLUDING the S009 full-chain
+render (gate: python3 scripts/m009_b2_rf16_verify.py).

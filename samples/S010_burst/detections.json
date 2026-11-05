@@ -1,0 +1,350 @@
+[
+  {
+    "id": 1,
+    "page_id": "s010_burst.jpg",
+    "x": 116,
+    "y": 63,
+    "width": 404,
+    "height": 374,
+    "quad": [
+      [
+        244,
+        199
+      ],
+      [
+        401,
+        232
+      ],
+      [
+        387,
+        300
+      ],
+      [
+        230,
+        267
+      ]
+    ],
+    "angle": -11.84,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 45.47,
+    "b2_gt_cx": 308.63,
+    "b2_gt_cy": 248.61,
+    "reading_order": 5
+  },
+  {
+    "id": 2,
+    "page_id": "s010_burst.jpg",
+    "x": 749,
+    "y": 104,
+    "width": 406,
+    "height": 310,
+    "quad": [
+      [
+        865,
+        240
+      ],
+      [
+        1023,
+        194
+      ],
+      [
+        1043,
+        263
+      ],
+      [
+        885,
+        309
+      ]
+    ],
+    "angle": 16.19,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 45.45,
+    "b2_gt_cx": 913.08,
+    "b2_gt_cy": 263.88,
+    "reading_order": 0
+  },
+  {
+    "id": 3,
+    "page_id": "s010_burst.jpg",
+    "x": 118,
+    "y": 458,
+    "width": 404,
+    "height": 340,
+    "quad": [
+      [
+        249,
+        577
+      ],
+      [
+        408,
+        635
+      ],
+      [
+        383,
+        702
+      ],
+      [
+        224,
+        644
+      ]
+    ],
+    "angle": -19.98,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 45.95,
+    "b2_gt_cx": 282.86,
+    "b2_gt_cy": 626.72,
+    "reading_order": 6
+  },
+  {
+    "id": 4,
+    "page_id": "s010_burst.jpg",
+    "x": 760,
+    "y": 490,
+    "width": 381,
+    "height": 301,
+    "quad": [
+      [
+        832,
+        571
+      ],
+      [
+        1074,
+        637
+      ],
+      [
+        1056,
+        706
+      ],
+      [
+        813,
+        641
+      ]
+    ],
+    "angle": -15.04,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 45.79,
+    "b2_gt_cx": 943.71,
+    "b2_gt_cy": 638.37,
+    "reading_order": 1
+  },
+  {
+    "id": 5,
+    "page_id": "s010_burst.jpg",
+    "x": 723,
+    "y": 829,
+    "width": 454,
+    "height": 361,
+    "quad": [
+      [
+        895,
+        963
+      ],
+      [
+        1019,
+        1013
+      ],
+      [
+        992,
+        1080
+      ],
+      [
+        868,
+        1030
+      ]
+    ],
+    "angle": -22.04,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 45.75,
+    "b2_gt_cx": 924.67,
+    "b2_gt_cy": 1013.56,
+    "reading_order": 2
+  },
+  {
+    "id": 6,
+    "page_id": "s010_burst.jpg",
+    "x": 93,
+    "y": 875,
+    "width": 428,
+    "height": 271,
+    "quad": [
+      [
+        170,
+        1008
+      ],
+      [
+        459,
+        956
+      ],
+      [
+        469,
+        1013
+      ],
+      [
+        181,
+        1064
+      ]
+    ],
+    "angle": 10.18,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 37.21,
+    "b2_gt_cx": 333.72,
+    "b2_gt_cy": 1006.79,
+    "reading_order": 7
+  },
+  {
+    "id": 7,
+    "page_id": "s010_burst.jpg",
+    "x": 267,
+    "y": 1225,
+    "width": 439,
+    "height": 311,
+    "quad": [
+      [
+        376,
+        1382
+      ],
+      [
+        590,
+        1314
+      ],
+      [
+        612,
+        1383
+      ],
+      [
+        398,
+        1451
+      ]
+    ],
+    "angle": 17.65,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "b2_gt_lines": 2,
+    "b2_gt_spacing": 46.18,
+    "b2_gt_cx": 452.52,
+    "b2_gt_cy": 1395.42,
+    "reading_order": 8
+  },
+  {
+    "id": 8,
+    "page_id": "s010_burst.jpg",
+    "x": 755,
+    "y": 1250,
+    "width": 391,
+    "height": 261,
+    "quad": [
+      [
+        755,
+        1250
+      ],
+      [
+        1146,
+        1250
+      ],
+      [
+        1146,
+        1511
+      ],
+      [
+        755,
+        1511
+      ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "reading_order": 3
+  },
+  {
+    "id": 9,
+    "page_id": "s010_burst.jpg",
+    "x": 1098,
+    "y": 1530,
+    "width": 65,
+    "height": 421,
+    "quad": [
+      [
+        1098,
+        1530
+      ],
+      [
+        1163,
+        1530
+      ],
+      [
+        1163,
+        1951
+      ],
+      [
+        1098,
+        1951
+      ]
+    ],
+    "angle": 0.0,
+    "region_type": "overlay",
+    "detector_class": "text_free",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "reading_order": 4
+  },
+  {
+    "id": 10,
+    "page_id": "s010_burst.jpg",
+    "x": 262,
+    "y": 1600,
+    "width": 449,
+    "height": 308,
+    "quad": [
+      [
+        262,
+        1600
+      ],
+      [
+        711,
+        1600
+      ],
+      [
+        711,
+        1908
+      ],
+      [
+        262,
+        1908
+      ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble",
+    "detector_class": "text_bubble",
+    "detector_score": 0.9,
+    "parent_bubble_id": null,
+    "reading_order": 9
+  }
+]

@@ -1,0 +1,401 @@
+{
+ "sample_id": "S011_manhwa_ui",
+ "captured_at": "2026-11-04",
+ "branch": "mangabd-009-b2",
+ "notebook_blob_sha": "d0ad299b0ee7e9410e70b6690f3bfe77103561ff",
+ "notebook_sha256": "98c01952913e5201928a8b88b1a9eb85a7d4082fe8ea0b0f11cefdd118b7098a",
+ "pipeline_variant": "MANGABD-009 B2 RF-18 regression fixture — synthesized manhwa-UI page (game-system windows + dark panel + heavy art), full chain (detect -> ocr -> inpaint -> translate -> render) on the RF-18 bytes",
+ "translation_engine": "synthetic (RF-18 fixture)",
+ "source_page": "synthesized by scripts/m009_b2_rf18_page.py (rng_seed 20261104) — NOT an Owner Colab upload",
+ "provenance": "RF-18 directive: archive the manhwa-UI class (tilted system-window text, dark UI panel, art-crowded light panel). Ground truth = construction beta (PIL rotate law, cell-10 Test 16) + the builder's own true-ink mask (text_mask.png); the pipeline's mask-GT ladder must reproduce both.",
+ "disclosures": [
+  "SYNTHESIZED fixture (not Owner-produced art); its job is to pin the manhwa-UI orientation-parity class, not to imitate art.",
+  "Sandbox has no onnxruntime/torch GPU: RT-DETR is stubbed to the TRUE region boxes and CTD to the TRUE text-ink prob map (detector stand-ins, RF-16/17 pattern + the RF-18 CTD extension); the region build, RF-18 ladder, quads, angles, reading-order sort and every render byte after the boxes are the REAL production path.",
+  "OCR is stubbed to the drawn JP text; translations are the builder's Bengali strings; inpainted.png is the synthesized clean page (panels + art stay, text removed).",
+  "text_mask.png is the TRUE synthesized text ink (the RF-18 orientation ground truth), not the pipeline detect-stage mask.",
+  "U5 is deliberately ASYMMETRIC (short + long line): its rendered-ink re-measurement deviation is REPORT-ONLY (measurement-surface verdict) — see the RF-18 record.",
+  "The Owner's live manhwa page remains the final visual gate for the B2 merge."
+ ],
+ "acceptance_rule": "RF-18 hard criteria on S011: stored angle within +/-2 deg of GT for all 6 UI panels (mask-GT law); lines |post - GT| <= 1; rendered-ink re-measure within +/-2 deg on SYMMETRIC blocks (asymmetric REPORT-ONLY); oriented-bbox IoU >= 0.6 or side parity <= 15%; zero rendered ink outside the panel interior; horizontals 0, vertical V-3; per-region parity table + overlay printed by scripts/m009_b2_rf18_verify.py V4/V5.",
+ "ground_truth": [
+  {
+   "id": 1,
+   "tag": "U2",
+   "class": "ui",
+   "box": {
+    "x": 760,
+    "y": 78,
+    "width": 442,
+    "height": 344
+   },
+   "ground_truth_beta_deg": 12.0,
+   "stored_angle_deg": 12.01,
+   "stored_quad": [
+    [
+     868,
+     233
+    ],
+    [
+     1027,
+     199
+    ],
+    [
+     1042,
+     270
+    ],
+    [
+     883,
+     304
+    ]
+   ],
+   "b2_gt_lines": 2,
+   "b2_gt_spacing": 45.76,
+   "gt_lines": 2,
+   "line_extents_px": [
+    180,
+    180
+   ],
+   "symmetric": true,
+   "true_text_ink_px": 1139,
+   "acceptance": "|stored - beta| <= 2.0 (RF-18 mask-GT law); lines |post - GT| <= 1; rendered-ink re-measure <= 2.0 on symmetric blocks (asymmetric blocks REPORT-ONLY — measurement-surface verdict, RF-18 disclosure)",
+   "pass": true
+  },
+  {
+   "id": 2,
+   "tag": "U1",
+   "class": "ui",
+   "box": {
+    "x": 73,
+    "y": 110,
+    "width": 514,
+    "height": 342
+   },
+   "ground_truth_beta_deg": -8.0,
+   "stored_angle_deg": -8.05,
+   "stored_quad": [
+    [
+     194,
+     181
+    ],
+    [
+     484,
+     222
+    ],
+    [
+     467,
+     340
+    ],
+    [
+     177,
+     298
+    ]
+   ],
+   "b2_gt_lines": 3,
+   "b2_gt_spacing": 45.84,
+   "gt_lines": 3,
+   "line_extents_px": [
+    299,
+    299,
+    299
+   ],
+   "symmetric": true,
+   "true_text_ink_px": 3095,
+   "acceptance": "|stored - beta| <= 2.0 (RF-18 mask-GT law); lines |post - GT| <= 1; rendered-ink re-measure <= 2.0 on symmetric blocks (asymmetric blocks REPORT-ONLY — measurement-surface verdict, RF-18 disclosure)",
+   "pass": true
+  },
+  {
+   "id": 3,
+   "tag": "U3",
+   "class": "ui",
+   "box": {
+    "x": 78,
+    "y": 478,
+    "width": 504,
+    "height": 364
+   },
+   "ground_truth_beta_deg": -18.0,
+   "stored_angle_deg": -18.07,
+   "stored_quad": [
+    [
+     216,
+     585
+    ],
+    [
+     466,
+     667
+    ],
+    [
+     444,
+     736
+    ],
+    [
+     194,
+     654
+    ]
+   ],
+   "b2_gt_lines": 2,
+   "b2_gt_spacing": 45.6,
+   "gt_lines": 2,
+   "line_extents_px": [
+    270,
+    270
+   ],
+   "symmetric": true,
+   "true_text_ink_px": 1737,
+   "acceptance": "|stored - beta| <= 2.0 (RF-18 mask-GT law); lines |post - GT| <= 1; rendered-ink re-measure <= 2.0 on symmetric blocks (asymmetric blocks REPORT-ONLY — measurement-surface verdict, RF-18 disclosure)",
+   "pass": true
+  },
+  {
+   "id": 4,
+   "tag": "U4",
+   "class": "ui",
+   "box": {
+    "x": 740,
+    "y": 458,
+    "width": 441,
+    "height": 343
+   },
+   "ground_truth_beta_deg": 6.0,
+   "stored_angle_deg": 5.86,
+   "stored_quad": [
+    [
+     808,
+     610
+    ],
+    [
+     1105,
+     579
+    ],
+    [
+     1116,
+     689
+    ],
+    [
+     819,
+     720
+    ]
+   ],
+   "b2_gt_lines": 3,
+   "b2_gt_spacing": 42.84,
+   "gt_lines": 3,
+   "line_extents_px": [
+    308,
+    308,
+    308
+   ],
+   "symmetric": true,
+   "true_text_ink_px": 2179,
+   "acceptance": "|stored - beta| <= 2.0 (RF-18 mask-GT law); lines |post - GT| <= 1; rendered-ink re-measure <= 2.0 on symmetric blocks (asymmetric blocks REPORT-ONLY — measurement-surface verdict, RF-18 disclosure)",
+   "pass": true
+  },
+  {
+   "id": 5,
+   "tag": "U5",
+   "class": "ui",
+   "box": {
+    "x": 115,
+    "y": 910,
+    "width": 434,
+    "height": 342
+   },
+   "ground_truth_beta_deg": -25.0,
+   "stored_angle_deg": -24.99,
+   "stored_quad": [
+    [
+     202,
+     977
+    ],
+    [
+     468,
+     1101
+    ],
+    [
+     449,
+     1141
+    ],
+    [
+     184,
+     1018
+    ]
+   ],
+   "b2_gt_lines": 2,
+   "b2_gt_spacing": 32.8,
+   "gt_lines": 2,
+   "line_extents_px": [
+    57,
+    304
+   ],
+   "symmetric": false,
+   "true_text_ink_px": 635,
+   "acceptance": "|stored - beta| <= 2.0 (RF-18 mask-GT law); lines |post - GT| <= 1; rendered-ink re-measure <= 2.0 on symmetric blocks (asymmetric blocks REPORT-ONLY — measurement-surface verdict, RF-18 disclosure)",
+   "pass": true
+  },
+  {
+   "id": 6,
+   "tag": "U6",
+   "class": "ui_dark",
+   "box": {
+    "x": 761,
+    "y": 911,
+    "width": 399,
+    "height": 279
+   },
+   "ground_truth_beta_deg": -14.0,
+   "stored_angle_deg": -13.9,
+   "stored_quad": [
+    [
+     847,
+     961
+    ],
+    [
+     1103,
+     1025
+    ],
+    [
+     1074,
+     1140
+    ],
+    [
+     819,
+     1077
+    ]
+   ],
+   "b2_gt_lines": 3,
+   "b2_gt_spacing": 45.88,
+   "gt_lines": 3,
+   "line_extents_px": [
+    269,
+    269,
+    269
+   ],
+   "symmetric": true,
+   "true_text_ink_px": 2679,
+   "acceptance": "|stored - beta| <= 2.0 (RF-18 mask-GT law); lines |post - GT| <= 1; rendered-ink re-measure <= 2.0 on symmetric blocks (asymmetric blocks REPORT-ONLY — measurement-surface verdict, RF-18 disclosure)",
+   "pass": true
+  },
+  {
+   "id": 7,
+   "tag": "H1",
+   "class": "horizontal",
+   "box": {
+    "x": 285,
+    "y": 1252,
+    "width": 431,
+    "height": 336
+   },
+   "ground_truth_beta_deg": 0.0,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     285,
+     1252
+    ],
+    [
+     716,
+     1252
+    ],
+    [
+     716,
+     1588
+    ],
+    [
+     285,
+     1588
+    ]
+   ],
+   "b2_gt_lines": null,
+   "b2_gt_spacing": null,
+   "gt_lines": 2,
+   "line_extents_px": [
+    319,
+    318
+   ],
+   "symmetric": true,
+   "true_text_ink_px": 33500,
+   "acceptance": "stored == 0.0",
+   "pass": true
+  },
+  {
+   "id": 8,
+   "tag": "V1",
+   "class": "vertical",
+   "box": {
+    "x": 148,
+    "y": 1550,
+    "width": 65,
+    "height": 421
+   },
+   "ground_truth_beta_deg": 0.0,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     148,
+     1550
+    ],
+    [
+     213,
+     1550
+    ],
+    [
+     213,
+     1971
+    ],
+    [
+     148,
+     1971
+    ]
+   ],
+   "b2_gt_lines": null,
+   "b2_gt_spacing": null,
+   "gt_lines": 1,
+   "line_extents_px": [],
+   "symmetric": false,
+   "true_text_ink_px": 1045,
+   "acceptance": "stored == 0.0 (V-3 vertical class by shape)",
+   "pass": true
+  },
+  {
+   "id": 9,
+   "tag": "H2",
+   "class": "horizontal",
+   "box": {
+    "x": 740,
+    "y": 1592,
+    "width": 421,
+    "height": 336
+   },
+   "ground_truth_beta_deg": 0.0,
+   "stored_angle_deg": 0.0,
+   "stored_quad": [
+    [
+     740,
+     1592
+    ],
+    [
+     1161,
+     1592
+    ],
+    [
+     1161,
+     1928
+    ],
+    [
+     740,
+     1928
+    ]
+   ],
+   "b2_gt_lines": null,
+   "b2_gt_spacing": null,
+   "gt_lines": 3,
+   "line_extents_px": [
+    180,
+    150,
+    210
+   ],
+   "symmetric": true,
+   "true_text_ink_px": 49050,
+   "acceptance": "stored == 0.0",
+   "pass": true
+  }
+ ]
+}
