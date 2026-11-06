@@ -1,0 +1,4298 @@
+{
+  "instrument": "scripts/m009_b3_color_measure.py",
+  "batch": "MANGABD-009 B3 Phase A (docs-only, NO source changes)",
+  "notebook_sha256_pin": "8926a2b313f655369cb5bac1e0bf316454082d8eac01d197cd52cd4aff8c7615",
+  "knobs_under_test": {
+    "chroma_colored": 45,
+    "v_white": 215,
+    "v_black": 90,
+    "min_ink_px": 30,
+    "mad_max": 40,
+    "ring_delta_min": 40,
+    "bimodal_min_frac": 0.25,
+    "bimodal_hue_sep_deg": 40.0,
+    "chroma_sensitivity": [
+      35,
+      60
+    ],
+    "locator_deviance": 80,
+    "locator_trust": "mask-vs-ring contrast >= ring_delta_min"
+  },
+  "pages": [
+    {
+      "name": "S003",
+      "dir": "S003_batch2",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "446b357560122e97a28f2709d057bc69",
+      "duplicate_of": null,
+      "regions": 6,
+      "image_wh": [
+        844,
+        1200
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.91,
+        "median_gray_at_saved_mask": 252.5,
+        "verdict": "area-mask (inpaint coverage; unusable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "overlay",
+          "xywh": [
+            10,
+            81,
+            61,
+            298
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 19604,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 4462
+          },
+          "ink_px": 4462,
+          "med_rgb": [
+            80,
+            80,
+            80
+          ],
+          "chroma": 0,
+          "V": 80,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            69,
+            69,
+            69
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 10912,
+          "ring_delta_l2": 301,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            218,
+            110,
+            87,
+            156
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 14106,
+            "mask_ring_delta_l2": 3,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 4271
+          },
+          "ink_px": 4271,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            10,
+            10,
+            10
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 6020,
+          "ring_delta_l2": 423,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            403,
+            340,
+            204,
+            216
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 36854,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              255,
+              255,
+              255
+            ],
+            "deviant_px": 13561
+          },
+          "ink_px": 13561,
+          "med_rgb": [
+            4,
+            4,
+            4
+          ],
+          "chroma": 0,
+          "V": 4,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            4,
+            4,
+            4
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 13310,
+          "ring_delta_l2": 433,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            76,
+            361,
+            103,
+            109
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 10847,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 3131
+          },
+          "ink_px": 3131,
+          "med_rgb": [
+            9,
+            9,
+            9
+          ],
+          "chroma": 0,
+          "V": 9,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            9,
+            9,
+            9
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 4580,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            197,
+            672,
+            128,
+            140
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 17981,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 5536
+          },
+          "ink_px": 5536,
+          "med_rgb": [
+            13,
+            13,
+            13
+          ],
+          "chroma": 0,
+          "V": 13,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            13,
+            13,
+            13
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 7728,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            101,
+            880,
+            131,
+            204
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 27213,
+            "mask_ring_delta_l2": 7,
+            "bg_med_rgb": [
+              251,
+              251,
+              251
+            ],
+            "deviant_px": 8298
+          },
+          "ink_px": 8298,
+          "med_rgb": [
+            39,
+            39,
+            39
+          ],
+          "chroma": 0,
+          "V": 39,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            39,
+            39,
+            39
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 13789,
+          "ring_delta_l2": 371,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 6,
+          "gray": 0,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "deviance-locator (saved mask area-type/starved)": 6
+        }
+      }
+    },
+    {
+      "name": "S007",
+      "dir": "S007",
+      "source": "extra",
+      "status": "ok",
+      "original_md5": "446b357560122e97a28f2709d057bc69",
+      "duplicate_of": "S003",
+      "regions": 6,
+      "image_wh": [
+        844,
+        1200
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.91,
+        "median_gray_at_saved_mask": 252.5,
+        "verdict": "area-mask (inpaint coverage; unusable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "overlay",
+          "xywh": [
+            10,
+            81,
+            61,
+            298
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 19604,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 4462
+          },
+          "ink_px": 4462,
+          "med_rgb": [
+            80,
+            80,
+            80
+          ],
+          "chroma": 0,
+          "V": 80,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            69,
+            69,
+            69
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 10912,
+          "ring_delta_l2": 301,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            218,
+            110,
+            87,
+            156
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 14106,
+            "mask_ring_delta_l2": 3,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 4271
+          },
+          "ink_px": 4271,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            10,
+            10,
+            10
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 6020,
+          "ring_delta_l2": 423,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            403,
+            340,
+            204,
+            216
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 36854,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              255,
+              255,
+              255
+            ],
+            "deviant_px": 13561
+          },
+          "ink_px": 13561,
+          "med_rgb": [
+            4,
+            4,
+            4
+          ],
+          "chroma": 0,
+          "V": 4,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            4,
+            4,
+            4
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 13310,
+          "ring_delta_l2": 433,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            76,
+            361,
+            103,
+            109
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 10847,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 3131
+          },
+          "ink_px": 3131,
+          "med_rgb": [
+            9,
+            9,
+            9
+          ],
+          "chroma": 0,
+          "V": 9,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            9,
+            9,
+            9
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 4580,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            197,
+            672,
+            128,
+            140
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 17981,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 5536
+          },
+          "ink_px": 5536,
+          "med_rgb": [
+            13,
+            13,
+            13
+          ],
+          "chroma": 0,
+          "V": 13,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            13,
+            13,
+            13
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 7728,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            101,
+            880,
+            131,
+            204
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 27213,
+            "mask_ring_delta_l2": 7,
+            "bg_med_rgb": [
+              251,
+              251,
+              251
+            ],
+            "deviant_px": 8298
+          },
+          "ink_px": 8298,
+          "med_rgb": [
+            39,
+            39,
+            39
+          ],
+          "chroma": 0,
+          "V": 39,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            39,
+            39,
+            39
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 13789,
+          "ring_delta_l2": 371,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 6,
+          "gray": 0,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "deviance-locator (saved mask area-type/starved)": 6
+        }
+      }
+    },
+    {
+      "name": "S009",
+      "dir": "S009_diagonal",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "0d9b8766207858203f7204413190b203",
+      "duplicate_of": null,
+      "regions": 10,
+      "image_wh": [
+        1300,
+        2000
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.012,
+        "median_gray_at_saved_mask": 10.0,
+        "verdict": "stroke-precise (usable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "bubble",
+          "xywh": [
+            100,
+            90,
+            401,
+            308
+          ],
+          "angle": -14.8,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1728,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1728,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 17315,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            760,
+            100,
+            408,
+            288
+          ],
+          "angle": 11.81,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1188,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1188,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 10182,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            62,
+            445,
+            449,
+            291
+          ],
+          "angle": -8.86,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1467,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1467,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 17600,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            765,
+            437,
+            371,
+            279
+          ],
+          "angle": 20.22,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1016,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1016,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 11050,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            100,
+            810,
+            401,
+            308
+          ],
+          "angle": -18.04,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1970,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1970,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 17210,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            735,
+            805,
+            431,
+            318
+          ],
+          "angle": 7.97,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1705,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1705,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 16668,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 7,
+          "region_type": "bubble",
+          "xywh": [
+            750,
+            1147,
+            401,
+            299
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1038,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1038,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 11516,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 8,
+          "region_type": "bubble",
+          "xywh": [
+            105,
+            1152,
+            391,
+            316
+          ],
+          "angle": -24.83,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1290,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1290,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 11609,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 9,
+          "region_type": "overlay",
+          "xywh": [
+            1118,
+            1460,
+            84,
+            421
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1045,
+            "mask_ring_delta_l2": 168
+          },
+          "ink_px": 1045,
+          "med_rgb": [
+            158,
+            158,
+            158
+          ],
+          "chroma": 0,
+          "V": 158,
+          "class": "gray",
+          "class_sensitivity": {
+            "chroma35": "gray",
+            "chroma60": "gray"
+          },
+          "mad_rgb": [
+            55,
+            55,
+            55
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 4344,
+          "ring_delta_l2": 168,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 10,
+          "region_type": "bubble",
+          "xywh": [
+            273,
+            1502,
+            443,
+            336
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 2067,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 2067,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 18447,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 9,
+          "gray": 1,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "saved-mask (stroke-precise)": 10
+        }
+      }
+    },
+    {
+      "name": "S010",
+      "dir": "S010_burst",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "57b82f877eee3c9b7ca6d58842acd446",
+      "duplicate_of": null,
+      "regions": 10,
+      "image_wh": [
+        1300,
+        2000
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.008,
+        "median_gray_at_saved_mask": 10.0,
+        "verdict": "stroke-precise (usable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "bubble",
+          "xywh": [
+            116,
+            63,
+            404,
+            374
+          ],
+          "angle": -11.84,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 829,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 829,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 6863,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            749,
+            104,
+            406,
+            310
+          ],
+          "angle": 16.19,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 744,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 744,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 6702,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            118,
+            458,
+            404,
+            340
+          ],
+          "angle": -19.98,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 776,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 776,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 7490,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            760,
+            490,
+            381,
+            301
+          ],
+          "angle": -15.04,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1462,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1462,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 11303,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            723,
+            829,
+            454,
+            361
+          ],
+          "angle": -22.04,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 634,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 634,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 5945,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            93,
+            875,
+            428,
+            271
+          ],
+          "angle": 10.18,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 828,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 828,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 11752,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 7,
+          "region_type": "bubble",
+          "xywh": [
+            267,
+            1225,
+            439,
+            311
+          ],
+          "angle": 17.65,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1249,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1249,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 10708,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 8,
+          "region_type": "bubble",
+          "xywh": [
+            755,
+            1250,
+            391,
+            261
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1143,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1143,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 11848,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 9,
+          "region_type": "overlay",
+          "xywh": [
+            1098,
+            1530,
+            65,
+            421
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1045,
+            "mask_ring_delta_l2": 168
+          },
+          "ink_px": 1045,
+          "med_rgb": [
+            158,
+            158,
+            158
+          ],
+          "chroma": 0,
+          "V": 158,
+          "class": "gray",
+          "class_sensitivity": {
+            "chroma35": "gray",
+            "chroma60": "gray"
+          },
+          "mad_rgb": [
+            55,
+            55,
+            55
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 4344,
+          "ring_delta_l2": 168,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 10,
+          "region_type": "bubble",
+          "xywh": [
+            262,
+            1600,
+            449,
+            308
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1159,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 1159,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 10748,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 9,
+          "gray": 1,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "saved-mask (stroke-precise)": 10
+        }
+      }
+    },
+    {
+      "name": "S011",
+      "dir": "S011_manhwa_ui",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "54decf4293fde67b32109aa3d8d476f8",
+      "duplicate_of": null,
+      "regions": 9,
+      "image_wh": [
+        1300,
+        2000
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.075,
+        "median_gray_at_saved_mask": 10.0,
+        "verdict": "stroke-precise (usable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "bubble",
+          "xywh": [
+            760,
+            78,
+            442,
+            344
+          ],
+          "angle": 12.01,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1139,
+            "mask_ring_delta_l2": 416
+          },
+          "ink_px": 1139,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            250,
+            250,
+            250
+          ],
+          "ring_px": 7957,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            73,
+            110,
+            514,
+            342
+          ],
+          "angle": -8.05,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 3095,
+            "mask_ring_delta_l2": 416
+          },
+          "ink_px": 3095,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            250,
+            250,
+            250
+          ],
+          "ring_px": 21093,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            78,
+            478,
+            504,
+            364
+          ],
+          "angle": -18.07,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1737,
+            "mask_ring_delta_l2": 416
+          },
+          "ink_px": 1737,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            250,
+            250,
+            250
+          ],
+          "ring_px": 12220,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            740,
+            458,
+            441,
+            343
+          ],
+          "angle": 5.86,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 2179,
+            "mask_ring_delta_l2": 416
+          },
+          "ink_px": 2179,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            250,
+            250,
+            250
+          ],
+          "ring_px": 18790,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            115,
+            910,
+            434,
+            342
+          ],
+          "angle": -24.99,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 635,
+            "mask_ring_delta_l2": 416
+          },
+          "ink_px": 635,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            250,
+            250,
+            250
+          ],
+          "ring_px": 6912,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            761,
+            911,
+            399,
+            279
+          ],
+          "angle": -13.9,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 2679,
+            "mask_ring_delta_l2": 317
+          },
+          "ink_px": 2679,
+          "med_rgb": [
+            245,
+            245,
+            245
+          ],
+          "chroma": 0,
+          "V": 245,
+          "class": "white",
+          "class_sensitivity": {
+            "chroma35": "white",
+            "chroma60": "white"
+          },
+          "mad_rgb": [
+            1,
+            1,
+            1
+          ],
+          "ring_bg_rgb": [
+            62,
+            62,
+            62
+          ],
+          "ring_px": 18576,
+          "ring_delta_l2": 317,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 7,
+          "region_type": "bubble",
+          "xywh": [
+            285,
+            1252,
+            431,
+            336
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 33500,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 33500,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            0,
+            0,
+            0
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 4418,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 8,
+          "region_type": "overlay",
+          "xywh": [
+            148,
+            1550,
+            65,
+            421
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 1045,
+            "mask_ring_delta_l2": 166
+          },
+          "ink_px": 1045,
+          "med_rgb": [
+            159,
+            159,
+            159
+          ],
+          "chroma": 0,
+          "V": 159,
+          "class": "gray",
+          "class_sensitivity": {
+            "chroma35": "gray",
+            "chroma60": "gray"
+          },
+          "mad_rgb": [
+            55,
+            55,
+            55
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 4344,
+          "ring_delta_l2": 166,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 9,
+          "region_type": "bubble",
+          "xywh": [
+            740,
+            1592,
+            421,
+            336
+          ],
+          "angle": 0.0,
+          "locator_source": "saved-mask (stroke-precise)",
+          "locator_diag": {
+            "saved_px": 49050,
+            "mask_ring_delta_l2": 424
+          },
+          "ink_px": 49050,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            0,
+            0,
+            0
+          ],
+          "ring_bg_rgb": [
+            255,
+            255,
+            255
+          ],
+          "ring_px": 4838,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 1,
+          "black": 7,
+          "gray": 1,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "saved-mask (stroke-precise)": 9
+        }
+      }
+    },
+    {
+      "name": "S001",
+      "dir": "S001_color_webtoon",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "446b357560122e97a28f2709d057bc69",
+      "duplicate_of": "S003",
+      "regions": 6,
+      "image_wh": [
+        844,
+        1200
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.909,
+        "median_gray_at_saved_mask": 252.5,
+        "verdict": "area-mask (inpaint coverage; unusable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "overlay",
+          "xywh": [
+            10,
+            81,
+            61,
+            298
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 19445,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 4462
+          },
+          "ink_px": 4462,
+          "med_rgb": [
+            80,
+            80,
+            80
+          ],
+          "chroma": 0,
+          "V": 80,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            69,
+            69,
+            69
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 10912,
+          "ring_delta_l2": 301,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            218,
+            110,
+            87,
+            156
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 14106,
+            "mask_ring_delta_l2": 3,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 4271
+          },
+          "ink_px": 4271,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            10,
+            10,
+            10
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 6020,
+          "ring_delta_l2": 423,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            403,
+            340,
+            204,
+            216
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 36854,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              255,
+              255,
+              255
+            ],
+            "deviant_px": 13561
+          },
+          "ink_px": 13561,
+          "med_rgb": [
+            4,
+            4,
+            4
+          ],
+          "chroma": 0,
+          "V": 4,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            4,
+            4,
+            4
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 13310,
+          "ring_delta_l2": 433,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            76,
+            361,
+            103,
+            109
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 10847,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 3131
+          },
+          "ink_px": 3131,
+          "med_rgb": [
+            9,
+            9,
+            9
+          ],
+          "chroma": 0,
+          "V": 9,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            9,
+            9,
+            9
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 4580,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            197,
+            672,
+            128,
+            140
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 17981,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 5536
+          },
+          "ink_px": 5536,
+          "med_rgb": [
+            13,
+            13,
+            13
+          ],
+          "chroma": 0,
+          "V": 13,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            13,
+            13,
+            13
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 7728,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            101,
+            880,
+            131,
+            204
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 27213,
+            "mask_ring_delta_l2": 7,
+            "bg_med_rgb": [
+              251,
+              251,
+              251
+            ],
+            "deviant_px": 8298
+          },
+          "ink_px": 8298,
+          "med_rgb": [
+            39,
+            39,
+            39
+          ],
+          "chroma": 0,
+          "V": 39,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            39,
+            39,
+            39
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 13789,
+          "ring_delta_l2": 371,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 6,
+          "gray": 0,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "deviance-locator (saved mask area-type/starved)": 6
+        }
+      }
+    },
+    {
+      "name": "S002",
+      "dir": "S002_batch1",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "446b357560122e97a28f2709d057bc69",
+      "duplicate_of": "S003",
+      "regions": 6,
+      "image_wh": [
+        844,
+        1200
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.91,
+        "median_gray_at_saved_mask": 252.5,
+        "verdict": "area-mask (inpaint coverage; unusable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "overlay",
+          "xywh": [
+            10,
+            81,
+            61,
+            298
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 19604,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 4462
+          },
+          "ink_px": 4462,
+          "med_rgb": [
+            80,
+            80,
+            80
+          ],
+          "chroma": 0,
+          "V": 80,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            69,
+            69,
+            69
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 10912,
+          "ring_delta_l2": 301,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            218,
+            110,
+            87,
+            156
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 14106,
+            "mask_ring_delta_l2": 3,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 4271
+          },
+          "ink_px": 4271,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            10,
+            10,
+            10
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 6020,
+          "ring_delta_l2": 423,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            403,
+            340,
+            204,
+            216
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 36854,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              255,
+              255,
+              255
+            ],
+            "deviant_px": 13561
+          },
+          "ink_px": 13561,
+          "med_rgb": [
+            4,
+            4,
+            4
+          ],
+          "chroma": 0,
+          "V": 4,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            4,
+            4,
+            4
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 13310,
+          "ring_delta_l2": 433,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            76,
+            361,
+            103,
+            109
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 10847,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 3131
+          },
+          "ink_px": 3131,
+          "med_rgb": [
+            9,
+            9,
+            9
+          ],
+          "chroma": 0,
+          "V": 9,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            9,
+            9,
+            9
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 4580,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            197,
+            672,
+            128,
+            140
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 17981,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 5536
+          },
+          "ink_px": 5536,
+          "med_rgb": [
+            13,
+            13,
+            13
+          ],
+          "chroma": 0,
+          "V": 13,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            13,
+            13,
+            13
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 7728,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            101,
+            880,
+            131,
+            204
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 27213,
+            "mask_ring_delta_l2": 7,
+            "bg_med_rgb": [
+              251,
+              251,
+              251
+            ],
+            "deviant_px": 8298
+          },
+          "ink_px": 8298,
+          "med_rgb": [
+            39,
+            39,
+            39
+          ],
+          "chroma": 0,
+          "V": 39,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            39,
+            39,
+            39
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 13789,
+          "ring_delta_l2": 371,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 6,
+          "gray": 0,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "deviance-locator (saved mask area-type/starved)": 6
+        }
+      }
+    },
+    {
+      "name": "S005m",
+      "dir": "S005_manual",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "446b357560122e97a28f2709d057bc69",
+      "duplicate_of": "S003",
+      "regions": 6,
+      "image_wh": [
+        844,
+        1200
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.91,
+        "median_gray_at_saved_mask": 252.5,
+        "verdict": "area-mask (inpaint coverage; unusable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "overlay",
+          "xywh": [
+            10,
+            81,
+            61,
+            298
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 19604,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 4462
+          },
+          "ink_px": 4462,
+          "med_rgb": [
+            80,
+            80,
+            80
+          ],
+          "chroma": 0,
+          "V": 80,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            69,
+            69,
+            69
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 10912,
+          "ring_delta_l2": 301,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            218,
+            110,
+            87,
+            156
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 14106,
+            "mask_ring_delta_l2": 3,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 4271
+          },
+          "ink_px": 4271,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            10,
+            10,
+            10
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 6020,
+          "ring_delta_l2": 423,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            403,
+            340,
+            204,
+            216
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 36854,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              255,
+              255,
+              255
+            ],
+            "deviant_px": 13561
+          },
+          "ink_px": 13561,
+          "med_rgb": [
+            4,
+            4,
+            4
+          ],
+          "chroma": 0,
+          "V": 4,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            4,
+            4,
+            4
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 13310,
+          "ring_delta_l2": 433,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            76,
+            361,
+            103,
+            109
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 10847,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 3131
+          },
+          "ink_px": 3131,
+          "med_rgb": [
+            9,
+            9,
+            9
+          ],
+          "chroma": 0,
+          "V": 9,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            9,
+            9,
+            9
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 4580,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            197,
+            672,
+            128,
+            140
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 17981,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 5536
+          },
+          "ink_px": 5536,
+          "med_rgb": [
+            13,
+            13,
+            13
+          ],
+          "chroma": 0,
+          "V": 13,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            13,
+            13,
+            13
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 7728,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            101,
+            880,
+            131,
+            204
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 27213,
+            "mask_ring_delta_l2": 7,
+            "bg_med_rgb": [
+              251,
+              251,
+              251
+            ],
+            "deviant_px": 8298
+          },
+          "ink_px": 8298,
+          "med_rgb": [
+            39,
+            39,
+            39
+          ],
+          "chroma": 0,
+          "V": 39,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            39,
+            39,
+            39
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 13789,
+          "ring_delta_l2": 371,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 6,
+          "gray": 0,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "deviance-locator (saved mask area-type/starved)": 6
+        }
+      }
+    },
+    {
+      "name": "S005o",
+      "dir": "S005_openrouter",
+      "source": "repo",
+      "status": "ok",
+      "original_md5": "446b357560122e97a28f2709d057bc69",
+      "duplicate_of": "S003",
+      "regions": 6,
+      "image_wh": [
+        844,
+        1200
+      ],
+      "saved_mask_character": {
+        "coverage_of_region_bboxes": 0.91,
+        "median_gray_at_saved_mask": 252.5,
+        "verdict": "area-mask (inpaint coverage; unusable as ink locator)"
+      },
+      "region_rows": [
+        {
+          "id": 1,
+          "region_type": "overlay",
+          "xywh": [
+            10,
+            81,
+            61,
+            298
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 19604,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 4462
+          },
+          "ink_px": 4462,
+          "med_rgb": [
+            80,
+            80,
+            80
+          ],
+          "chroma": 0,
+          "V": 80,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            69,
+            69,
+            69
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 10912,
+          "ring_delta_l2": 301,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": false,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 2,
+          "region_type": "bubble",
+          "xywh": [
+            218,
+            110,
+            87,
+            156
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 14106,
+            "mask_ring_delta_l2": 3,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 4271
+          },
+          "ink_px": 4271,
+          "med_rgb": [
+            10,
+            10,
+            10
+          ],
+          "chroma": 0,
+          "V": 10,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            10,
+            10,
+            10
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 6020,
+          "ring_delta_l2": 423,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 3,
+          "region_type": "bubble",
+          "xywh": [
+            403,
+            340,
+            204,
+            216
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 36854,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              255,
+              255,
+              255
+            ],
+            "deviant_px": 13561
+          },
+          "ink_px": 13561,
+          "med_rgb": [
+            4,
+            4,
+            4
+          ],
+          "chroma": 0,
+          "V": 4,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            4,
+            4,
+            4
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 13310,
+          "ring_delta_l2": 433,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 4,
+          "region_type": "bubble",
+          "xywh": [
+            76,
+            361,
+            103,
+            109
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 10847,
+            "mask_ring_delta_l2": 2,
+            "bg_med_rgb": [
+              254,
+              254,
+              254
+            ],
+            "deviant_px": 3131
+          },
+          "ink_px": 3131,
+          "med_rgb": [
+            9,
+            9,
+            9
+          ],
+          "chroma": 0,
+          "V": 9,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            9,
+            9,
+            9
+          ],
+          "ring_bg_rgb": [
+            254,
+            254,
+            254
+          ],
+          "ring_px": 4580,
+          "ring_delta_l2": 424,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 5,
+          "region_type": "bubble",
+          "xywh": [
+            197,
+            672,
+            128,
+            140
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 17981,
+            "mask_ring_delta_l2": 5,
+            "bg_med_rgb": [
+              253,
+              253,
+              253
+            ],
+            "deviant_px": 5536
+          },
+          "ink_px": 5536,
+          "med_rgb": [
+            13,
+            13,
+            13
+          ],
+          "chroma": 0,
+          "V": 13,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            13,
+            13,
+            13
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 7728,
+          "ring_delta_l2": 416,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        },
+        {
+          "id": 6,
+          "region_type": "bubble",
+          "xywh": [
+            101,
+            880,
+            131,
+            204
+          ],
+          "angle": 0.0,
+          "locator_source": "deviance-locator (saved mask area-type/starved)",
+          "locator_diag": {
+            "saved_px": 27213,
+            "mask_ring_delta_l2": 7,
+            "bg_med_rgb": [
+              251,
+              251,
+              251
+            ],
+            "deviant_px": 8298
+          },
+          "ink_px": 8298,
+          "med_rgb": [
+            39,
+            39,
+            39
+          ],
+          "chroma": 0,
+          "V": 39,
+          "class": "black",
+          "class_sensitivity": {
+            "chroma35": "black",
+            "chroma60": "black"
+          },
+          "mad_rgb": [
+            39,
+            39,
+            39
+          ],
+          "ring_bg_rgb": [
+            253,
+            253,
+            253
+          ],
+          "ring_px": 13789,
+          "ring_delta_l2": 371,
+          "hue_bimodal": false,
+          "hue_detail": null,
+          "gates": {
+            "mad_ok": true,
+            "ring_ok": true,
+            "not_bimodal": true
+          },
+          "key_fires": false
+        }
+      ],
+      "summary": {
+        "classes": {
+          "colored": 0,
+          "white": 0,
+          "black": 6,
+          "gray": 0,
+          "no-ink": 0,
+          "empty-window": 0
+        },
+        "key_fires": 0,
+        "locator_sources": {
+          "deviance-locator (saved mask area-type/starved)": 6
+        }
+      }
+    }
+  ],
+  "synthetic_probes": {
+    "status": "ok",
+    "passed": 16,
+    "total": 16,
+    "probes": [
+      {
+        "probe": "red_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          255,
+          0,
+          0
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "blue_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          0,
+          0,
+          255
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "green_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          0,
+          128,
+          0
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "yellow_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          255,
+          220,
+          0
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "cyan_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          0,
+          220,
+          220
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "magenta_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          220,
+          0,
+          220
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "darkred_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          170,
+          30,
+          30
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "lightblue_on_white",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          120,
+          170,
+          255
+        ],
+        "color_err_l2": 0,
+        "tolerance": 30,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "white_on_black",
+        "expected_class": "white",
+        "expected_key_fires": false,
+        "got_class": "white",
+        "got_key_fires": false,
+        "sampled_med_rgb": [
+          255,
+          255,
+          255
+        ],
+        "color_err_l2": null,
+        "tolerance": null,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "black_on_white",
+        "expected_class": "black",
+        "expected_key_fires": false,
+        "got_class": "black",
+        "got_key_fires": false,
+        "sampled_med_rgb": [
+          0,
+          0,
+          0
+        ],
+        "color_err_l2": null,
+        "tolerance": null,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "gray_on_white",
+        "expected_class": "gray",
+        "expected_key_fires": false,
+        "got_class": "gray",
+        "got_key_fires": false,
+        "sampled_med_rgb": [
+          128,
+          128,
+          128
+        ],
+        "color_err_l2": null,
+        "tolerance": null,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "red_on_white_jpeg",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          252,
+          3,
+          2
+        ],
+        "color_err_l2": 5,
+        "tolerance": 35,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "red_on_pink",
+        "expected_class": "colored",
+        "expected_key_fires": true,
+        "got_class": "colored",
+        "got_key_fires": true,
+        "sampled_med_rgb": [
+          200,
+          0,
+          0
+        ],
+        "color_err_l2": 0,
+        "tolerance": 35,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": true,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "red_on_red_lowc",
+        "expected_class": "colored",
+        "expected_key_fires": false,
+        "got_class": "colored",
+        "got_key_fires": false,
+        "sampled_med_rgb": [
+          255,
+          40,
+          40
+        ],
+        "color_err_l2": null,
+        "tolerance": null,
+        "gates": {
+          "mad_ok": true,
+          "ring_ok": false,
+          "not_bimodal": true
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "gradient_red_blue",
+        "expected_class": "colored",
+        "expected_key_fires": false,
+        "got_class": "colored",
+        "got_key_fires": false,
+        "sampled_med_rgb": [
+          134,
+          0,
+          134
+        ],
+        "color_err_l2": null,
+        "tolerance": null,
+        "gates": {
+          "mad_ok": false,
+          "ring_ok": true,
+          "not_bimodal": false
+        },
+        "verdict": "PASS"
+      },
+      {
+        "probe": "split_red_blue",
+        "expected_class": "colored",
+        "expected_key_fires": false,
+        "got_class": "colored",
+        "got_key_fires": false,
+        "sampled_med_rgb": [
+          134,
+          0,
+          134
+        ],
+        "color_err_l2": null,
+        "tolerance": null,
+        "gates": {
+          "mad_ok": false,
+          "ring_ok": true,
+          "not_bimodal": false
+        },
+        "verdict": "PASS"
+      }
+    ]
+  },
+  "otsu_cross_check": [
+    {
+      "page": "S003",
+      "region_id": 1,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        48,
+        48,
+        48
+      ]
+    },
+    {
+      "page": "S003",
+      "region_id": 2,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "page": "S003",
+      "region_id": 5,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        7,
+        7,
+        7
+      ]
+    },
+    {
+      "page": "S001",
+      "region_id": 4,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        6,
+        6,
+        6
+      ]
+    },
+    {
+      "page": "S009",
+      "region_id": 1,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        12,
+        12,
+        12
+      ]
+    },
+    {
+      "page": "S010",
+      "region_id": 1,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        20,
+        20,
+        20
+      ]
+    },
+    {
+      "page": "S010",
+      "region_id": 5,
+      "otsu_class": "white",
+      "otsu_med_rgb": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "page": "S011",
+      "region_id": 2,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        20,
+        20,
+        20
+      ]
+    },
+    {
+      "page": "S011",
+      "region_id": 6,
+      "otsu_class": "gray",
+      "otsu_med_rgb": [
+        150,
+        150,
+        150
+      ]
+    },
+    {
+      "page": "S011",
+      "region_id": 8,
+      "otsu_class": "black",
+      "otsu_med_rgb": [
+        20,
+        20,
+        20
+      ]
+    }
+  ],
+  "otsu_cross_agreement": "7/10",
+  "otsu_cross_note": "The Otsu cross-check is the naive maskless baseline; its 3 misses are exactly the hard windows where the locator law wins: S010 r5 (dark window + large white burst art — Otsu calls the art the ink; the stroke-precise mask correctly samples the black text strokes), S011 r6 (2.4% white strokes on a dark window), S011 r8 (gray 158 strokes vs Otsu's dark-side pick). Recorded as evidence for the mask-based locator, not as sampler error.",
+  "vlm_visual_passes": {
+    "full_sheet_130px": {
+      "model": "glm-5.3-flash",
+      "verdicts": {
+        "S003 r1": "white",
+        "S003 r2": "black",
+        "S003 r5": "black",
+        "S001 r4": "black",
+        "S009 r1": "gray",
+        "S010 r1": "black",
+        "S010 r5": "black",
+        "S011 r2": "black",
+        "S011 r6": "white",
+        "S011 r8": "white"
+      },
+      "agreement_with_sampler": "7/10"
+    },
+    "focus_2x_recheck": {
+      "model": "glm-5.3-flash",
+      "verdicts": {
+        "S003 r1": "black",
+        "S009 r1": "black",
+        "S011 r8": "white"
+      },
+      "agreement_with_sampler": "2/3"
+    },
+    "adjudication": "Full-sheet misreads at 130px tile height (S003 r1 tall narrow strip, S009 r1 thin tilted strokes) resolve to the sampler verdicts at 2x. S011 r8 remains perceptually ambiguous (gray 158 reads as white at a glance) but has exact numeric ground truth: the fixture's stroke-precise mask median is BGR 158 == sampler median 158, min 7 / max 255 — gray ink by construction. Sampler holds 10/10 against numeric truth; VLM agrees 9/10 after the 2x re-check, the residual being the gray/white perceptual boundary."
+  },
+  "manual_inspection": {
+    "sheet": "/home/z/my-project/m009_b3_work/contact_sheet.png",
+    "selection": [
+      "S003 r1",
+      "S003 r2",
+      "S003 r5",
+      "S001 r4",
+      "S009 r1",
+      "S010 r1",
+      "S010 r5",
+      "S011 r2",
+      "S011 r6",
+      "S011 r8"
+    ],
+    "records": [
+      {
+        "page": "S003",
+        "region_id": 1,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S003",
+        "region_id": 2,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S003",
+        "region_id": 5,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S001",
+        "region_id": 4,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S009",
+        "region_id": 1,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S010",
+        "region_id": 1,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S010",
+        "region_id": 5,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S011",
+        "region_id": 2,
+        "algorithm_class": "black",
+        "manual_class": "black",
+        "agree": true
+      },
+      {
+        "page": "S011",
+        "region_id": 6,
+        "algorithm_class": "white",
+        "manual_class": "white",
+        "agree": true
+      },
+      {
+        "page": "S011",
+        "region_id": 8,
+        "algorithm_class": "gray",
+        "manual_class": "gray",
+        "agree": true
+      }
+    ],
+    "agreement": "10/10",
+    "accuracy": 1.0
+  },
+  "corpus_verdict": {
+    "directive_pages": [
+      "S003",
+      "S007",
+      "S009",
+      "S010",
+      "S011"
+    ],
+    "directive_regions_total": 41,
+    "directive_key_fires_total": 0,
+    "distinct_source_images": 4,
+    "distinct_md5": [
+      "0d9b8766207858203f7204413190b203",
+      "446b357560122e97a28f2709d057bc69",
+      "54decf4293fde67b32109aa3d8d476f8",
+      "57b82f877eee3c9b7ca6d58842acd446"
+    ],
+    "colored_ink_in_committed_corpus": false,
+    "note": "Committed corpus text ink is black/white/gray only. The 'S001_color_webtoon' archive is a misleading name: its original.jpg is byte-identical to the S003 family source page (md5 ledger above) — a B&W page. The colored arm therefore validates synthetically (C3) + on future Owner pages; on the current corpus the feature is inert by construction (0 keys)."
+  }
+}
