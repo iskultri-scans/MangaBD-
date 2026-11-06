@@ -1,0 +1,125 @@
+MANGABD-009 B3 Phase C: ink color inheritance — implemented per the Owner ruling RB3-1..RB3-7 (cells {6,10,11,12} ONLY; every OFF/no-key path byte-identical to 8fbde52; battery Test 23; verification 67/67 ALL GREEN)
+
+RULING SURFACE (Owner, on the Phase A findings 8fbde52):
+- RB3-1 APPROVE default ON: rendering.color_inherit_enable setdefault
+  True (cell 6, the b2_orientation_enable precedent spot); kill-switch
+  proven by Test 23's knob-OFF byte-parity arm (OFF-with-key ==
+  ON-without-key == OFF-without-key final.jpg bytes).
+- RB3-2 APPROVE gray NO: sampler classifies gray -> note, no key; the
+  gray-158 fixture verticals stay exactly today's black.
+- RB3-3 APPROVE vertical as-is: white ink never gets a key by
+  construction (classifier white -> no key), so the V-3 vertical arm
+  keeps its (0,0,0) literal as the ONLY white path; the arm changes
+  ONLY by the ink_color else-branch (colored verticals inherit).
+- RB3-4 APPROVE undilated CTD raw mask ONLY; artifact fallback =
+  skip: _b3_undilated_ink_mask == the _b2_page_ink_mask FIRST branch
+  VERBATIM (threshold + close(5,5)x2 + clean min_area=3) with the
+  artifact fallback DELETED; raw absent/below-threshold -> None ->
+  sampling silently skipped (no key). _b2_page_ink_mask itself is
+  byte-untouched — the artifact fallback stays legal for ORIENTATION.
+  B3 builds its OWN mask (b2_ink_mask's source is ambiguous between
+  branches); the duplicate morphology build is the disclosed
+  tens-of-ms cost of source-certainty.
+- RB3-5 APPROVE skip + WARN: colored-classified regions failing the
+  MAD/ring/bimodal gates get no key + log_event WARN (gradient and
+  multi-color SFX are not dominant-colored into a color the artist
+  never drew).
+- RB3-6 APPROVE no render contrast floor: the override sets
+  text_color = the validated sampled color as-is; contrast was already
+  proven detect-side by the mask-vs-ring law.
+- RB3-7 APPROVE knob home: MANGABD_CONFIG["rendering"]
+  ["color_inherit_enable"] — read by BOTH ends (cell-6 sampling gate +
+  cell-10 apply gate), the B2 mirror law.
+
+IMPLEMENTATION (20 anchored manifest patches, re-derivable;
+scripts/m009_b3_phaseC_patches.json):
+
+Cell 6 (detection, 4 patches): knob setdefault; the two helpers
+(_b3_undilated_ink_mask + _b3_sample_ink_color — the Phase A
+instrument's 16/16-probe-validated sampler ported runtime: window
+bbox+/-2 clipped, >=30 ink px, 60k cap rng(42), per-channel MEDIAN,
+chroma>=45/V>=215/V<=90 classify, MAD<40 + ring dL2>=40 +
+hue-not-bimodal gates); the knob-gated per-page b3_ink_mask build;
+the region-loop conditional ink_color key (the RF-18 b2_gt_* law:
+ONLY colored-and-gated rows get "ink_color": [r,g,b] — every other
+row's detections.json bytes exact).
+
+Cell 10 (render, 8 patches): render_bengali_text ink_color=None kwarg
+(RF-15 signature law) + apply-before-None-check (separate kwarg so
+RF-17's pure white/black verdicts stay distinguishable); parse-init
+knob mirror + b3_page_ink map; knob-gated detections-parse read with
+strict 3xuint8 validation (bool excluded) + WARN-on-invalid ->
+RF-17 fallback; per-row lookup; the override at the SINGLE
+choose_text_color call site; the render call forwards the kwarg
+(None = previous, always-sent); battery Test 23. RF-17
+choose_text_color, the production rotate block, _b2_render_angle,
+_b2_gt_tilted_layout and the B2.1 guard/quarantine helpers are
+byte-untouched.
+
+Cells 11/12 (V-3 wrapper chain, 4 patches each): signature + vertical
+arm (tuple(ink_color) if not None else the exact previous literal) +
+keyword forward through the chain cell12->cell11->base (RF-15 law);
+cell 11 gains a 7.5b wrapper self-check (vertical red / exact black
+None-path / horizontal kwarg forward, hard-raise); cell 12 gains a
+7.7 full-chain integration check (render_page through the bound
+chain: colored horizontal + colored vertical -> red, keyless vertical
+-> black, 0 TypeError, 3/3 rendered — the Test 20 exec-order law on
+the new kwarg).
+
+BATTERY TEST 23 (fail-on-current-bytes contract — pre-B3 every arm
+fails: no key writer, no key reader, no kwarg): (a) sampler arms —
+red solid fires with median EXACTLY [200,30,30]; black/white/
+gray-158/no-ink no-key; gradient -> gate_mad; red-on-red (dL2 37.7 <
+40) -> gate_ring; raw absent / below-threshold -> None (RB3-4);
+(b) render end-to-end — key -> red ink, no-key twin -> black, knob
+OFF -> byte-parity from both directions; (c) invalid stored color
+-> WARN + fallback bytes; (d) base kwarg apply + None default.
+Fixture self-cleaning finally (Test 19/22 discipline).
+
+VERIFICATION (67/67 ALL GREEN, scripts/m009_b3_phaseC_verify.py):
+V1 static — scope drift EXACTLY {6,10,11,12}; the other 23 cells
+byte-identical to 8fbde52; AST 27/27 warnings-as-errors; manifest
+re-derivation (work == base + exactly the 20 patches); all
+B1/B2/B2.1 surfaces byte-untouched (choose_text_color, rotate block,
+_b2_render_angle, _b2_gt_tilted_layout, B2.1 guards, _b2_page_ink_mask
+incl. artifact fallback, _b2_mask_orientation, battery Tests 16-22 +
+RF-13 tail, wrapper predicates/guards/_qc_render_vertical/Test 20);
+secret scan 0 hits. V2 battery (harness, cells 01-07+10+11+12
+verbatim, the B2.1 disclosed env-stub set) — cell-10 SUCCESS ledger
+29/29 (continuity 21 -> 29), Test 23 all arms PASS, Tests 17/19/21/22
+PASS, cell-11 7.5b + m8 5/5 PASS, cell-12 Test 20 + 7.7 PASS,
+quarantine/guard WARN evidence intact. V3 archive parity — corpus
+pre-condition 0 ink_color keys in the five archived detections.json;
+S003/S007/S009/S010/S011 fresh renders byte-IDENTICAL base vs work
+(362,909 / 360,031 / 466,240 / 572,784 / 493,146 B) + render-meta
+parity + zero quarantine side effects (the conditional-key law keeps
+the whole committed corpus inert). V4 wrapper law — cells 11/12
+wrapper spans == base + EXACTLY the ink_color threading patches
+(reverse-apply equality); None-path literals preserved; old-call
+compatibility. V5 knob law — cell-6 sampling fully gated; cell-10
+consumption gated at parse; zero ink_color consumers outside
+{6,10,11,12}; gray/white/black never keyed. V6 m002_sim_v2
+fresh-kernel simulator: 0 abort sites.
+
+WHAT DELIBERATELY DOES NOT CHANGE: every OFF/no-key render path
+(byte-proven); RF-17 semantics (the override only replaces its
+verdict when a validated key exists); non-colored vertical ink
+(gray/white stay black — RB3-2/3); _b2_page_ink_mask's artifact
+fallback for orientation; all archived detections.json + finals
+(0 keys, byte-identical renders); the B2 orientation path; DECISION.md
+(the ruling enters the decision log at the merge docs-sync per the
+B-series precedent).
+
+CUSTODY: committed here — the content module, build driver, manifest,
+harness, 67-gate verify, precommit audit, this message, the GLM_5_3.md
+CURRENT PHASE header + the M9-B3C.0..5 record. Workspace-only:
+cells_b3_fix/ extracts + b3_home/ harness scratch (regenerable).
+Base: main @ 8fbde52 (B3 Phase A, docs-only); notebook sha256
+8926a2b3...7615 -> c719feb6e4f6...4d6 (cells 6/10/11/12,
++7519/+13041/+2881/+5272 chars).
+
+NEXT: Flash Phase D (independent re-verify on the Flash env; then the
+Owner Colab battery — Run All 29/29, and on a real colored page the
+Bengali inherits the artist's ink color while black/white/gray pages
+stay byte-unchanged) -> squash-merge per the B-series discipline ->
+docs sync. STOPPED for the Phase D handoff per the workflow.
