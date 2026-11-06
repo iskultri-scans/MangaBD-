@@ -1,0 +1,108 @@
+MANGABD-009 B2.1 Phase C: guard except-WARN allowlist + never-save-blank quarantine — implemented per the Owner ruling RB21-2/RB21-3 (cells {10} ONLY; healthy-path bytes byte-identical; NO changes to items 1+4)
+
+RULING SURFACE (Owner, on the Phase A findings 67bc594):
+- RB21-1 REJECT  asymmetric-block parity: placement-null-proven
+  (<0.001 deg change on all 20 tilted rows); T5 class resists even
+  with extent-balancing (2.47 > 2 deg) — the hard <=2 deg
+  re-measured-ink gate is unachievable by any spacing constraint;
+  changing Owner-accepted RF-18 bytes for an unpassable gate violates
+  ship-quality. NO change: _b2_gt_tilted_layout incl. the vjust block
+  byte-untouched; asymmetric rendered-ink angle stays report-only
+  (disclosed, not hidden); the gateable truth remains the stored angle
+  (max dev 0.22/0.35/0.14 deg).
+- RB21-2 APPROVE guard except-WARN with exception-type allowlist:
+  FileNotFoundError (cold-start, no TRANSLATION_CSV yet) = expected,
+  silent; other exceptions = WARN + return False. Closes the last
+  silent route to the cache trap; the allowlist prevents spam on
+  fresh-page Run All.
+- RB21-3 APPROVE quarantine: rendered=0 AND translations exist ->
+  save to quarantine/ (not final/), log WARN, do not mark stage done.
+  Eyeball renders (rendered=0, translations absent) stay legitimate
+  (final + done). New battery Test 22: fail-on-current-bytes contract.
+- RB21-4 REJECT  ring-margin tuning: rung-1 (CTD mask) already covers
+  20/20; margin churn re-opens V3/V6 risk for a rung production never
+  reaches; U6 dark-panel unfixable by any margin; conservative miss
+  renders upright (never wrong-lean). NO change: cell 6
+  byte-identical; _B2_RING_MARGIN stays 6.
+
+SCOPE (the ruling's NEXT block): items 2+3 only, cells {10} ONLY,
+healthy-path bytes byte-identical, NO changes to items 1+4.
+
+PATCHES (3, cell 10 only, manifest re-derivable —
+scripts/m009_b21_phaseC_patches.json):
+- P1 _b2_renderable_rows_present helper (new L1614: the RF-14 guard's
+  renderable-rows predicate extracted VERBATIM so the guard and the
+  quarantine branch share ONE condition — the Phase A ruling
+  requirement) + _b2_blank_cache_stale rewritten (L1655): meta gate
+  unchanged, body tail delegates to the helper, except split into
+  FileNotFoundError (silent) / Exception (WARN "Blank-cache guard
+  raised" + fail-open False — return values unchanged on every path)
+- P2 render_page quarantine branch (L2038-2076) before the
+  previously-unconditional save (now L2078): rendered==0 ->
+  predicate with the same allowlist; on quarantine -> canvas saved as
+  quarantine/final.jpg (page-dir sibling, NOT the final artifact
+  slot), save_translation_df preserved, WARN "BLANK render
+  quarantined", NO mark_stage_done, canvas returned; rendered>0 never
+  consults the predicate (zero new I/O/logs/prints on healthy
+  renders)
+- P3 battery Test 22 (L3356-3541): (a) forced all-fail render with a
+  renderable row -> final NOT saved + quarantine/final.jpg + stage
+  NOT done + WARN; (b) recovery re-render -> healthy final + done +
+  ink >= 50 px (on current bytes this arm hits the poisoned cache —
+  the contract fails twice on pre-B2.1 bytes); (c) eyeball render ->
+  final + done + no quarantine (Phase D legitimacy preserved);
+  (d) guard allowlist: cold-start silent False, corrupted-meta WARN +
+  False; fixture self-cleaning (Test 19 discipline)
+
+VERIFICATION 48/48 ALL GREEN (scripts/m009_b21_phaseC_verify.py):
+- V1 static: scope drift exactly {10} vs 67bc594; 26 non-target cells
+  byte-identical (cell 6 = item 4 untouched; _b2_gt_tilted_layout =
+  item 1 untouched); AST 27/27 warnings-as-errors; manifest
+  re-derivation; production rotate/paste + _b2_render_angle mirror +
+  battery Tests 16/17-18/19/21 + RF-13 hygiene tail byte-untouched;
+  secret scan 0 on the delta
+- V2 battery (scripts/m009_b21_phaseC_harness.py, cells 01-07+10
+  VERBATIM with the RF-14 disclosed env-stub set): cell-10 SUCCESS;
+  ledger 21/21 (19 @ RF-14 -> 20 @ RF-18 -> 21 with Test 22); Test 22
+  PASS; Tests 19+21 PASS; both new WARN routes exercised in-battery
+- V3 fail-on-current-bytes contract live-proven (span-exec,
+  file-backed store): on BASE 67bc594 the Test-22 scenario saves the
+  blank final + marks the stage done + stays silent (the poison-cache
+  write); on WORK it quarantines (no final, quarantine/final.jpg, no
+  stage-done, WARN); recovery ink identical (1877 px both sides; base
+  via the RF-14 stale-cache bypass = the resume half, work never
+  poisoned = the fresh half closed); final-slot saves base 2 vs work
+  1; eyeball renders keep final+done on both
+- V4 healthy-path render parity: S003/S007/S009/S010/S011 fresh
+  renders byte-IDENTICAL base vs work (362,909 / 360,031 / 466,240 /
+  572,784 / 493,146 B) + render-meta parity (b2_orientation tilted
+  7/7/6) + zero quarantine side effects
+- V5 guard edge matrix: 6/6 return-value parity (E1 healthy False, E2
+  cold-start False, E3 marker-only False, E4 renderable True — the
+  trap condition intact, E5 corrupted-meta False, E6 missing-page
+  False); WARN parity on expected classes; WARN delta EXACTLY on the
+  unexpected classes (E5/E6: base silent, work loud)
+- V6 m002_sim_v2 fresh-kernel on the fixed cells: 0 abort sites
+
+DISCLOSURES: the battery harness does not exec cell_23 (it serves the
+Owner-session render flow, not the battery — the RF-14 harness
+exec'd it for that scenario only); V4's comparator is same-env
+base-vs-work (the committed archive finals were produced under the
+B2-session JPEG encoder and are not the comparator); quarantine/ is a
+page-dir sibling directory — the cell-3 ARTIFACT_FILENAMES whitelist
+is untouched; DECISION.md is not modified in Phase C (the ruling
+enters the decision log at the merge docs-sync per the B-series
+precedent); RF-14's guard stays for pre-B2.1 poisoned caches (the
+quarantine closes the write side, the guard the read side).
+
+NOTEBOOK sha256 at delivery:
+8926a2b313f655369cb5bac1e0bf316454082d8eac01d197cd52cd4aff8c7615
+(base 67bc594 = the Flash-RF-18-pinned merged B2 bytes 98c01952...;
+cell 10 only, +10,514 chars; GLM_5_3.md CURRENT PHASE rewritten to
+the PHASE C DELIVERED form + the Phase C record M9-B21C.0..5
+appended, Phase A + B2 records intact).
+
+Next: Flash Phase D on branch mangabd-009-b2-1; then the Owner gate.
+Queued OPEN unchanged: B3 (ink color — awaits separate Owner
+authorization per Ruling 1), O-notes (O-1 colored JP title inpaint,
+O-2 SFX OCR "WHAAAAT!", O-3 2-3 bubbles below perfect fill).
