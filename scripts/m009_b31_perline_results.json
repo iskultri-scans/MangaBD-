@@ -1,0 +1,2127 @@
+{
+ "instrument": "m009_b31_perline_measure.py",
+ "batch": "MANGABD-009 B3.1 Phase A (docs-only)",
+ "base_branch": "origin/mangabd-009-b3 @ cf01aef (UNMERGED)",
+ "notebook_sha256_pin": "c719feb6e4f6f12d267952c17b0fa380d0292b6d9a8fbec1290964714d7384d6",
+ "cell_sha_manifest": {
+  "cell_01": "932237350c2206e7dd3c83e1327191d75c343b8189cc2dabb7db213e4fc97ca5",
+  "cell_02": "950ac8e854c965f477a49d5c3c79a1e92d5eecd4cb619d8e0a743641d8e990e9",
+  "cell_03": "905912c6b8f981393ff2cbd40b376a7b31112873b16d7f36b83e512b1dbf8a82",
+  "cell_04": "e2796af087d5d73e8addddf66f76c8fd648244625bb655e08a29959ee7141bbe",
+  "cell_05": "09e70f71e089faead77f9d05d031fb24dd1dcdf890fd48ba6fb774373196fd13",
+  "cell_06": "e5db460ab037252ee25193f8d96829b91c432bd0a86e8eb24075b757e1ceb153",
+  "cell_07": "9a9f791d00f97035ec6de3531e5ba1d1c2448ea7e55fdf5c9bd734fc0cfa8e88",
+  "cell_10": "82e231a9a7e8825d90637758876099bd35af91e8957deac5bfc6e3162515eb5f",
+  "cell_11": "1845a39e38e7f42012d56521824d070784f4823706de9f5cc7a2eec97a37dd12",
+  "cell_12": "ca489e68fd6b2cf6cedc46a6140c9b9660418cb43af87a0b43fae3a8257e9550"
+ },
+ "battery_test23_in_env": "PASS",
+ "font": {
+  "path": "/home/z/my-project/m008_probe/fonts/NotoSansBengali-Regular.ttf",
+  "sha256": "b55c62ee531e3214da6c0701daecea89a52ba42db7d8206b92e6b51f397a3193"
+ },
+ "page": {
+  "w": 844,
+  "h": 1200,
+  "note": "B1-era working res; bubble geometry from the S011 detections census; ink hues from the owner diagnostic"
+ },
+ "part_ab": {
+  "b3_mask_px": 53767,
+  "regions": [
+   {
+    "id": 1,
+    "bbox": [
+     60,
+     80,
+     411,
+     176
+    ],
+    "gt_lines": 4,
+    "gt_colored_lines": 2,
+    "chromatic_px": 1768,
+    "ink_px": 21326,
+    "chromatic_frac": 0.0829,
+    "b3_region_key": null,
+    "b3_region_note": "gray",
+    "b2_orientation": {
+     "measured": true,
+     "angle": 0.0,
+     "gt": null
+    },
+    "b3_closed": {
+     "band_count": 4,
+     "gt_lines": 4,
+     "bands": [
+      {
+       "band": [
+        82.0,
+        109.8
+       ],
+       "gt_line_idx": 0,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        127.7,
+        153.5
+       ],
+       "gt_line_idx": 1,
+       "gt_color": [
+        200,
+        30,
+        30
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          200,
+          32,
+          32
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        169.4,
+        197.3
+       ],
+       "gt_line_idx": 2,
+       "gt_color": [
+        30,
+        30,
+        180
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          30,
+          30,
+          180
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        217.1,
+        239.0
+       ],
+       "gt_line_idx": 3,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.2": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.3": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      }
+     }
+    },
+    "raw_thr": {
+     "band_count": 4,
+     "gt_lines": 4,
+     "bands": [
+      {
+       "band": [
+        80.0,
+        109.8
+       ],
+       "gt_line_idx": 0,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        127.7,
+        153.5
+       ],
+       "gt_line_idx": 1,
+       "gt_color": [
+        200,
+        30,
+        30
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          200,
+          30,
+          30
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": [
+          200,
+          30,
+          30
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        169.4,
+        197.3
+       ],
+       "gt_line_idx": 2,
+       "gt_color": [
+        30,
+        30,
+        180
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          30,
+          30,
+          180
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": [
+          30,
+          30,
+          180
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        217.1,
+        241.0
+       ],
+       "gt_line_idx": 3,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.2": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.3": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      }
+     }
+    }
+   },
+   {
+    "id": 2,
+    "bbox": [
+     470,
+     90,
+     317,
+     126
+    ],
+    "gt_lines": 3,
+    "gt_colored_lines": 1,
+    "chromatic_px": 2256,
+    "ink_px": 11496,
+    "chromatic_frac": 0.1962,
+    "b3_region_key": null,
+    "b3_region_note": "gate_mad",
+    "b2_orientation": {
+     "measured": true,
+     "angle": 0.0,
+     "gt": null
+    },
+    "b3_closed": {
+     "band_count": 3,
+     "gt_lines": 3,
+     "bands": [
+      {
+       "band": [
+        94.0,
+        117.8
+       ],
+       "gt_line_idx": 0,
+       "gt_color": [
+        200,
+        30,
+        30
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          201,
+          35,
+          35
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": [
+          201,
+          35,
+          35
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.3": {
+         "color": [
+          201,
+          35,
+          35
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.5": {
+         "color": [
+          201,
+          35,
+          35
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        131.6,
+        161.4
+       ],
+       "gt_line_idx": 1,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        177.2,
+        199.0
+       ],
+       "gt_line_idx": 2,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": [
+        201,
+        36,
+        36
+       ],
+       "note": "colored",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.2": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.3": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      }
+     }
+    },
+    "raw_thr": {
+     "band_count": 3,
+     "gt_lines": 3,
+     "bands": [
+      {
+       "band": [
+        92.0,
+        117.8
+       ],
+       "gt_line_idx": 0,
+       "gt_color": [
+        200,
+        30,
+        30
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          201,
+          33,
+          33
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": [
+          201,
+          33,
+          33
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.3": {
+         "color": [
+          201,
+          33,
+          33
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.5": {
+         "color": [
+          201,
+          33,
+          33
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        131.6,
+        161.4
+       ],
+       "gt_line_idx": 1,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        177.2,
+        199.0
+       ],
+       "gt_line_idx": 2,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": [
+        201,
+        33,
+        33
+       ],
+       "note": "colored",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.2": {
+       "color": [
+        201,
+        33,
+        33
+       ],
+       "note": "colored",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.3": {
+       "color": [
+        201,
+        33,
+        33
+       ],
+       "note": "colored",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      }
+     }
+    }
+   },
+   {
+    "id": 3,
+    "bbox": [
+     60,
+     360,
+     205,
+     48
+    ],
+    "gt_lines": 1,
+    "gt_colored_lines": 1,
+    "chromatic_px": 2088,
+    "ink_px": 3592,
+    "chromatic_frac": 0.5813,
+    "b3_region_key": null,
+    "b3_region_note": "gate_mad",
+    "b2_orientation": {
+     "measured": true,
+     "angle": 0.0,
+     "gt": null
+    },
+    "b3_closed": {
+     "band_count": 1,
+     "gt_lines": 1,
+     "bands": [
+      {
+       "band": [
+        361.0,
+        394.0
+       ],
+       "gt_line_idx": 0,
+       "gt_color": [
+        200,
+        30,
+        30
+       ],
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.2": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.3": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      }
+     }
+    },
+    "raw_thr": {
+     "band_count": 1,
+     "gt_lines": 1,
+     "bands": [
+      {
+       "band": [
+        361.0,
+        394.0
+       ],
+       "gt_line_idx": 0,
+       "gt_color": [
+        200,
+        30,
+        30
+       ],
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gate_bimodal",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.2": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.3": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "gate_bimodal",
+       "gt_any": [
+        200,
+        30,
+        30
+       ]
+      }
+     }
+    }
+   },
+   {
+    "id": 4,
+    "bbox": [
+     60,
+     500,
+     248,
+     136
+    ],
+    "gt_lines": 4,
+    "gt_colored_lines": 0,
+    "chromatic_px": 0,
+    "ink_px": 10280,
+    "chromatic_frac": 0.0,
+    "b3_region_key": null,
+    "b3_region_note": "gray",
+    "b2_orientation": {
+     "measured": true,
+     "angle": 0.0,
+     "gt": null
+    },
+    "b3_closed": {
+     "band_count": 4,
+     "gt_lines": 4,
+     "bands": [
+      {
+       "band": [
+        503.0,
+        524.8
+       ],
+       "gt_line_idx": 0,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        538.7,
+        558.5
+       ],
+       "gt_line_idx": 1,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        570.4,
+        592.3
+       ],
+       "gt_line_idx": 2,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        606.2,
+        626.0
+       ],
+       "gt_line_idx": 3,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      },
+      "0.2": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      },
+      "0.3": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      }
+     }
+    },
+    "raw_thr": {
+     "band_count": 4,
+     "gt_lines": 4,
+     "bands": [
+      {
+       "band": [
+        503.0,
+        524.8
+       ],
+       "gt_line_idx": 0,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        536.7,
+        558.5
+       ],
+       "gt_line_idx": 1,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        570.4,
+        592.3
+       ],
+       "gt_line_idx": 2,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        604.2,
+        626.0
+       ],
+       "gt_line_idx": 3,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      },
+      "0.2": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      },
+      "0.3": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": null
+      }
+     }
+    }
+   },
+   {
+    "id": 5,
+    "bbox": [
+     470,
+     420,
+     232,
+     84
+    ],
+    "gt_lines": 2,
+    "gt_colored_lines": 1,
+    "chromatic_px": 718,
+    "ink_px": 7048,
+    "chromatic_frac": 0.1019,
+    "b3_region_key": null,
+    "b3_region_note": "gray",
+    "b2_orientation": {
+     "measured": true,
+     "angle": 0.0,
+     "gt": null
+    },
+    "b3_closed": {
+     "band_count": 2,
+     "gt_lines": 2,
+     "bands": [
+      {
+       "band": [
+        420.0,
+        447.6
+       ],
+       "gt_line_idx": 0,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "gray",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        461.4,
+        489.1
+       ],
+       "gt_line_idx": 1,
+       "gt_color": [
+        96,
+        20,
+        170
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          103,
+          30,
+          173
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": [
+          103,
+          30,
+          173
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": [
+        104,
+        32,
+        174
+       ],
+       "note": "colored",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      },
+      "0.2": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      },
+      "0.3": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      }
+     }
+    },
+    "raw_thr": {
+     "band_count": 2,
+     "gt_lines": 2,
+     "bands": [
+      {
+       "band": [
+        420.0,
+        449.6
+       ],
+       "gt_line_idx": 0,
+       "gt_color": null,
+       "tau": {
+        "0.1": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.2": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.3": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "black",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      },
+      {
+       "band": [
+        461.4,
+        491.0
+       ],
+       "gt_line_idx": 1,
+       "gt_color": [
+        96,
+        20,
+        170
+       ],
+       "tau": {
+        "0.1": {
+         "color": [
+          102,
+          29,
+          173
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.2": {
+         "color": [
+          102,
+          29,
+          173
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.3": {
+         "color": [
+          102,
+          29,
+          173
+         ],
+         "note": "colored",
+         "hit": true,
+         "false_color": false
+        },
+        "0.5": {
+         "color": null,
+         "note": "below_tau",
+         "hit": false,
+         "false_color": false
+        }
+       }
+      }
+     ],
+     "region_base": {
+      "0.1": {
+       "color": [
+        102,
+        29,
+        173
+       ],
+       "note": "colored",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      },
+      "0.2": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      },
+      "0.3": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      },
+      "0.5": {
+       "color": null,
+       "note": "below_tau",
+       "gt_any": [
+        96,
+        20,
+        170
+       ]
+      }
+     }
+    }
+   }
+  ],
+  "summary": {
+   "b3_closed_tau0.1": {
+    "colored_line_hits": 4,
+    "false_colors": 0,
+    "colored_line_misses": 1
+   },
+   "b3_closed_tau0.2": {
+    "colored_line_hits": 2,
+    "false_colors": 0,
+    "colored_line_misses": 3
+   },
+   "b3_closed_tau0.3": {
+    "colored_line_hits": 1,
+    "false_colors": 0,
+    "colored_line_misses": 4
+   },
+   "b3_closed_tau0.5": {
+    "colored_line_hits": 1,
+    "false_colors": 0,
+    "colored_line_misses": 4
+   },
+   "raw_thr_tau0.1": {
+    "colored_line_hits": 4,
+    "false_colors": 0,
+    "colored_line_misses": 1
+   },
+   "raw_thr_tau0.2": {
+    "colored_line_hits": 4,
+    "false_colors": 0,
+    "colored_line_misses": 1
+   },
+   "raw_thr_tau0.3": {
+    "colored_line_hits": 2,
+    "false_colors": 0,
+    "colored_line_misses": 3
+   },
+   "raw_thr_tau0.5": {
+    "colored_line_hits": 1,
+    "false_colors": 0,
+    "colored_line_misses": 4
+   },
+   "b3_region_keys_fired": 0
+  }
+ },
+ "part_c": [
+  {
+   "variant": "V0_baseline",
+   "det": {
+    "id": 1,
+    "x": 60,
+    "y": 80,
+    "width": 340,
+    "height": 210,
+    "quad": [
+     [
+      60,
+      80
+     ],
+     [
+      400,
+      80
+     ],
+     [
+      400,
+      290
+     ],
+     [
+      60,
+      290
+     ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble"
+   },
+   "measure": {
+    "row_bands": 3,
+    "band_heights": [
+     19.9,
+     19.9,
+     21.8
+    ],
+    "col_bands": 1,
+    "col_widths": [
+     300.4
+    ],
+    "ink_px": 5319,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": false
+   }
+  },
+  {
+   "variant": "V1_v3_capture",
+   "det": {
+    "id": 1,
+    "x": 60,
+    "y": 400,
+    "width": 80,
+    "height": 220,
+    "quad": [
+     [
+      60,
+      400
+     ],
+     [
+      140,
+      400
+     ],
+     [
+      140,
+      620
+     ],
+     [
+      60,
+      620
+     ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble"
+   },
+   "measure": {
+    "row_bands": 1,
+    "band_heights": [
+     210.6
+    ],
+    "col_bands": 3,
+    "col_widths": [
+     5.9,
+     13.8,
+     13.8
+    ],
+    "ink_px": 1647,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": false
+   }
+  },
+  {
+   "variant": "V2_quad_collapse",
+   "det": {
+    "id": 1,
+    "x": 60,
+    "y": 80,
+    "width": 340,
+    "height": 210,
+    "quad": [
+     [
+      6.71,
+      47.27
+     ],
+     [
+      481.76,
+      258.78
+     ],
+     [
+      453.29,
+      322.73
+     ],
+     [
+      -21.76,
+      111.22
+     ]
+    ],
+    "angle": 24.0,
+    "region_type": "bubble"
+   },
+   "measure": {
+    "row_bands": 2,
+    "band_heights": [
+     13.9,
+     6.0
+    ],
+    "col_bands": 9,
+    "col_widths": [
+     35.9,
+     47.8,
+     37.9,
+     25.9,
+     143.5,
+     37.9,
+     47.8,
+     37.9,
+     23.9
+    ],
+    "ink_px": 2373,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": false
+   }
+  },
+  {
+   "variant": "V2b_quad_thin",
+   "det": {
+    "id": 1,
+    "x": 60,
+    "y": 80,
+    "width": 340,
+    "height": 210,
+    "quad": [
+     [
+      -1.42,
+      65.55
+     ],
+     [
+      473.62,
+      277.05
+     ],
+     [
+      461.42,
+      304.45
+     ],
+     [
+      -13.62,
+      92.95
+     ]
+    ],
+    "angle": 24.0,
+    "region_type": "bubble"
+   },
+   "measure": {
+    "row_bands": 1,
+    "band_heights": [
+     11.9
+    ],
+    "col_bands": 2,
+    "col_widths": [
+     265.1,
+     167.4
+    ],
+    "ink_px": 1200,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": true
+   }
+  },
+  {
+   "variant": "V3_h_truncated",
+   "det": {
+    "id": 1,
+    "x": 60,
+    "y": 80,
+    "width": 340,
+    "height": 52,
+    "quad": [
+     [
+      60,
+      80
+     ],
+     [
+      400,
+      80
+     ],
+     [
+      400,
+      132
+     ],
+     [
+      60,
+      132
+     ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble"
+   },
+   "measure": {
+    "row_bands": 2,
+    "band_heights": [
+     15.8,
+     15.8
+    ],
+    "col_bands": 1,
+    "col_widths": [
+     322.3
+    ],
+    "ink_px": 2656,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": false
+   }
+  },
+  {
+   "variant": "V4_w_oversized",
+   "det": {
+    "id": 1,
+    "x": 20,
+    "y": 80,
+    "width": 800,
+    "height": 52,
+    "quad": [
+     [
+      20,
+      80
+     ],
+     [
+      820,
+      80
+     ],
+     [
+      820,
+      132
+     ],
+     [
+      20,
+      132
+     ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble"
+   },
+   "measure": {
+    "row_bands": 1,
+    "band_heights": [
+     17.7
+    ],
+    "col_bands": 12,
+    "col_widths": [
+     31.9,
+     29.9,
+     119.7,
+     33.9,
+     53.9,
+     79.8,
+     45.9,
+     119.7,
+     49.9,
+     31.9,
+     53.9,
+     79.8
+    ],
+    "ink_px": 4512,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": false
+   }
+  },
+  {
+   "variant": "V4b_w_oversize_sliver",
+   "det": {
+    "id": 1,
+    "x": 20,
+    "y": 80,
+    "width": 800,
+    "height": 36,
+    "quad": [
+     [
+      20,
+      80
+     ],
+     [
+      820,
+      80
+     ],
+     [
+      820,
+      116
+     ],
+     [
+      20,
+      116
+     ]
+    ],
+    "angle": 0.0,
+    "region_type": "bubble"
+   },
+   "measure": {
+    "row_bands": 1,
+    "band_heights": [
+     17.7
+    ],
+    "col_bands": 12,
+    "col_widths": [
+     31.9,
+     29.9,
+     119.7,
+     33.9,
+     53.9,
+     79.8,
+     45.9,
+     119.7,
+     49.9,
+     31.9,
+     53.9,
+     79.8
+    ],
+    "ink_px": 4512,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": false
+   }
+  },
+  {
+   "variant": "V4c_sliver_no_bf",
+   "det": {
+    "id": 1,
+    "x": 20,
+    "y": 80,
+    "width": 800,
+    "height": 36,
+    "quad": [
+     [
+      20,
+      80
+     ],
+     [
+      820,
+      80
+     ],
+     [
+      820,
+      116
+     ],
+     [
+      20,
+      116
+     ]
+    ],
+    "angle": 0.0,
+    "region_type": "overlay"
+   },
+   "measure": {
+    "row_bands": 1,
+    "band_heights": [
+     15.7
+    ],
+    "col_bands": 1,
+    "col_widths": [
+     536.7
+    ],
+    "ink_px": 2739,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": true
+   }
+  },
+  {
+   "variant": "V5_b2gt_merged",
+   "det": {
+    "id": 1,
+    "x": 60,
+    "y": 80,
+    "width": 340,
+    "height": 210,
+    "quad": [
+     [
+      90.45,
+      41.99
+     ],
+     [
+      420.35,
+      124.25
+     ],
+     [
+      369.55,
+      328.01
+     ],
+     [
+      39.65,
+      245.75
+     ]
+    ],
+    "angle": 14.0,
+    "region_type": "bubble",
+    "b2_gt_lines": 1,
+    "b2_gt_spacing": 0.0,
+    "b2_gt_cx": 230.0,
+    "b2_gt_cy": 185.0
+   },
+   "measure": {
+    "row_bands": 1,
+    "band_heights": [
+     10.0
+    ],
+    "col_bands": 3,
+    "col_widths": [
+     89.7,
+     161.4,
+     53.8
+    ],
+    "ink_px": 412,
+    "meta_found": false,
+    "meta": {},
+    "single_tiny_line": true
+   }
+  }
+ ],
+ "disclosures": [
+  "detection-stage box geometry in PART C is INJECTED (no real CTD/RT-DETR under the torch stub) — the mis-detection hypothesis (V3/V4 preconditions) is ranked by injection + static analysis; final adjudication should capture the owner page's real detections.json from the Colab run",
+  "the raw prob map is drawn stroke-precise at 255 (the Test 23 idealization); real CTD prob maps are soft — threshold behavior at 60 is expected to be equivalent, disclosed",
+  "per-line law functions here are the PROTOTYPE (Phase C ports them into cell-6 anchored patches); NO source changes in this batch"
+ ]
+}
