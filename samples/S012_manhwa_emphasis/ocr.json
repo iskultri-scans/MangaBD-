@@ -1,0 +1,533 @@
+[
+  {
+    "region": {
+      "id": 1,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 88,
+      "y": 88,
+      "width": 292,
+      "height": 278,
+      "quad": [
+        [
+          88,
+          88
+        ],
+        [
+          380,
+          88
+        ],
+        [
+          380,
+          366
+        ],
+        [
+          88,
+          366
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "line_colors": [
+        null,
+        [
+          200,
+          30,
+          30
+        ],
+        null,
+        [
+          30,
+          30,
+          180
+        ]
+      ],
+      "reading_order": 4
+    },
+    "ocr": {
+      "text": "それは",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এটা কি সত্যিই সত্যি হচ্ছে নাকি আমার সাথে সুস্পষ্ট রসিকতা করছ বলো তো আমি বুঝতে চাই",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 42
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 31
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 2,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 518,
+      "y": 78,
+      "width": 204,
+      "height": 98,
+      "quad": [
+        [
+          518,
+          78
+        ],
+        [
+          722,
+          78
+        ],
+        [
+          722,
+          176
+        ],
+        [
+          518,
+          176
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "ink_color": [
+        200,
+        30,
+        30
+      ],
+      "line_colors": [
+        [
+          200,
+          30,
+          30
+        ],
+        [
+          200,
+          30,
+          30
+        ]
+      ],
+      "reading_order": 0
+    },
+    "ocr": {
+      "text": "うそだ",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "মিথ্যা বলো এটা সব মিথ্যা",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 109
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 32
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 3,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 528,
+      "y": 252,
+      "width": 216,
+      "height": 42,
+      "quad": [
+        [
+          528,
+          252
+        ],
+        [
+          744,
+          252
+        ],
+        [
+          744,
+          294
+        ],
+        [
+          528,
+          294
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 1
+    },
+    "ocr": {
+      "text": "ドカーーン",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "বুম ব্যাং কাবুম",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 116
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 28
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 4,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 528,
+      "y": 398,
+      "width": 204,
+      "height": 248,
+      "quad": [
+        [
+          528,
+          398
+        ],
+        [
+          732,
+          398
+        ],
+        [
+          732,
+          646
+        ],
+        [
+          528,
+          646
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 2
+    },
+    "ocr": {
+      "text": "黒い",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এই চারটি লাইন সাধারণ কালো",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 102
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 42
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 5,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 168,
+      "y": 476,
+      "width": 64,
+      "height": 48,
+      "quad": [
+        [
+          176,
+          476
+        ],
+        [
+          232,
+          488
+        ],
+        [
+          224,
+          524
+        ],
+        [
+          168,
+          512
+        ]
+      ],
+      "angle": -12.34,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "b2_gt_lines": 3,
+      "b2_gt_spacing": 15.85,
+      "b2_gt_cx": 200.0,
+      "b2_gt_cy": 500.0,
+      "reading_order": 5
+    },
+    "ocr": {
+      "text": "せまい",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "সরু বুদবুদ তিন লাইন",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 96
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 30
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 6,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 148,
+      "y": 658,
+      "width": 52,
+      "height": 60,
+      "quad": [
+        [
+          148,
+          658
+        ],
+        [
+          200,
+          658
+        ],
+        [
+          200,
+          718
+        ],
+        [
+          148,
+          718
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 6
+    },
+    "ocr": {
+      "text": "ちいさい",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "ছোট্ট জাদুর কথা এখানে",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 113
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 31
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 7,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 178,
+      "y": 788,
+      "width": 44,
+      "height": 336,
+      "quad": [
+        [
+          178,
+          788
+        ],
+        [
+          222,
+          788
+        ],
+        [
+          222,
+          1124
+        ],
+        [
+          178,
+          1124
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "overlay",
+      "detector_class": "text_free",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 7
+    },
+    "ocr": {
+      "text": "たてがきの",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "নোট এখানে লম্বা লম্বা",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 119
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 36
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 8,
+      "page_id": "s012_manhwa_emphasis.jpg",
+      "x": 538,
+      "y": 768,
+      "width": 190,
+      "height": 98,
+      "quad": [
+        [
+          538,
+          768
+        ],
+        [
+          728,
+          768
+        ],
+        [
+          728,
+          866
+        ],
+        [
+          538,
+          866
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "line_colors": [
+        [
+          96,
+          20,
+          170
+        ],
+        null
+      ],
+      "reading_order": 3
+    },
+    "ocr": {
+      "text": "大事な",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এই কথাটা খুব জরুরি কথা",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 113
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 30
+        }
+      ]
+    }
+  }
+]

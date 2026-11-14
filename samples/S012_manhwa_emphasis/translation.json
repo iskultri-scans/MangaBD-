@@ -1,0 +1,74 @@
+[
+ {
+  "id": 1,
+  "region_type": "bubble",
+  "original_text": "それは\nまさか\n冗談で\n言ってるのか",
+  "translated_text": "এটা কি সত্যিই সত্যি হচ্ছে নাকি আমার সাথে সুস্পষ্ট রসিকতা করছ বলো তো আমি বুঝতে চাই",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 2,
+  "region_type": "bubble",
+  "original_text": "うそだ\nと言ってくれ",
+  "translated_text": "মিথ্যা বলো এটা সব মিথ্যা",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 3,
+  "region_type": "bubble",
+  "original_text": "ドカーーン",
+  "translated_text": "বুম ব্যাং কাবুম",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 4,
+  "region_type": "bubble",
+  "original_text": "黒い\n四行の\nテキスト\nです",
+  "translated_text": "এই চারটি লাইন সাধারণ কালো",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 5,
+  "region_type": "bubble",
+  "original_text": "せまい\nふきだし\n三行",
+  "translated_text": "সরু বুদবুদ তিন লাইন",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 6,
+  "region_type": "bubble",
+  "original_text": "ちいさい\nまほうの\nことばが\nならんでる",
+  "translated_text": "ছোট্ট জাদুর কথা এখানে",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 7,
+  "region_type": "overlay",
+  "original_text": "たてがきの\nテストです",
+  "translated_text": "নোট এখানে লম্বা লম্বা",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 8,
+  "region_type": "bubble",
+  "original_text": "大事な\n言葉だよ",
+  "translated_text": "এই কথাটা খুব জরুরি কথা",
+  "translator_engine": "synthetic (B3.1 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ }
+]

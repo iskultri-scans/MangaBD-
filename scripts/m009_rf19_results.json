@@ -1,0 +1,216 @@
+{
+ "checks": [
+  {
+   "name": "V0a on branch mangabd-009-b3",
+   "ok": true,
+   "detail": "mangabd-009-b3"
+  },
+  {
+   "name": "V0b merge hold intact (36faa98 NOT ancestor of main)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V0b merge hold intact (cf01aef NOT ancestor of main)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V0d base notebook == the B3.1-tip pin (3055f374...)",
+   "ok": true,
+   "detail": "3055f374abdcf92a"
+  },
+  {
+   "name": "V0c working notebook == byte-faithful (base + manifest) rebuild",
+   "ok": true,
+   "detail": "42aa6a92ad467b8f"
+  },
+  {
+   "name": "V0e cells dirs byte-pinned to their notebook refs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1a changed cells EXACTLY {6,10}",
+   "ok": true,
+   "detail": "[6, 10]"
+  },
+  {
+   "name": "V1b 25 non-target cells byte-identical",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1c AST 27/27 both refs (warnings-as-errors)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1d manifest present (8 patches)",
+   "ok": true,
+   "detail": "8 patches"
+  },
+  {
+   "name": "V1e re-derivation base->work BYTE-EXACT (all 27 cells)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1f re-derivation work->base BYTE-EXACT (all 27 cells)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1g wiring probes (RF-19 surfaces + B1/B2/B3/B3.1 preserved + cells 11/12 untouched)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1h secret-pattern scan on added notebook lines (0 hits)",
+   "ok": true,
+   "detail": "391 added lines, hits=[]"
+  },
+  {
+   "name": "V2a battery smoke ALL GREEN (exit 0)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2b RF-19 green markers 6 (the Test-25 arms)",
+   "ok": true,
+   "detail": "6 markers"
+  },
+  {
+   "name": "V2c Test-25 arm present+green: RF-19 false-tilt gate: asymmetric emphasis c...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-25 arm present+green: RF-19 genuine tilt preserved: 12° block...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-25 arm present+green: RF-19 tiny-guard FIRES: id=4-class...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-25 arm present+green: RF-19 healthy single line: short text...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-25 arm present+green: RF-19 healthy multi-line: normal region...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-25 arm present+green: RF-19 battery guard census: fires EXACTLY...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2d B3.1 green markers 13 (11 Test-24 arms + cell-11 7.5c + cell-12 7.7b)",
+   "ok": true,
+   "detail": "13 markers"
+  },
+  {
+   "name": "V2e Test-24 arm still green: B3.1 tiny-text assertion: original lines >= ...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2e Test-24 arm still green: B3.1 kill-switch: OFF...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2e Test-24 arm still green: B3.1 narrow V5 end-to-end: raw-locator GT...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2f legacy B3 arms still green (Test 23 family)",
+   "ok": true,
+   "detail": "LEGACY-B3-MARKERS-OK True"
+  },
+  {
+   "name": "V2g cell-10 SUCCESS",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V3a S003 fresh render byte-IDENTICAL (base vs work) + RF-19 fire census 0",
+   "ok": true,
+   "detail": "364141 B, fires=[]"
+  },
+  {
+   "name": "V3a S007 fresh render byte-IDENTICAL (base vs work) + RF-19 fire census 0",
+   "ok": true,
+   "detail": "360203 B, fires=[]"
+  },
+  {
+   "name": "V3a S009 fresh render byte-IDENTICAL (base vs work) + RF-19 fire census 0",
+   "ok": true,
+   "detail": "465547 B, fires=[]"
+  },
+  {
+   "name": "V3a S010 fresh render byte-IDENTICAL (base vs work) + RF-19 fire census 0",
+   "ok": true,
+   "detail": "571859 B, fires=[]"
+  },
+  {
+   "name": "V3a S011 fresh render byte-IDENTICAL (base vs work) + RF-19 fire census 0",
+   "ok": true,
+   "detail": "492616 B, fires=[]"
+  },
+  {
+   "name": "V3a S012 fresh render byte-IDENTICAL (base vs work) + RF-19 fire census 0",
+   "ok": true,
+   "detail": "141459 B, fires=[]"
+  },
+  {
+   "name": "V3b knob-OFF on real S003: WORK-OFF == BASE bytes",
+   "ok": true,
+   "detail": "364141 B"
+  },
+  {
+   "name": "V4a S012 determinism: chain re-run detections byte-identical (band gate: R6 12° stays tilted, all keys unchanged)",
+   "ok": true,
+   "detail": "8b54384abd4070c8b19d2ad15ec452af4640d99c73b2870559b634e6b585d6bf vs 8b54384abd4070c8b19d2ad15ec452af4640d99c73b2870559b634e6b585d6bf; R6_ANG -12.34 3"
+  },
+  {
+   "name": "V4b S012 determinism: chain re-run final.jpg byte-identical (tiny-guard census 0 on the S012 chain render)",
+   "ok": true,
+   "detail": "f110e8520e99e68d974cf604e16f442e4a63944c073f004e43a25ceaab18ad76 vs f110e8520e99e68d974cf604e16f442e4a63944c073f004e43a25ceaab18ad76"
+  },
+  {
+   "name": "V5a sim runs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V5b m002_sim_v2 = 0 abort sites",
+   "ok": true,
+   "detail": "iner_types', 'kill_residual', 'mask_only_translated', 'restore_boxes', 'run_inpaint_all', 'run_render_all']\n  def cell 15:689: ['run_inpaint_all', 'run_render_all']\n  def cell 23:71: ['run_inpaint_all', 'run_render_all', 'sync_translate_stage']\n\nDONE — read-only analysis, no project files modified.\n"
+  }
+ ],
+ "summary": {
+  "pass": 39,
+  "fail": 0,
+  "notebook_sha256_work": "42aa6a92ad467b8faf6f0b2e68848ed873b58f5e277fb96c24876d49c2bdc588",
+  "notebook_sha256_base": "3055f374abdcf92ad2bcbe6b4e85a697aa79ae897c6ebdc0a8d5a7dfbd33607f",
+  "test25_arms": 6,
+  "test24_arms": 11,
+  "archives_parity": [
+   "S003",
+   "S007",
+   "S009",
+   "S010",
+   "S011",
+   "S012"
+  ],
+  "guard_fire_census": "archives 0; battery exactly (__rf19_t25_guard__, 1)"
+ }
+}

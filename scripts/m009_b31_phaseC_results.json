@@ -1,0 +1,469 @@
+{
+ "checks": [
+  {
+   "name": "V0a on branch mangabd-009-b3",
+   "ok": true,
+   "detail": "mangabd-009-b3"
+  },
+  {
+   "name": "V0b B3 merge hold intact (cf01aef NOT ancestor of main)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V0d base notebook == the B3-tip pin (c719feb6...)",
+   "ok": true,
+   "detail": "c719feb6e4f6f12d"
+  },
+  {
+   "name": "V0c working notebook == byte-faithful (base + manifest) rebuild",
+   "ok": true,
+   "detail": "3055f374abdcf92a"
+  },
+  {
+   "name": "V0e cells dirs byte-pinned to their notebook refs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1a changed cells EXACTLY {6,10,11,12}",
+   "ok": true,
+   "detail": "[6, 10, 11, 12]"
+  },
+  {
+   "name": "V1b 23 non-target cells byte-identical",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1c AST 27/27 both refs (warnings-as-errors)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1d manifest present (20 patches)",
+   "ok": true,
+   "detail": "20 patches"
+  },
+  {
+   "name": "V1e re-derivation base->work BYTE-EXACT (all 27 cells)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1f re-derivation work->base BYTE-EXACT (all 27 cells)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1g wiring probes (B3.1 surfaces + B1/B2/B3 preserved)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1h secret-pattern scan on added notebook lines (0 hits)",
+   "ok": true,
+   "detail": "928 added lines, hits=[]"
+  },
+  {
+   "name": "V2a battery smoke ALL GREEN (exit 0)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2b B3.1 green markers 13 (11 Test-24 arms + cell-11 7.5c + cell-12 7.7b)",
+   "ok": true,
+   "detail": "13 markers"
+  },
+  {
+   "name": "V2c arm present+green: B3.1 per-line law: emphasis red/blue lines f...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 law contrast: B3 region sampler এখনো in...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 law domain: V-3 vertical shapes + tilte...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 render: per-line mixed...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 kill-switch: OFF...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 tiny-text assertion: original lines >= ...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 narrow V5 mechanism: close(5,5)x2 merge...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 narrow law: raw-locator orientation on ...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 narrow V5 end-to-end: raw-locator GT...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 invalid stored line_colors...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c arm present+green: B3.1 base kwarg: line_colors per-line apply...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2d cell-11 7.5c green (fallback per-line + vertical ignores)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2e cell-12 7.7b green (full chain, typerr=0, rendered=4)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2f legacy B3 arms still green (Test 23 family)",
+   "ok": true,
+   "detail": "LEGACY-B3-MARKERS-OK True"
+  },
+  {
+   "name": "V3a0 corpus pre-condition: 0 line_colors keys in the five archives",
+   "ok": true,
+   "detail": "conditional-key law premise"
+  },
+  {
+   "name": "V3a S003 fresh render byte-IDENTICAL (base vs work)",
+   "ok": true,
+   "detail": "364141 B"
+  },
+  {
+   "name": "V3a S007 fresh render byte-IDENTICAL (base vs work)",
+   "ok": true,
+   "detail": "360203 B"
+  },
+  {
+   "name": "V3a S009 fresh render byte-IDENTICAL (base vs work)",
+   "ok": true,
+   "detail": "465547 B"
+  },
+  {
+   "name": "V3a S010 fresh render byte-IDENTICAL (base vs work)",
+   "ok": true,
+   "detail": "571859 B"
+  },
+  {
+   "name": "V3a S011 fresh render byte-IDENTICAL (base vs work)",
+   "ok": true,
+   "detail": "492616 B"
+  },
+  {
+   "name": "V3b knob-OFF on real S003: WORK-OFF == BASE bytes",
+   "ok": true,
+   "detail": "364141 B"
+  },
+  {
+   "name": "V4a cell-11 wrapper span == base + exactly the line_colors threading patches (reverse-apply equality)",
+   "ok": true,
+   "detail": "applied=2"
+  },
+  {
+   "name": "V4a cell-12 wrapper span == base + exactly the line_colors threading patches (reverse-apply equality)",
+   "ok": true,
+   "detail": "applied=2"
+  },
+  {
+   "name": "V5a S012 law-vs-GT 8/8 (per-line ledger reproduced by the REAL chain)",
+   "ok": true,
+   "detail": "8/8"
+  },
+  {
+   "name": "V5b the owner case: R1 line_colors == [None, red, None, blue]",
+   "ok": true,
+   "detail": "[None, [200, 30, 30], None, [30, 30, 180]]"
+  },
+  {
+   "name": "V5c R6 narrow fix pin: b2_gt_lines == 3 (raw locator @ w<80)",
+   "ok": true,
+   "detail": "{'id': 5, 'tag': 'R6', 'class': 'narrow_tilt', 'box': {'x': 168, 'y': 476, 'width': 64, 'height': 48}, 'angle': -12.34, 'b2_gt_lines': 3, 'gt_line_colors': None, 'actual_line_colors': None, 'actual_ink_color': None, 'pass': True, 'notes': []}"
+  },
+  {
+   "name": "V5d R1 colored ink: WORK 694 px vs BASE 0 px (B3.1 delta proof)",
+   "ok": true,
+   "detail": "work=694 base=0"
+  },
+  {
+   "name": "V5d R1 colored ink: WORK 1174 px vs BASE 0 px (B3.1 delta proof)",
+   "ok": true,
+   "detail": "work=1174 base=0"
+  },
+  {
+   "name": "V5d R5 colored ink: WORK 1242 px vs BASE 0 px (B3.1 delta proof)",
+   "ok": true,
+   "detail": "work=1242 base=0"
+  },
+  {
+   "name": "V5d R2 continuity: region ink_color fires on BOTH (B3 law intact on a full-red shout)",
+   "ok": true,
+   "detail": "work=1490 base=1490"
+  },
+  {
+   "name": "V5e S012 determinism: chain re-run detections byte-identical",
+   "ok": true,
+   "detail": "8b54384abd4070c8b19d2ad15ec452af4640d99c73b2870559b634e6b585d6bf vs 8b54384abd4070c8b19d2ad15ec452af4640d99c73b2870559b634e6b585d6bf"
+  },
+  {
+   "name": "V5f S012 determinism: chain re-run final.jpg byte-identical",
+   "ok": true,
+   "detail": "f110e8520e99e68d974cf604e16f442e4a63944c073f004e43a25ceaab18ad76 vs f110e8520e99e68d974cf604e16f442e4a63944c073f004e43a25ceaab18ad76"
+  },
+  {
+   "name": "V6a sim runs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V6b m002_sim_v2 = 0 abort sites",
+   "ok": true,
+   "detail": "iner_types', 'kill_residual', 'mask_only_translated', 'restore_boxes', 'run_inpaint_all', 'run_render_all']\n  def cell 15:689: ['run_inpaint_all', 'run_render_all']\n  def cell 23:71: ['run_inpaint_all', 'run_render_all', 'sync_translate_stage']\n\nDONE — read-only analysis, no project files modified.\n"
+  }
+ ],
+ "summary": {
+  "pass": 49,
+  "fail": 0,
+  "notebook_sha256_work": "3055f374abdcf92ad2bcbe6b4e85a697aa79ae897c6ebdc0a8d5a7dfbd33607f",
+  "notebook_sha256_base": "c719feb6e4f6f12d267952c17b0fa380d0292b6d9a8fbec1290964714d7384d6",
+  "s012_regions_pass": 8,
+  "test24_arms": 13
+ },
+ "s012_parity": [
+  {
+   "id": 1,
+   "tag": "R1",
+   "class": "emphasis4",
+   "box": {
+    "x": 88,
+    "y": 88,
+    "width": 292,
+    "height": 278
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": [
+    null,
+    [
+     200,
+     30,
+     30
+    ],
+    null,
+    [
+     30,
+     30,
+     180
+    ]
+   ],
+   "actual_line_colors": [
+    null,
+    [
+     200,
+     30,
+     30
+    ],
+    null,
+    [
+     30,
+     30,
+     180
+    ]
+   ],
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 2,
+   "tag": "R2",
+   "class": "shout",
+   "box": {
+    "x": 518,
+    "y": 78,
+    "width": 204,
+    "height": 98
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": [
+    [
+     200,
+     30,
+     30
+    ],
+    [
+     200,
+     30,
+     30
+    ]
+   ],
+   "actual_line_colors": [
+    [
+     200,
+     30,
+     30
+    ],
+    [
+     200,
+     30,
+     30
+    ]
+   ],
+   "actual_ink_color": [
+    200,
+    30,
+    30
+   ],
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 3,
+   "tag": "R3",
+   "class": "sfx_twohue",
+   "box": {
+    "x": 528,
+    "y": 252,
+    "width": 216,
+    "height": 42
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 4,
+   "tag": "R4",
+   "class": "black_ctrl",
+   "box": {
+    "x": 528,
+    "y": 398,
+    "width": 204,
+    "height": 248
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 5,
+   "tag": "R6",
+   "class": "narrow_tilt",
+   "box": {
+    "x": 168,
+    "y": 476,
+    "width": 64,
+    "height": 48
+   },
+   "angle": -12.34,
+   "b2_gt_lines": 3,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 6,
+   "tag": "R7",
+   "class": "tiny_id8",
+   "box": {
+    "x": 148,
+    "y": 658,
+    "width": 52,
+    "height": 60
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 7,
+   "tag": "R8",
+   "class": "vertical",
+   "box": {
+    "x": 178,
+    "y": 788,
+    "width": 44,
+    "height": 336
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 8,
+   "tag": "R5",
+   "class": "purple2",
+   "box": {
+    "x": 538,
+    "y": 768,
+    "width": 190,
+    "height": 98
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": [
+    [
+     96,
+     20,
+     170
+    ],
+    null
+   ],
+   "actual_line_colors": [
+    [
+     96,
+     20,
+     170
+    ],
+    null
+   ],
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  }
+ ]
+}

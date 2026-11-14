@@ -1,0 +1,231 @@
+{
+ "sample_id": "S012_manhwa_emphasis",
+ "captured_at": "2026-11-09",
+ "branch": "mangabd-009-b3",
+ "notebook_sha256": "3055f374abdcf92ad2bcbe6b4e85a697aa79ae897c6ebdc0a8d5a7dfbd33607f",
+ "pipeline_variant": "MANGABD-009 B3.1 regression fixture — synthesized owner-REJECT page class (per-word emphasis coloring), full chain (detect -> ocr -> inpaint -> translate -> render) on the B3.1 Phase C bytes",
+ "translation_engine": "synthetic (B3.1 fixture)",
+ "source_page": "synthesized by scripts/m009_b31_s012_page.py (rng_seed 20261109; construction fully deterministic) — NOT an Owner Colab upload",
+ "provenance": "B3.1 ruling (RB31-1..RB31-8 on Phase A 13a6e02 + the phase-C addendum: V5 CONFIRMED via the Owner's detections.json, id=8 w=51 h=62 area=3162): pin the emphasis-corpus class that made B3 region-median sampling inert (live-REJECT 0/5 keys) + the narrow-bubble V5 class + the tiny-text id=8 class. Ground truth = the builder's own per-line color ledger (gt_line_colors) + the true-ink mask (text_mask.png); the pipeline's per-line law (raw-threshold locator, chromatic-cluster median tau=0.15) must reproduce the ledger, and the render must put each mapped line's color on that line.",
+ "disclosures": [
+  "SYNTHESIZED fixture (not Owner-produced art); its job is to pin the emphasis-coloring + narrow-bubble + tiny-text classes, not to imitate art.",
+  "Sandbox has no onnxruntime/torch GPU: RT-DETR is stubbed to the TRUE region boxes and CTD to the TRUE text-ink prob map (the S009/S010/S011 pattern); the region build, B2 orientation ladder (incl. the B3.1 narrow fix at w<80), the per-line color law, reading-order sort and every render byte after the boxes are the REAL production path.",
+  "OCR is stubbed to the drawn JP text; translations are the builder's Bengali strings; inpainted.png is the synthesized clean page.",
+  "text_mask.png is the TRUE synthesized text ink, not the pipeline detect-stage mask.",
+  "R6's b2_gt_lines=3 arrives via the B3.1 narrow fix (raw locator at w<80): on the B3-tip bytes the closed mask merges its 8px-gap variant (Test 24 mechanism arm) — the fixture pins the FIXED behavior.",
+  "The Owner's live colored page remains the final re-accept gate for the B3/B3.1 merge."
+ ],
+ "acceptance_rule": "per-region: line_colors == the builder's per-line GT ledger (L2 <= 10 per colored line, null elsewhere; conditional-key law — keyless regions stay keyless), ink_color only where the B3 region law legitimately fires (R2), b2_gt_lines=3 on R6 (narrow fix), angle 0 on the axis-aligned/vertical classes, line-level gate WARN on R3; render: mapped colored lines carry their color (base-vs-work delta asserted by scripts/m009_b31_phaseC_verify.py).",
+ "ground_truth": [
+  {
+   "id": 1,
+   "tag": "R1",
+   "class": "emphasis4",
+   "box": {
+    "x": 88,
+    "y": 88,
+    "width": 292,
+    "height": 278
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": [
+    null,
+    [
+     200,
+     30,
+     30
+    ],
+    null,
+    [
+     30,
+     30,
+     180
+    ]
+   ],
+   "actual_line_colors": [
+    null,
+    [
+     200,
+     30,
+     30
+    ],
+    null,
+    [
+     30,
+     30,
+     180
+    ]
+   ],
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 2,
+   "tag": "R2",
+   "class": "shout",
+   "box": {
+    "x": 518,
+    "y": 78,
+    "width": 204,
+    "height": 98
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": [
+    [
+     200,
+     30,
+     30
+    ],
+    [
+     200,
+     30,
+     30
+    ]
+   ],
+   "actual_line_colors": [
+    [
+     200,
+     30,
+     30
+    ],
+    [
+     200,
+     30,
+     30
+    ]
+   ],
+   "actual_ink_color": [
+    200,
+    30,
+    30
+   ],
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 3,
+   "tag": "R3",
+   "class": "sfx_twohue",
+   "box": {
+    "x": 528,
+    "y": 252,
+    "width": 216,
+    "height": 42
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 4,
+   "tag": "R4",
+   "class": "black_ctrl",
+   "box": {
+    "x": 528,
+    "y": 398,
+    "width": 204,
+    "height": 248
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 5,
+   "tag": "R6",
+   "class": "narrow_tilt",
+   "box": {
+    "x": 168,
+    "y": 476,
+    "width": 64,
+    "height": 48
+   },
+   "angle": -12.34,
+   "b2_gt_lines": 3,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 6,
+   "tag": "R7",
+   "class": "tiny_id8",
+   "box": {
+    "x": 148,
+    "y": 658,
+    "width": 52,
+    "height": 60
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 7,
+   "tag": "R8",
+   "class": "vertical",
+   "box": {
+    "x": 178,
+    "y": 788,
+    "width": 44,
+    "height": 336
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": null,
+   "actual_line_colors": null,
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  },
+  {
+   "id": 8,
+   "tag": "R5",
+   "class": "purple2",
+   "box": {
+    "x": 538,
+    "y": 768,
+    "width": 190,
+    "height": 98
+   },
+   "angle": 0.0,
+   "b2_gt_lines": null,
+   "gt_line_colors": [
+    [
+     96,
+     20,
+     170
+    ],
+    null
+   ],
+   "actual_line_colors": [
+    [
+     96,
+     20,
+     170
+    ],
+    null
+   ],
+   "actual_ink_color": null,
+   "pass": true,
+   "notes": []
+  }
+ ]
+}
