@@ -1,0 +1,673 @@
+[
+  {
+    "region": {
+      "id": 1,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 88,
+      "y": 62,
+      "width": 284,
+      "height": 208,
+      "quad": [
+        [
+          89,
+          31
+        ],
+        [
+          394,
+          62
+        ],
+        [
+          370,
+          300
+        ],
+        [
+          65,
+          269
+        ]
+      ],
+      "angle": -5.84,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 0
+    },
+    "ocr": {
+      "text": "これは",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এই অন্ধকার ওয়েবটুনের কথা এখানে লেখা আছে",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 0
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 2,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 98,
+      "y": 148,
+      "width": 232,
+      "height": 26,
+      "quad": [
+        [
+          98,
+          148
+        ],
+        [
+          330,
+          148
+        ],
+        [
+          330,
+          174
+        ],
+        [
+          98,
+          174
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 2
+    },
+    "ocr": {
+      "text": "これは",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "এই অন্ধকার ওয়েবটুনের কথা এখানে লেখা আছে",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 39
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 3,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 448,
+      "y": 118,
+      "width": 344,
+      "height": 188,
+      "quad": [
+        [
+          448,
+          118
+        ],
+        [
+          792,
+          118
+        ],
+        [
+          792,
+          306
+        ],
+        [
+          448,
+          306
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 1
+    },
+    "ocr": {
+      "text": "二つ目の",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "দ্বিতীয় কাঁটাওয়ালা বুদবুদের কথা",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 27
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 4,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 496,
+      "y": 262,
+      "width": 222,
+      "height": 40,
+      "quad": [
+        [
+          496,
+          262
+        ],
+        [
+          718,
+          262
+        ],
+        [
+          718,
+          302
+        ],
+        [
+          496,
+          302
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 3
+    },
+    "ocr": {
+      "text": "二つ目の",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "দ্বিতীয় কাঁটাওয়ালা বুদবুদের কথা",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 27
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 5,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 68,
+      "y": 488,
+      "width": 224,
+      "height": 164,
+      "quad": [
+        [
+          68,
+          488
+        ],
+        [
+          292,
+          488
+        ],
+        [
+          292,
+          652
+        ],
+        [
+          68,
+          652
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 6
+    },
+    "ocr": {
+      "text": "隣同士の",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "পাশাপাশি বুদবুদের কথা নম্বর এক",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 27
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 6,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 308,
+      "y": 488,
+      "width": 224,
+      "height": 164,
+      "quad": [
+        [
+          308,
+          488
+        ],
+        [
+          532,
+          488
+        ],
+        [
+          532,
+          652
+        ],
+        [
+          308,
+          652
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 5
+    },
+    "ocr": {
+      "text": "隣同士の",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "পাশাপাশি বুদবুদের কথা নম্বর দুই",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 26
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 7,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 548,
+      "y": 488,
+      "width": 224,
+      "height": 164,
+      "quad": [
+        [
+          548,
+          488
+        ],
+        [
+          772,
+          488
+        ],
+        [
+          772,
+          652
+        ],
+        [
+          548,
+          652
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 4
+    },
+    "ocr": {
+      "text": "隣同士の",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "পাশাপাশি বুদবুদের কথা নম্বর তিন",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 27
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 8,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 86,
+      "y": 756,
+      "width": 188,
+      "height": 78,
+      "quad": [
+        [
+          86,
+          756
+        ],
+        [
+          274,
+          756
+        ],
+        [
+          274,
+          834
+        ],
+        [
+          86,
+          834
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 8
+    },
+    "ocr": {
+      "text": "キム",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "নামফলক キム",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 26
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 9,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 496,
+      "y": 756,
+      "width": 188,
+      "height": 78,
+      "quad": [
+        [
+          496,
+          756
+        ],
+        [
+          684,
+          756
+        ],
+        [
+          684,
+          834
+        ],
+        [
+          496,
+          834
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 7
+    },
+    "ocr": {
+      "text": "リ",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "নামফলক リ",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 26
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 10,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 58,
+      "y": 908,
+      "width": 364,
+      "height": 244,
+      "quad": [
+        [
+          58,
+          908
+        ],
+        [
+          422,
+          908
+        ],
+        [
+          422,
+          1152
+        ],
+        [
+          58,
+          1152
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 9
+    },
+    "ocr": {
+      "text": "消えていない",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "না মোছা ভূতুড়ে লেখা এখানে",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 27
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  },
+  {
+    "region": {
+      "id": 11,
+      "page_id": "s013_dark_webtoon.jpg",
+      "x": 596,
+      "y": 946,
+      "width": 208,
+      "height": 178,
+      "quad": [
+        [
+          596,
+          946
+        ],
+        [
+          804,
+          946
+        ],
+        [
+          804,
+          1124
+        ],
+        [
+          596,
+          1124
+        ]
+      ],
+      "angle": 0.0,
+      "region_type": "bubble",
+      "detector_class": "text_bubble",
+      "detector_score": 0.9,
+      "parent_bubble_id": null,
+      "reading_order": 10
+    },
+    "ocr": {
+      "text": "白い背景の",
+      "confidence": 0.9,
+      "engine": "stub",
+      "language_score": {
+        "en": 1.0,
+        "bn": 0.0,
+        "unknown": 0.0
+      },
+      "warnings": [],
+      "is_english": true,
+      "status": "ok",
+      "vertical_ocr": null,
+      "__bengali": "সাদা পটভূমির কন্ট্রোল বুদবুদ",
+      "fallback_trace": [
+        {
+          "engine": "qwen",
+          "outcome": "error",
+          "ms": 27
+        },
+        {
+          "engine": "openrouter_vision",
+          "outcome": "ok",
+          "ms": 0
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,101 @@
+[
+ {
+  "id": 1,
+  "region_type": "bubble",
+  "original_text": "これは\n暗いウェブトゥーン\nのセリフ\nです",
+  "translated_text": "এই অন্ধকার ওয়েবটুনের কথা এখানে লেখা আছে",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 2,
+  "region_type": "bubble",
+  "original_text": "暗いウェブトゥーン",
+  "translated_text": "অন্ধকার ওয়েবটুনের ডুপ্লিকেট লাইন",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 3,
+  "region_type": "bubble",
+  "original_text": "二つ目の\n尖った吹き出し\n三行",
+  "translated_text": "দ্বিতীয় কাঁটাওয়ালা বুদবুদের কথা",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 4,
+  "region_type": "bubble",
+  "original_text": "三行",
+  "translated_text": "তৃতীয় লাইনের ডুপ্লিকেট",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 5,
+  "region_type": "bubble",
+  "original_text": "隣同士の\n吹き出し",
+  "translated_text": "পাশাপাশি বুদবুদের কথা নম্বর এক",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 6,
+  "region_type": "bubble",
+  "original_text": "隣同士の\n吹き出し",
+  "translated_text": "পাশাপাশি বুদবুদের কথা নম্বর দুই",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 7,
+  "region_type": "bubble",
+  "original_text": "隣同士の\n吹き出し",
+  "translated_text": "পাশাপাশি বুদবুদের কথা নম্বর তিন",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 8,
+  "region_type": "bubble",
+  "original_text": "キム",
+  "translated_text": "নামফলক キム",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 9,
+  "region_type": "bubble",
+  "original_text": "リ",
+  "translated_text": "নামফলক リ",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 10,
+  "region_type": "bubble",
+  "original_text": "消えていない\n幽霊の文字\n三行",
+  "translated_text": "না মোছা ভূতুড়ে লেখা এখানে",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ },
+ {
+  "id": 11,
+  "region_type": "bubble",
+  "original_text": "白い背景の\n対照実験\nです",
+  "translated_text": "সাদা পটভূমির কন্ট্রোল বুদবুদ",
+  "translator_engine": "synthetic (RF-20 fixture)",
+  "bengali_valid": true,
+  "status": "rendered"
+ }
+]

@@ -133,8 +133,20 @@ def run_chain(page_name, full, clean, regions, ink_mask, extra_seed=None):
     df_now = ns["translation_df"]
     rendered = int((df_now[df_now["page_id"] == pid]["status"]
                     == "rendered").sum())
-    assert rendered == len(det_rows), \
-        f"rendered {rendered}/{len(det_rows)}"
+    # MANGABD-009 RF-20: suppressed duplicate fragments are expected
+    # non-renders (skipped by design, WARN'd + meta'd); allow them
+    # ONLY when the RF-20 dedup meta names exactly the missing ids
+    # (render-side suppression, never a silent render error).
+    _meta = (ns["get_page"](pid, required=True).get("meta") or {})
+    _sup = set(int(i) for i in
+               (_meta.get("rf20_dedup") or {}).get("suppressed", []))
+    _ok_ids = {int(d["id"]) for d in det_rows} - _sup
+    _ren_ids = set(
+        int(i) for i in df_now[
+            (df_now["page_id"] == pid)
+            & (df_now["status"] == "rendered")]["id"])
+    assert _ren_ids == _ok_ids and rendered == len(_ok_ids), \
+        f"rendered {rendered}/{len(det_rows)} (suppressed={sorted(_sup)})"
     return ns, pid, det_rows
 
 

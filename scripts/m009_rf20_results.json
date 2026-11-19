@@ -1,0 +1,207 @@
+{
+ "checks": [
+  {
+   "name": "V0a on branch mangabd-009-rf20",
+   "ok": true,
+   "detail": "mangabd-009-rf20"
+  },
+  {
+   "name": "V0d base notebook == the RF-19-merge pin (42aa6a92...)",
+   "ok": true,
+   "detail": "42aa6a92ad467b8f"
+  },
+  {
+   "name": "V0c working notebook == byte-faithful (base + manifest) rebuild",
+   "ok": true,
+   "detail": "bd5012ddf2064b73"
+  },
+  {
+   "name": "V0e cells dirs byte-pinned to their notebook refs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1a changed cells EXACTLY {10}",
+   "ok": true,
+   "detail": "[10]"
+  },
+  {
+   "name": "V1b 26 non-target cells byte-identical",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1c AST 27/27 both refs (warnings-as-errors)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1d manifest present (9 patches)",
+   "ok": true,
+   "detail": "9 patches"
+  },
+  {
+   "name": "V1e re-derivation base->work BYTE-EXACT (all 27 cells)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1f re-derivation work->base BYTE-EXACT (all 27 cells)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1g wiring probes (RF-20 surfaces + RF-19/B1/B2/B3/B3.1 preserved + cells 11/12 untouched)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V1h secret-pattern scan on added notebook lines (0 hits)",
+   "ok": true,
+   "detail": "636 added lines, hits=[]"
+  },
+  {
+   "name": "V2a battery smoke ALL GREEN (exit 0)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2b RF-20 green markers 7 (the six Test-26 arms + the census freeze arm)",
+   "ok": true,
+   "detail": "7 markers"
+  },
+  {
+   "name": "V2c Test-26 arm present+green: RF-20 pair law: containment triple...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-26 arm present+green: RF-20 whole+fragment renders ONCE...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-26 arm present+green: RF-20 double-text gone...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-26 arm present+green: RF-20 adjacent bubbles 12/13/14...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-26 arm present+green: RF-20 dark-spiky ghost wipe...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2c Test-26 arm present+green: RF-20 white-bg no-op...",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2d Test-26 census exact (dup pair + dark ghost only)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2e RF-19 green markers 6 (Test-25 arms intact)",
+   "ok": true,
+   "detail": "6 markers"
+  },
+  {
+   "name": "V2f B3.1 green markers 13 (11 Test-24 arms + cell-11 7.5c + cell-12 7.7b)",
+   "ok": true,
+   "detail": "13 markers"
+  },
+  {
+   "name": "V2g legacy B3 arms still green (Test 23 family)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V2h cell-10 SUCCESS",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V3a S003 fresh render byte-IDENTICAL (base vs work) + RF-20 fire census 0",
+   "ok": true,
+   "detail": "364141 B, dedup=[], ghost=[]"
+  },
+  {
+   "name": "V3a S007 fresh render byte-IDENTICAL (base vs work) + RF-20 fire census 0",
+   "ok": true,
+   "detail": "360203 B, dedup=[], ghost=[]"
+  },
+  {
+   "name": "V3a S009 fresh render byte-IDENTICAL (base vs work) + RF-20 fire census 0",
+   "ok": true,
+   "detail": "465547 B, dedup=[], ghost=[]"
+  },
+  {
+   "name": "V3a S010 fresh render byte-IDENTICAL (base vs work) + RF-20 fire census 0",
+   "ok": true,
+   "detail": "571859 B, dedup=[], ghost=[]"
+  },
+  {
+   "name": "V3a S011 fresh render byte-IDENTICAL (base vs work) + RF-20 fire census 0",
+   "ok": true,
+   "detail": "492616 B, dedup=[], ghost=[]"
+  },
+  {
+   "name": "V3a S012 fresh render byte-IDENTICAL (base vs work) + RF-20 fire census 0",
+   "ok": true,
+   "detail": "141459 B, dedup=[], ghost=[]"
+  },
+  {
+   "name": "V3b knob-OFF on real S003: WORK-OFF == BASE bytes",
+   "ok": true,
+   "detail": "364141 B"
+  },
+  {
+   "name": "V4a S013 determinism: chain re-run detections byte-identical (duplicate fragments present in det, suppression is render-side)",
+   "ok": true,
+   "detail": "5bdf4e1e68bda6ac6abfc3e2d4febe98bb696fc834d260a7d3d33a2ac3b9ce62 vs 5bdf4e1e68bda6ac6abfc3e2d4febe98bb696fc834d260a7d3d33a2ac3b9ce62"
+  },
+  {
+   "name": "V4b S013 determinism: chain re-run final.jpg byte-identical (dedup + ghost laws live: fragments suppressed once, R10 wiped)",
+   "ok": true,
+   "detail": "f978f0617a1fbdace99e4d1d90f224aaa623cb1dbe6e1af33001c880a57e421a vs f978f0617a1fbdace99e4d1d90f224aaa623cb1dbe6e1af33001c880a57e421a"
+  },
+  {
+   "name": "V4c S013 render meta: dedup {R2,R4} + ghost {R10} + all controls rendered",
+   "ok": true,
+   "detail": "META {\"rf20_dedup\": {\"suppressed\": [2, 4]}, \"rf20_ghost_wipe\": {\"regions\": [1, 3, 5, 6, 7, 8, 9, 10]}, \"rendered_regions\": 9, \"skipped_regions\": 2}"
+  },
+  {
+   "name": "V5a sim runs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "V5b m002_sim_v2 = 0 abort sites",
+   "ok": true,
+   "detail": "iner_types', 'kill_residual', 'mask_only_translated', 'restore_boxes', 'run_inpaint_all', 'run_render_all']\n  def cell 15:689: ['run_inpaint_all', 'run_render_all']\n  def cell 23:71: ['run_inpaint_all', 'run_render_all', 'sync_translate_stage']\n\nDONE — read-only analysis, no project files modified.\n"
+  }
+ ],
+ "summary": {
+  "pass": 37,
+  "fail": 0,
+  "notebook_sha256_work": "bd5012ddf2064b73236cf57b08423d905f192c58f9971a70e7f540b0b9c9cb2f",
+  "notebook_sha256_base": "42aa6a92ad467b8faf6f0b2e68848ed873b58f5e277fb96c24876d49c2bdc588",
+  "test26_arms": 7,
+  "test25_arms": 6,
+  "test24_arms": 13,
+  "archives_parity": [
+   "S003",
+   "S007",
+   "S009",
+   "S010",
+   "S011",
+   "S012"
+  ],
+  "fire_census": "archives 0/0; battery exactly (__rf20_t26_dup__, 2) + (__rf20_t26_dark__, 15)"
+ }
+}
